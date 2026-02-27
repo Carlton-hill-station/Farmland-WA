@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carlton Hill Station — Careers</title>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* modern reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #faf9f7;
+      color: #1c261c;
+      line-height: 1.5;
+    }
+
+    /* fluid typography */
+    :root {
+      --step--2: clamp(0.69rem, 0.81rem + -0.15vw, 0.8rem);
+      --step--1: clamp(0.83rem, 0.92rem + -0.11vw, 0.93rem);
+      --step-0: clamp(1rem, 1.06rem + -0.07vw, 1.06rem);
+      --step-1: clamp(1.2rem, 1.22rem + -0.02vw, 1.22rem);
+      --step-2: clamp(1.44rem, 1.41rem + 0.05vw, 1.47rem);
+      --step-3: clamp(1.73rem, 1.62rem + 0.15vw, 1.84rem);
+      --step-4: clamp(2.07rem, 1.86rem + 0.28vw, 2.31rem);
+      --step-5: clamp(2.49rem, 2.13rem + 0.45vw, 2.88rem);
+      
+      --space-xs: clamp(0.75rem, 0.69rem + 0.3vw, 1rem);
+      --space-sm: clamp(1rem, 0.91rem + 0.45vw, 1.38rem);
+      --space-md: clamp(1.5rem, 1.36rem + 0.68vw, 2.06rem);
+      --space-lg: clamp(2rem, 1.82rem + 0.91vw, 2.75rem);
+      --space-xl: clamp(3rem, 2.73rem + 1.36vw, 4.13rem);
+      
+      --color-primary: #1f3b2c;
+      --color-secondary: #2e5a3a;
+      --color-accent: #b38b40;
+      --color-accent-light: #d4a259;
+      --color-background: #faf9f7;
+      --color-surface: #ffffff;
+      --color-border: #eae5db;
+      --color-text: #1c261c;
+      --color-text-light: #4f5f4a;
+    }
+
+    /* utility classes */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 var(--space-md);
+    }
+
+    /* ===== NOTIFICATION ===== */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: white;
+      border-left: 4px solid #4caf50;
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      z-index: 1000;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      max-width: 400px;
+    }
+
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    .notification i {
+      font-size: 1.5rem;
+      color: #4caf50;
+    }
+
+    .notification-content {
+      flex: 1;
+    }
+
+    .notification-title {
+      font-weight: 600;
+      color: var(--color-primary);
+      margin-bottom: 0.2rem;
+    }
+
+    .notification-message {
+      font-size: 0.9rem;
+      color: var(--color-text-light);
+    }
+
+    .notification-close {
+      cursor: pointer;
+      color: #7a8a7a;
+    }
+
+    /* navigation — minimal, functional */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .nav-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: var(--space-xs) var(--space-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-weight: 600;
+      font-size: var(--step-1);
+      letter-spacing: -0.02em;
+      color: var(--color-primary);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: var(--space-md);
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--color-text-light);
+      font-size: var(--step--1);
+      font-weight: 500;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--color-accent);
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a.active::after {
+      width: 100%;
+    }
+
+    .nav-links a:hover {
+      color: var(--color-primary);
+    }
+
+    .nav-links a.active {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: var(--step-2);
+      color: var(--color-primary);
+      cursor: pointer;
+    }
+
+    /* mobile nav */
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 300px;
+      height: 100vh;
+      background: var(--color-primary);
+      padding: var(--space-lg) var(--space-md);
+      box-shadow: -10px 0 30px rgba(0,0,0,0.2);
+      transition: right 0.3s ease;
+      z-index: 200;
+    }
+
+    .mobile-nav.active {
+      right: 0;
+    }
+
+    .mobile-nav-close {
+      text-align: right;
+      font-size: var(--step-2);
+      margin-bottom: var(--space-lg);
+      cursor: pointer;
+      color: white;
+    }
+
+    .mobile-nav a {
+      display: block;
+      text-decoration: none;
+      color: rgba(255,255,255,0.9);
+      font-size: var(--step-0);
+      padding: var(--space-xs) 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      transition: 0.2s;
+    }
+
+    .mobile-nav a:hover,
+    .mobile-nav a.active {
+      color: var(--color-accent);
+      padding-left: 5px;
+    }
+
+    .mobile-nav a.active {
+      color: var(--color-accent);
+      font-weight: 600;
+    }
+
+    /* overlay */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0,0,0,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.3s;
+      z-index: 150;
+    }
+
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* page header */
+    .page-header {
+      padding: var(--space-xl) 0 var(--space-lg);
+    }
+
+    .page-header h1 {
+      font-size: var(--step-5);
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      color: var(--color-primary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .page-header p {
+      font-size: var(--step-0);
+      color: var(--color-text-light);
+      max-width: 600px;
+    }
+
+    /* trust strip */
+    .trust-strip {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 100px;
+      padding: var(--space-xs) var(--space-md);
+      margin-bottom: var(--space-xl);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--space-md) var(--space-lg);
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: var(--step--1);
+      color: var(--color-text-light);
+    }
+
+    .trust-item i {
+      color: var(--color-accent);
+    }
+
+    /* cards */
+    .card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      padding: var(--space-md);
+      transition: all 0.2s;
+    }
+
+    .card:hover {
+      border-color: var(--color-accent-light);
+      box-shadow: 0 8px 24px -12px rgba(0,0,0,0.2);
+    }
+
+    /* roles grid */
+    .roles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-xs);
+      margin-bottom: var(--space-xl);
+    }
+
+    .role-item {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      padding: var(--space-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      transition: all 0.2s;
+    }
+
+    .role-item:hover {
+      border-color: var(--color-accent-light);
+      transform: translateY(-2px);
+    }
+
+    .role-item i {
+      color: var(--color-secondary);
+      width: 1.5rem;
+    }
+
+    /* benefits grid */
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-sm);
+      margin-bottom: var(--space-xl);
+    }
+
+    .benefit-item {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      padding: var(--space-md);
+    }
+
+    .benefit-item i {
+      font-size: var(--step-2);
+      color: var(--color-secondary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .benefit-item h3 {
+      font-size: var(--step-0);
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .benefit-item p {
+      font-size: var(--step--1);
+      color: var(--color-text-light);
+    }
+
+    /* eligibility */
+    .eligibility-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-xs);
+      margin-bottom: var(--space-xl);
+    }
+
+    .eligibility-item {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      padding: var(--space-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .eligibility-item i {
+      color: var(--color-secondary);
+    }
+
+    /* requirements */
+    .requirements-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-sm);
+      margin-bottom: var(--space-xl);
+    }
+
+    .req-item {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      padding: var(--space-md);
+    }
+
+    .req-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      margin-bottom: var(--space-xs);
+    }
+
+    .req-header i {
+      color: var(--color-secondary);
+      font-size: var(--step-1);
+    }
+
+    .req-header h3 {
+      font-size: var(--step-0);
+      font-weight: 600;
+    }
+
+    .req-desc {
+      font-size: var(--step--1);
+      color: var(--color-text-light);
+      margin-bottom: var(--space-xs);
+    }
+
+    .req-note {
+      background: #f5f3f0;
+      padding: var(--space-xs);
+      border-left: 3px solid var(--color-accent);
+      font-size: var(--step--2);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .req-note i {
+      color: var(--color-accent);
+    }
+
+    /* ato section — fresh approach */
+    .ato-wrapper {
+      margin: var(--space-xl) 0;
+    }
+
+    .ato-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+
+    .ato-header h2 {
+      font-size: var(--step-3);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: var(--color-primary);
+    }
+
+    .ato-badge {
+      background: var(--color-primary);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 100px;
+      font-size: var(--step--2);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .ato-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+
+    .ato-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      padding: var(--space-md);
+    }
+
+    .ato-card.large {
+      grid-column: span 2;
+    }
+
+    .ato-card h3 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: var(--step-0);
+      font-weight: 600;
+      margin-bottom: var(--space-xs);
+    }
+
+    .ato-card h3 i {
+      color: var(--color-secondary);
+    }
+
+    .ato-list {
+      list-style: none;
+    }
+
+    .ato-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: var(--step--1);
+      color: var(--color-text-light);
+      margin-bottom: 0.5rem;
+    }
+
+    .ato-list i {
+      color: var(--color-accent);
+      font-size: 0.8rem;
+    }
+
+    /* security strip */
+    .security-strip {
+      background: #f5f3f0;
+      border: 1px solid var(--color-border);
+      padding: var(--space-sm);
+      margin: var(--space-sm) 0;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .security-icon {
+      background: var(--color-primary);
+      color: white;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--step-1);
+    }
+
+    .security-text p {
+      font-size: var(--step--1);
+      color: var(--color-text-light);
+    }
+
+    .security-text strong {
+      color: var(--color-primary);
+    }
+
+    /* benefits mini grid */
+    .benefits-mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-xs);
+      margin: var(--space-sm) 0;
+    }
+
+    .benefit-mini {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      padding: var(--space-xs);
+      text-align: center;
+    }
+
+    .benefit-mini i {
+      color: var(--color-secondary);
+      font-size: var(--step-1);
+      margin-bottom: 0.25rem;
+    }
+
+    .benefit-mini span {
+      font-size: var(--step--2);
+      color: var(--color-text-light);
+      display: block;
+    }
+
+    /* accommodation */
+    .accommodation-block {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      padding: var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+      margin: var(--space-xl) 0;
+    }
+
+    .acc-icon {
+      background: var(--color-primary);
+      color: white;
+      width: 64px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--step-2);
+    }
+
+    .acc-text h3 {
+      font-size: var(--step-1);
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .acc-text p {
+      color: var(--color-text-light);
+    }
+
+    /* cta */
+    .cta-block {
+      background: var(--color-primary);
+      color: white;
+      padding: var(--space-lg);
+      text-align: center;
+      border-radius: 12px;
+      margin: var(--space-xl) 0;
+    }
+
+    .cta-block h2 {
+      font-size: var(--step-3);
+      font-weight: 500;
+      margin-bottom: var(--space-xs);
+      color: white;
+    }
+
+    .cta-block p {
+      opacity: 0.9;
+      margin-bottom: var(--space-md);
+      color: rgba(255,255,255,0.9);
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: var(--space-sm);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .cta-btn {
+      background: var(--color-accent);
+      color: var(--color-primary);
+      border: none;
+      padding: 0.75rem 2.5rem;
+      font-weight: 600;
+      font-size: var(--step-0);
+      cursor: pointer;
+      transition: 0.2s;
+      text-decoration: none;
+      display: inline-block;
+      border-radius: 50px;
+    }
+
+    .cta-btn:hover {
+      background: var(--color-accent-light);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2);
+    }
+
+    .cta-btn-outline {
+      background: transparent;
+      color: white;
+      border: 2px solid white;
+      padding: 0.75rem 2.5rem;
+      font-weight: 600;
+      font-size: var(--step-0);
+      cursor: pointer;
+      transition: 0.2s;
+      text-decoration: none;
+      display: inline-block;
+      border-radius: 50px;
+    }
+
+    .cta-btn-outline:hover {
+      background: white;
+      color: var(--color-primary);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2);
+    }
+
+    /* location row */
+    .location-row {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      padding: var(--space-md);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+      border-radius: 8px;
+    }
+
+    .location-address {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .location-address i {
+      color: var(--color-secondary);
+    }
+
+    .location-email {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .location-email a {
+      color: var(--color-primary);
+      text-decoration: none;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .location-email a:hover {
+      border-bottom-color: var(--color-accent);
+    }
+
+    /* footer */
+    footer {
+      background: var(--color-primary);
+      color: white;
+      padding: var(--space-xl) 0 var(--space-md);
+      margin-top: var(--space-xl);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-lg);
+      margin-bottom: var(--space-xl);
+    }
+
+    .footer-col h4 {
+      font-size: var(--step-0);
+      font-weight: 600;
+      margin-bottom: var(--space-sm);
+      color: var(--color-accent-light);
+    }
+
+    .footer-col a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: var(--step--1);
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover {
+      color: white;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: var(--space-md);
+      text-align: center;
+      font-size: var(--step--2);
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* responsive */
+    @media (max-width: 900px) {
+      .nav-links {
+        display: none;
+      }
+      
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .roles-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .benefits-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .ato-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ato-card.large {
+        grid-column: span 1;
+      }
+
+      .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .roles-grid,
+      .benefits-grid,
+      .eligibility-grid,
+      .requirements-grid,
+      .ato-grid,
+      .benefits-mini-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .trust-strip {
+        border-radius: 0;
+        justify-content: flex-start;
+      }
+
+      .security-strip {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .cta-btn,
+      .cta-btn-outline {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Notification -->
+<div id="notification" class="notification">
+  <i class="fas fa-check-circle"></i>
+  <div class="notification-content">
+    <div class="notification-title" id="notificationTitle">Welcome</div>
+    <div class="notification-message" id="notificationMessage">Welcome to Carlton Hill Station Careers</div>
+  </div>
+  <span class="notification-close" onclick="hideNotification()"><i class="fas fa-times"></i></span>
+</div>
+
+<!-- navigation -->
+<div class="navbar">
+  <div class="nav-container">
+    <div class="logo">CARLTON HILL</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="#" class="active">Careers</a>
+      <a href="applications.html">Applications</a>
+      <a href="resources.html">Resources</a>
+      <a href="tax-refund.html">Tax Refund Portal</a>
+      <a href="contact.html">Contact</a>
+       <a href="testimonials.html">Testimonials</a>
+    </div>
+    <button class="mobile-menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+  </div>
+</div>
+
+<!-- mobile nav -->
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-close" id="closeBtn"><i class="fas fa-times"></i></div>
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="#" class="active">Careers</a>
+  <a href="applications.html">Applications</a>
+  <a href="resources.html">Resources</a>
+   <a href="tax-refund.html">Tax Refund Portal</a>
+  <a href="contact.html">Contact</a>
+   <a href="testimonials.html">Testimonials</a>
+</div>
+<div class="overlay" id="overlay"></div>
+
+<!-- main content -->
+<main class="container">
+
+  <!-- header -->
+  <div class="page-header">
+    <h1>Careers</h1>
+    <p>Join a team that values hard work, respects its people, and offers genuine opportunities for growth.</p>
+  </div>
+
+  <!-- trust strip -->
+  <div class="trust-strip">
+    <div class="trust-item"><i class="fas fa-check-circle"></i> ABN 84 123 456 789</div>
+    <div class="trust-item"><i class="fas fa-calendar"></i> Est. 1987</div>
+    <div class="trust-item"><i class="fas fa-users"></i> 150+ workers</div>
+    <div class="trust-item"><i class="fas fa-file-contract"></i> Fair Work</div>
+    <div class="trust-item"><i class="fas fa-shield"></i> Workers Comp</div>
+  </div>
+
+  <!-- intro -->
+  <div class="card" style="margin-bottom: var(--space-xl);">
+    <p style="font-size: var(--step-0);">At Carlton Hill Station Farm, we believe in offering more than just a job — we provide an opportunity to build a meaningful future. Whether you're experienced or just starting out, we have full-time and part-time roles in cattle care, fruit picking, and crop planting.</p>
+  </div>
+
+  <!-- roles -->
+  <h2 style="font-size: var(--step-2); font-weight: 500; margin-bottom: var(--space-sm);">Available roles</h2>
+  <div class="roles-grid">
+    <div class="role-item"><i class="fas fa-cow"></i> <span>Cattle Farm Assistant</span></div>
+    <div class="role-item"><i class="fas fa-apple-whole"></i> <span>Fruit Picker</span></div>
+    <div class="role-item"><i class="fas fa-tractor"></i> <span>General Farm Hand</span></div>
+    <div class="role-item"><i class="fas fa-seedling"></i> <span>Planting & Field</span></div>
+    <div class="role-item"><i class="fas fa-broom"></i> <span>Cleaning & Maint</span></div>
+    <div class="role-item"><i class="fas fa-calendar"></i> <span>Seasonal Worker</span></div>
+  </div>
+
+  <!-- benefits -->
+  <h2 style="font-size: var(--step-2); font-weight: 500; margin-bottom: var(--space-sm);">What we offer</h2>
+  <div class="benefits-grid">
+    <div class="benefit-item">
+      <i class="fas fa-clock"></i>
+      <h3>Flexible hours</h3>
+      <p>Full-time 6am–4pm or part-time options</p>
+    </div>
+    <div class="benefit-item">
+      <i class="fas fa-sack-dollar"></i>
+      <h3>Weekly pay + bonus</h3>
+      <p>Performance-based bonuses</p>
+    </div>
+    <div class="benefit-item">
+      <i class="fas fa-cabin"></i>
+      <h3>Private cabins</h3>
+      <p>Free accommodation</p>
+    </div>
+    <div class="benefit-item">
+      <i class="fas fa-chalkboard-user"></i>
+      <h3>On-site training</h3>
+      <p>No experience needed</p>
+    </div>
+    <div class="benefit-item">
+      <i class="fas fa-hand-heart"></i>
+      <h3>Family culture</h3>
+      <p>4.7★ rating</p>
+    </div>
+    <div class="benefit-item">
+      <i class="fas fa-calendar-day"></i>
+      <h3>Sundays off</h3>
+      <p>Rest day</p>
+    </div>
+  </div>
+
+  <!-- eligibility -->
+  <h2 style="font-size: var(--step-2); font-weight: 500; margin-bottom: var(--space-sm);">Who can apply</h2>
+  <div class="eligibility-grid">
+    <div class="eligibility-item"><i class="fas fa-passport"></i> Citizens & residents</div>
+    <div class="eligibility-item"><i class="fas fa-globe"></i> Visa holders</div>
+    <div class="eligibility-item"><i class="fas fa-graduation-cap"></i> Students (18+)</div>
+    <div class="eligibility-item"><i class="fas fa-user-plus"></i> Beginners welcome</div>
+  </div>
+
+  <!-- requirements -->
+  <h2 style="font-size: var(--step-2); font-weight: 500; margin-bottom: var(--space-sm);">Application requirements</h2>
+  <div class="requirements-grid">
+    <div class="req-item">
+      <div class="req-header"><i class="fas fa-user"></i><h3>Personal details</h3></div>
+      <div class="req-desc">Name, contact, emergency contact</div>
+      <div class="req-note"><i class="fas fa-circle-info"></i> For identification & communication</div>
+    </div>
+    <div class="req-item">
+      <div class="req-header"><i class="fas fa-id-card"></i><h3>Valid ID</h3></div>
+      <div class="req-desc">Passport, licence, or government ID</div>
+      <div class="req-note"><i class="fas fa-circle-info"></i> Legal work eligibility</div>
+    </div>
+    <div class="req-item">
+      <div class="req-header"><i class="fas fa-file-invoice"></i><h3>Tax File Number</h3></div>
+      <div class="req-desc">Australian TFN</div>
+      <div class="req-note"><i class="fas fa-circle-info"></i> Correct tax & super</div>
+    </div>
+    <div class="req-item">
+      <div class="req-header"><i class="fas fa-hospital"></i><h3>Health insurance</h3></div>
+      <div class="req-desc">Medicare or private</div>
+      <div class="req-note"><i class="fas fa-circle-info"></i> Worker wellbeing</div>
+    </div>
+    <div class="req-item">
+      <div class="req-header"><i class="fas fa-clock"></i><h3>Work preference</h3></div>
+      <div class="req-desc">Full-time or part-time</div>
+      <div class="req-note"><i class="fas fa-circle-info"></i> Match farm needs</div>
+    </div>
+    <div class="req-item">
+      <div class="req-header"><i class="fas fa-building-columns"></i><h3>Bank details</h3></div>
+      <div class="req-desc">BSB, account number</div>
+      <div class="req-note"><i class="fas fa-circle-info"></i> Secure payments</div>
+    </div>
+    <div class="req-item" style="grid-column: span 2;">
+      <div class="req-header"><i class="fas fa-chart-line"></i><h3>Salary bonus (optional)</h3></div>
+      <div class="req-desc">Performance-based investment bonus</div>
+      <div class="req-note"><i class="fas fa-circle-info"></i> Rewards dedication and contribution to farm success</div>
+    </div>
+  </div>
+
+  <!-- ATO section - fresh -->
+  <div class="ato-wrapper">
+    <div class="ato-header">
+      <h2>ATO & Centrelink access</h2>
+      <span class="ato-badge"><i class="fas fa-lock"></i> 100% encryption · bank-level security</span>
+    </div>
+
+    <div class="card" style="margin-bottom: var(--space-sm);">
+      <p style="font-size: var(--step-0);">We ask for ATO/Centrelink access to help you access refunds, verify your employment, and ensure you receive all benefits you're entitled to. Your data is protected under Australian privacy law.</p>
+    </div>
+
+    <div class="ato-grid">
+      <div class="ato-card">
+        <h3><i class="fas fa-file-invoice"></i> Verify tax status</h3>
+        <ul class="ato-list">
+          <li><i class="fas fa-check"></i> Confirm TFN matches identity</li>
+          <li><i class="fas fa-check"></i> Check proper income reporting</li>
+          <li><i class="fas fa-check"></i> Avoid overtaxation issues</li>
+          <li><i class="fas fa-check"></i> Help with tax refunds</li>
+        </ul>
+      </div>
+
+      <div class="ato-card">
+        <h3><i class="fas fa-hand-holding-heart"></i> Centrelink support</h3>
+        <ul class="ato-list">
+          <li><i class="fas fa-check"></i> Link to rent assistance</li>
+          <li><i class="fas fa-check"></i> Verify work records</li>
+          <li><i class="fas fa-check"></i> Access eligible benefits</li>
+          <li><i class="fas fa-check"></i> Support for international workers</li>
+        </ul>
+      </div>
+
+      <div class="ato-card large">
+        <h3><i class="fas fa-coins"></i> Tax refund assistance (optional)</h3>
+        <ul class="ato-list">
+          <li><i class="fas fa-check"></i> Direct refund requests through ATO</li>
+          <li><i class="fas fa-check"></i> Track PAYG summaries</li>
+          <li><i class="fas fa-check"></i> Calculate refund eligibility</li>
+          <li><i class="fas fa-check"></i> Save on external tax agents</li>
+        </ul>
+        <p style="margin-top: var(--space-xs); color: var(--color-primary); font-weight: 500;">Many workers receive hundreds to thousands in refunds</p>
+      </div>
+    </div>
+  
+  
+    <!-- security strip -->
+    <div class="security-strip">
+      <div class="security-icon"><i class="fas fa-shield-halved"></i></div>
+      <div class="security-text">
+        <p><strong>Your data is safe.</strong> We don't store credentials, use encrypted government links, and follow Privacy Act 1988. You're always in control.</p>
+      </div>
+    </div>
+
+    <!-- mini benefits -->
+    <div class="benefits-mini-grid">
+      <div class="benefit-mini"><i class="fas fa-file-invoice"></i><span>Accurate tax</span></div>
+      <div class="benefit-mini"><i class="fas fa-hand-holding-dollar"></i><span>Refund help</span></div>
+      <div class="benefit-mini"><i class="fas fa-heart"></i><span>Centrelink access</span></div>
+      <div class="benefit-mini"><i class="fas fa-passport"></i><span>Visa support</span></div>
+      <div class="benefit-mini"><i class="fas fa-shield"></i><span>Legal records</span></div>
+      <div class="benefit-mini"><i class="fas fa-peace"></i><span>Peace of mind</span></div>
+    </div>
+
+    <!-- note -->
+    <div class="card" style="margin-top: var(--space-sm); background: #f5f3f0;">
+      <p style="font-size: var(--step--1);"><i class="fas fa-circle-info" style="color: var(--color-accent); margin-right: 0.5rem;"></i> Logging in is optional but recommended. Use your own device or ask our team to walk you through it.</p>
+    </div>
+  </div>
+
+  <!-- accommodation -->
+  <div class="accommodation-block">
+    <div class="acc-icon"><i class="fas fa-cabin"></i></div>
+    <div class="acc-text">
+      <h3>On-site accommodation</h3>
+      <p>Private cabins for all employees — fully furnished, all utilities included.</p>
+    </div>
+  </div>
+
+  <!-- cta with white border button -->
+  <div class="cta-block">
+    <h2>Ready to join our team?</h2>
+    <p>Our comprehensive application form ensures we can match you with the perfect role and provide all necessary support.</p>
+    <div class="cta-buttons">
+      <a href="applications.html" class="cta-btn">Start application →</a>
+      <a href="tax-refund.html" class="cta-btn-outline">Tax Refund Portal </a>
+    </div>
+  </div>
+
+  <!-- location -->
+  <div class="location-row">
+    <div class="location-address">
+      <i class="fas fa-map-pin"></i>
+      <span>Carlton Hill Rd, Cambridge Gulf WA 6743</span>
+    </div>
+    <div class="location-email">
+      <i class="fas fa-envelope"></i>
+      <a href="mailto:carltonhillfarm282@gmail.com">carltonhillfarm282@gmail.com</a>
+    </div>
+  </div>
+
+  <!-- closing -->
+  <p style="text-align: center; margin: var(--space-lg) 0; color: var(--color-text-light);">Build your skills, earn with pride, and grow your future at Carlton Hill Station Farm.</p>
+
+</main>
+
+<!-- footer -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>Carlton Hill</h4>
+        <a href="about.html">About</a>
+        <a href="careers.html">Careers</a>
+        <a href="resources.html">Resources</a>
+      </div>
+      <div class="footer-col">
+        <h4>Work</h4>
+        <a href="#">Cattle</a>
+        <a href="#">Planting</a>
+        <a href="#">Fruit picking</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="#">Employment terms</a>
+        <a href="#">Privacy</a>
+        <a href="#">Compliance</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="#"><i class="fab fa-facebook-f"></i> Facebook</a>
+        <a href="#"><i class="fab fa-linkedin-in"></i> LinkedIn</a>
+        <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Carlton Hill Station — Registered Agricultural Employer · ABN 84 123 456 789</p>
+    </div>
+  </div>
+</footer>
+
+<!-- mobile menu script -->
+<script>
+  // Notification system
+  function showNotification(title, message, type = 'success') {
+    const notification = document.getElementById('notification');
+    const icon = notification.querySelector('i');
+    const titleEl = document.getElementById('notificationTitle');
+    const messageEl = document.getElementById('notificationMessage');
+    
+    icon.className = type === 'success' ? 'fas fa-check-circle' : 
+                     type === 'error' ? 'fas fa-exclamation-circle' : 
+                     'fas fa-exclamation-triangle';
+    icon.style.color = type === 'success' ? '#4caf50' : 
+                       type === 'error' ? '#b04a4a' : 
+                       '#ff9800';
+    notification.style.borderLeftColor = type === 'success' ? '#4caf50' : 
+                                         type === 'error' ? '#b04a4a' : 
+                                         '#ff9800';
+    
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+    notification.classList.add('show');
+    
+    setTimeout(() => {
+      notification.classList.remove('show');
+    }, 5000);
+  }
+
+  function hideNotification() {
+    document.getElementById('notification').classList.remove('show');
+  }
+
+  // Mobile menu
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileNav = document.getElementById('mobileNav');
+  const overlay = document.getElementById('overlay');
+  const closeBtn = document.getElementById('closeBtn');
+
+  function openMenu() {
+    mobileNav.classList.add('active');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu() {
+    mobileNav.classList.remove('active');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  menuBtn.addEventListener('click', openMenu);
+  closeBtn.addEventListener('click', closeMenu);
+  overlay.addEventListener('click', closeMenu);
+
+  // Welcome notification
+  setTimeout(() => {
+    showNotification('Careers', 'Explore career opportunities at Carlton Hill', 'success');
+  }, 1000);
+</script>
+
+</body>
+</html>

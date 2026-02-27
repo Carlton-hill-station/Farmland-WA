@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carlton Hill Station | Tax Refund Portal</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #fcfaf7;
+      color: #1e2a1e;
+      line-height: 1.5;
+    }
+
+    /* ===== CUSTOM VARIABLES ===== */
+    :root {
+      --primary: #2a5a3a;
+      --primary-light: #3b7a4b;
+      --secondary: #6b9a7a;
+      --accent: #c49a6b;
+      --accent-light: #dbb68c;
+      --light: #f0f7f0;
+      --light-green: #e8f3e8;
+      --dark: #1a3a2a;
+      --gray: #e0e8e0;
+      --success: #4caf50;
+      --danger: #b04a4a;
+    }
+
+    /* ===== NAVIGATION ===== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--gray);
+    }
+
+    .nav-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: 1.3rem;
+      color: var(--primary);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #4a6a4a;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a.active::after {
+      width: 100%;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--primary);
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      font-size: 2rem;
+      cursor: pointer;
+      color: var(--primary);
+      background: none;
+      border: none;
+    }
+
+    /* ===== MOBILE NAV ===== */
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 280px;
+      height: 100vh;
+      background: var(--primary);
+      padding: 2rem;
+      transition: right 0.3s ease;
+      z-index: 200;
+      box-shadow: -5px 0 30px rgba(0,0,0,0.2);
+    }
+
+    .mobile-nav.active {
+      right: 0;
+    }
+
+    .mobile-nav-close {
+      text-align: right;
+      font-size: 2rem;
+      color: white;
+      margin-bottom: 2rem;
+      cursor: pointer;
+    }
+
+    .mobile-nav a {
+      display: block;
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+      font-size: 1.1rem;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      transition: 0.2s;
+    }
+
+    .mobile-nav a:hover,
+    .mobile-nav a.active {
+      color: var(--accent);
+      padding-left: 5px;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0,0,0,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.3s;
+      z-index: 150;
+    }
+
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ===== LOGIN PAGE ===== */
+    .login-page {
+      min-height: calc(100vh - 140px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--light-green) 0%, #ffffff 100%);
+      padding: 2rem 1rem;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .login-card {
+      background: white;
+      border: 1px solid var(--gray);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px -15px rgba(42, 90, 58, 0.15);
+    }
+
+    .login-header {
+      padding: 2rem 2rem 1.5rem 2rem;
+      text-align: center;
+      background: linear-gradient(135deg, var(--light-green) 0%, #ffffff 100%);
+    }
+
+    .shield-icon {
+      width: 70px;
+      height: 70px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+
+    .shield-icon i {
+      font-size: 2.5rem;
+      color: white;
+    }
+
+    .login-header h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      font-family: 'Playfair Display', serif;
+      text-align: center;
+    }
+
+    .login-header p {
+      font-size: 0.95rem;
+      color: #5a755a;
+      text-align: center;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+
+    .login-body {
+      padding: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--primary);
+      margin-bottom: 0.4rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 2px solid var(--gray);
+      border-radius: 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+      background: var(--light-green);
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: white;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 1rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-btn:disabled {
+      background: var(--gray);
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .login-btn .btn-text {
+      display: inline-block;
+      transition: opacity 0.2s;
+    }
+
+    .login-btn .spinner {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .login-btn.loading .btn-text {
+      opacity: 0;
+    }
+
+    .login-btn.loading .spinner {
+      display: block;
+    }
+
+    /* ===== SUCCESS MODAL ===== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      animation: slideUp 0.3s ease;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-icon {
+      width: 80px;
+      height: 80px;
+      background: var(--success);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+
+    .modal-icon i {
+      font-size: 3rem;
+      color: white;
+    }
+
+    .modal-content h3 {
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .modal-content p {
+      color: #5a755a;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-email {
+      background: var(--light-green);
+      padding: 0.8rem;
+      border-radius: 8px;
+      font-weight: 500;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+      word-break: break-all;
+    }
+
+    .modal-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+      width: 100%;
+      max-width: 200px;
+    }
+
+    .modal-btn:hover {
+      background: var(--primary-light);
+    }
+
+    /* ===== DASHBOARD PAGE ===== */
+    .dashboard-page {
+      min-height: calc(100vh - 140px);
+      background: var(--light-green);
+      display: none;
+    }
+
+    .dashboard-page.active {
+      display: block;
+    }
+
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+
+    .welcome-bar {
+      background: white;
+      border: 1px solid var(--gray);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .welcome-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--light-green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .welcome-text {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .welcome-text p {
+      color: #5a755a;
+      font-size: 0.95rem;
+    }
+
+    .welcome-text h3 {
+      color: var(--primary);
+      font-size: 1.2rem;
+      font-weight: 600;
+      word-break: break-word;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-bottom: 2rem;
+    }
+
+    .documents-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .doc-card {
+      background: white;
+      border: 1px solid var(--gray);
+      border-radius: 16px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: 0.2s;
+    }
+
+    .doc-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 10px 30px -10px var(--primary);
+    }
+
+    .doc-icon {
+      width: 60px;
+      height: 60px;
+      background: var(--light-green);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      color: var(--primary);
+      font-size: 2rem;
+    }
+
+    .doc-card h4 {
+      font-size: 1.1rem;
+      color: var(--primary);
+      margin-bottom: 0.3rem;
+    }
+
+    .doc-card p {
+      color: #5a755a;
+      font-size: 0.85rem;
+    }
+
+    .upload-section {
+      background: white;
+      border: 1px solid var(--gray);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .upload-section h3 {
+      font-size: 1.2rem;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+    }
+
+    .upload-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .upload-item {
+      border: 2px dashed var(--gray);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .upload-item:hover {
+      border-color: var(--accent);
+      background: var(--light-green);
+    }
+
+    .upload-item i {
+      font-size: 2rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .upload-item p {
+      color: #5a755a;
+      font-size: 0.9rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .upload-item small {
+      color: #8a9a8a;
+      font-size: 0.8rem;
+    }
+
+    .file-name {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--success);
+      word-break: break-all;
+    }
+
+    .submit-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 1rem 3rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.2s;
+      display: block;
+      margin: 0 auto;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .submit-btn:hover {
+      background: var(--primary-light);
+      transform: translateY(-2px);
+    }
+
+    .submit-btn:disabled {
+      background: var(--gray);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .bolt-footer {
+      background: var(--light-green);
+      border-top: 1px solid var(--gray);
+      padding: 1.5rem;
+      text-align: center;
+      margin-top: 3rem;
+    }
+
+    .bolt-footer p {
+      color: var(--primary);
+      font-size: 0.9rem;
+    }
+
+    .bolt-footer i {
+      color: var(--accent);
+      margin: 0 0.2rem;
+    }
+
+    .bolt-footer small {
+      color: #8a9a8a;
+      font-size: 0.8rem;
+      display: block;
+      margin-top: 0.3rem;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--primary);
+      color: white;
+      padding: 3rem 2rem 1.5rem;
+    }
+
+    .footer-grid {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3rem;
+    }
+
+    .footer-col h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+      color: var(--accent);
+    }
+
+    .footer-col a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.5rem;
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover {
+      color: white;
+    }
+
+    .footer-col p {
+      color: rgba(255,255,255,0.7);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-bottom {
+      max-width: 1280px;
+      margin: 2rem auto 0;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .documents-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .nav-links {
+        display: none;
+      }
+      .mobile-menu-btn {
+        display: block;
+      }
+      .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .upload-grid {
+        grid-template-columns: 1fr;
+      }
+      .welcome-bar {
+        flex-direction: column;
+        text-align: center;
+      }
+      .welcome-icon {
+        margin: 0 auto;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .documents-grid {
+        grid-template-columns: 1fr;
+      }
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+      .dashboard-container {
+        padding: 0 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVIGATION -->
+  <div class="navbar">
+    <div class="nav-container">
+      <div class="logo">CARLTON HILL</div>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="careers.html">Careers</a>
+        <a href="#" class="active">Tax Portal</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <button class="mobile-menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+    </div>
+  </div>
+
+  <!-- MOBILE NAV -->
+  <div class="mobile-nav" id="mobileNav">
+    <div class="mobile-nav-close" id="closeBtn"><i class="fas fa-times"></i></div>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="careers.html">Careers</a>
+    <a href="#" class="active">Tax Portal</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <div class="overlay" id="overlay"></div>
+
+  <!-- LOGIN PAGE -->
+  <div id="loginPage" class="login-page">
+    <div class="login-container">
+      <div class="login-card">
+        <div class="login-header">
+          <div class="shield-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <h2>Tax Refund Portal</h2>
+          <p>Upload your tax documents securely to process your refund</p>
+        </div>
+
+        <div class="login-body">
+          <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" id="email" placeholder="Enter your email" required>
+            </div>
+
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" id="password" placeholder="Enter your password" required>
+            </div>
+
+            <button type="submit" class="login-btn" id="loginBtn">
+              <span class="btn-text"><i class="fas fa-sign-in-alt"></i> Access Portal</span>
+              <span class="spinner"><i class="fas fa-spinner fa-spin"></i></span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUCCESS MODAL -->
+  <div id="successModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-icon">
+        <i class="fas fa-check"></i>
+      </div>
+      <h3>Login Successful!</h3>
+      <p>You have successfully logged in to your tax refund account.</p>
+      <div id="modalEmail" class="modal-email"></div>
+      <button class="modal-btn" onclick="closeModal()">Continue to Dashboard</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD PAGE -->
+  <div id="dashboardPage" class="dashboard-page">
+    <div class="dashboard-container">
+      <!-- Welcome Bar -->
+      <div class="welcome-bar">
+        <div class="welcome-icon">
+          <i class="fas fa-user-check"></i>
+        </div>
+        <div class="welcome-text">
+          <p>Welcome,</p>
+          <h3 id="userEmail">carltonhillfarm282@gmail.com</h3>
+          <p>You're securely logged in to your tax refund portal.</p>
+        </div>
+      </div>
+
+      <!-- Required Documents -->
+      <h2 class="section-title">Required Documents</h2>
+      <div class="documents-grid">
+        <div class="doc-card">
+          <div class="doc-icon">
+            <i class="fas fa-file-invoice"></i>
+          </div>
+          <h4>W-2 Forms</h4>
+          <p>Wage and Tax Statement</p>
+        </div>
+        <div class="doc-card">
+          <div class="doc-icon">
+            <i class="fas fa-file-invoice"></i>
+          </div>
+          <h4>1099 Forms</h4>
+          <p>Independent Contractor Income</p>
+        </div>
+        <div class="doc-card">
+          <div class="doc-icon">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <h4>Previous Year Tax Return</h4>
+          <p>Last year's tax filing</p>
+        </div>
+        <div class="doc-card">
+          <div class="doc-icon">
+            <i class="fas fa-id-card"></i>
+          </div>
+          <h4>ID Verification</h4>
+          <p>Government-issued ID</p>
+        </div>
+      </div>
+
+      <!-- Upload Documents -->
+      <div class="upload-section">
+        <h3><i class="fas fa-cloud-upload-alt"></i> Upload Your Documents</h3>
+        <div class="upload-grid">
+          <div class="upload-item" onclick="triggerFileUpload('w2')">
+            <i class="fas fa-file-pdf"></i>
+            <p>Upload W-2 Forms</p>
+            <small>PDF or image, max 10MB</small>
+            <div id="w2FileName" class="file-name"></div>
+            <input type="file" id="w2Upload" style="display: none;" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileUpload('w2', this)">
+          </div>
+          <div class="upload-item" onclick="triggerFileUpload('1099')">
+            <i class="fas fa-file-pdf"></i>
+            <p>Upload 1099 Forms</p>
+            <small>PDF or image, max 10MB</small>
+            <div id="1099FileName" class="file-name"></div>
+            <input type="file" id="1099Upload" style="display: none;" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileUpload('1099', this)">
+          </div>
+          <div class="upload-item" onclick="triggerFileUpload('previous')">
+            <i class="fas fa-file-pdf"></i>
+            <p>Upload Previous Year Return</p>
+            <small>PDF or image, max 10MB</small>
+            <div id="previousFileName" class="file-name"></div>
+            <input type="file" id="previousUpload" style="display: none;" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileUpload('previous', this)">
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 1rem;">
+          <p id="uploadStatus" style="color: var(--success); font-size: 0.9rem;"></p>
+        </div>
+
+        <button class="submit-btn" id="submitBtn" onclick="submitDocuments()">
+          <i class="fas fa-paper-plane"></i> Submit Documents
+        </button>
+      </div>
+
+      <!-- Bolt Footer -->
+      <div class="bolt-footer">
+        <p><i class="fas fa-bolt"></i> Powered by Bolt <i class="fas fa-bolt"></i></p>
+        <small>Made in Bolt</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>Carlton Hill</h4>
+        <p><i class="fas fa-tree"></i> Family-run since 1987</p>
+        <p><i class="fas fa-map"></i> Carlton Hill Rd, Cambridge Gulf</p>
+        <p><i class="fas fa-envelope"></i> carltonhillfarm282@gmail.com</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="careers.html">Careers</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Work Hours</h4>
+        <p>Mon - Sat: 6AM - 4PM</p>
+        <p>Sunday: Rest Day</p>
+      </div>
+      <div class="footer-col">
+        <h4>Accreditations</h4>
+        <p>ABN: 84 123 456 789</p>
+        <p>Fair Work Accredited</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Carlton Hill Station — Registered Agricultural Employer</p>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu functionality
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileNav = document.getElementById('mobileNav');
+    const overlay = document.getElementById('overlay');
+    const closeBtn = document.getElementById('closeBtn');
+
+    function openMenu() {
+      mobileNav.classList.add('active');
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+      mobileNav.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    menuBtn.addEventListener('click', openMenu);
+    closeBtn.addEventListener('click', closeMenu);
+    overlay.addEventListener('click', closeMenu);
+
+    // Store uploaded files
+    let uploadedFiles = {
+      w2: null,
+      '1099': null,
+      previous: null
+    };
+
+    // Load existing submissions from admin panel
+    function loadSubmissions() {
+      const saved = localStorage.getItem('taxSubmissions');
+      return saved ? JSON.parse(saved) : [];
+    }
+
+    // Save submission to admin panel
+    function saveSubmission(submission) {
+      const submissions = loadSubmissions();
+      submissions.push(submission);
+      localStorage.setItem('taxSubmissions', JSON.stringify(submissions));
+      
+      // Also save to admin notifications
+      const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
+      notifications.push({
+        type: 'tax_submission',
+        message: `New tax documents submitted by ${submission.email}`,
+        timestamp: new Date().toISOString(),
+        data: submission
+      });
+      localStorage.setItem('adminNotifications', JSON.stringify(notifications));
+    }
+
+    // Handle login with 5-second delay
+    function handleLogin(event) {
+      event.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const loginBtn = document.getElementById('loginBtn');
+
+      if (!email || !password) {
+        alert('Please enter both email and password');
+        return;
+      }
+
+      // Add loading state
+      loginBtn.classList.add('loading');
+      loginBtn.disabled = true;
+
+      // 5-second delay
+      setTimeout(() => {
+        // Remove loading state
+        loginBtn.classList.remove('loading');
+        loginBtn.disabled = false;
+
+        // Show modal
+        document.getElementById('modalEmail').textContent = email;
+        document.getElementById('successModal').classList.add('active');
+        
+        // Store email for dashboard
+        sessionStorage.setItem('userEmail', email);
+        
+        // Log login to admin
+        const logins = JSON.parse(localStorage.getItem('userLogins') || '[]');
+        logins.push({
+          email: email,
+          timestamp: new Date().toISOString(),
+          ip: '192.168.1.' + Math.floor(Math.random() * 255)
+        });
+        localStorage.setItem('userLogins', JSON.stringify(logins));
+      }, 5000);
+    }
+
+    // Close modal and show dashboard
+    function closeModal() {
+      document.getElementById('successModal').classList.remove('active');
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('dashboardPage').classList.add('active');
+      
+      // Update welcome email
+      const email = sessionStorage.getItem('userEmail') || 'carltonhillfarm282@gmail.com';
+      document.getElementById('userEmail').textContent = email;
+    }
+
+    // Trigger file upload
+    function triggerFileUpload(type) {
+      document.getElementById(type + 'Upload').click();
+    }
+
+    // Handle file upload
+    function handleFileUpload(type, input) {
+      const file = input.files[0];
+      if (file) {
+        // Check file size (max 10MB)
+        if (file.size > 10 * 1024 * 1024) {
+          alert('File size must be less than 10MB');
+          return;
+        }
+
+        // Read file as data URL for storage
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          uploadedFiles[type] = {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            data: e.target.result,
+            uploadTime: new Date().toISOString()
+          };
+          
+          // Show filename
+          const fileNameElement = document.getElementById(type + 'FileName');
+          fileNameElement.textContent = `✓ ${file.name}`;
+          
+          // Show status
+          document.getElementById('uploadStatus').textContent = `${type.toUpperCase()} file uploaded successfully`;
+          setTimeout(() => {
+            document.getElementById('uploadStatus').textContent = '';
+          }, 3000);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Submit documents to admin panel
+    function submitDocuments() {
+      const submitBtn = document.getElementById('submitBtn');
+      const email = sessionStorage.getItem('userEmail');
+      const uploaded = Object.values(uploadedFiles).filter(f => f !== null).length;
+      
+      if (uploaded === 0) {
+        alert('Please upload at least one document before submitting.');
+        return;
+      }
+
+      // Disable button during submission
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+      // Simulate network delay
+      setTimeout(() => {
+        // Create submission record
+        const submission = {
+          id: 'SUB-' + Date.now(),
+          email: email,
+          timestamp: new Date().toISOString(),
+          documents: uploadedFiles,
+          status: 'pending_review',
+          ip: '192.168.1.' + Math.floor(Math.random() * 255)
+        };
+
+        // Save to admin panel
+        saveSubmission(submission);
+
+        // Clear uploaded files display
+        document.getElementById('w2FileName').textContent = '';
+        document.getElementById('1099FileName').textContent = '';
+        document.getElementById('previousFileName').textContent = '';
+        
+        // Reset uploaded files
+        uploadedFiles = {
+          w2: null,
+          '1099': null,
+          previous: null
+        };
+
+        // Show success message
+        alert(`Documents submitted successfully!\n\nSubmission ID: ${submission.id}\nYou will receive a confirmation email shortly.`);
+
+        // Re-enable button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Documents';
+        
+        // Log submission
+        console.log('Documents submitted to admin:', submission);
+      }, 1500);
+    }
+
+    // Check if already logged in
+    window.onload = function() {
+      const savedEmail = sessionStorage.getItem('userEmail');
+      if (savedEmail) {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('dashboardPage').classList.add('active');
+        document.getElementById('userEmail').textContent = savedEmail;
+      }
+
+      // Initialize file name displays
+      document.getElementById('w2FileName').textContent = '';
+      document.getElementById('1099FileName').textContent = '';
+      document.getElementById('previousFileName').textContent = '';
+    };
+  </script>
+</body>
+</html>

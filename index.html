@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carlton Hill Station | Working Farm</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #fcfaf7;
+      color: #1e2a1e;
+      line-height: 1.5;
+    }
+
+    /* ===== CUSTOM VARIABLES ===== */
+    :root {
+      --primary: #1a3a2a;
+      --primary-light: #2d5a3d;
+      --secondary: #5b7a5a;
+      --accent: #c49a6b;
+      --accent-light: #dbb68c;
+      --light: #f9f6ef;
+      --dark: #162015;
+      --gray: #eae7de;
+      --success: #4caf50;
+      --danger: #b04a4a;
+      --warning: #ff9800;
+      
+      --step--2: clamp(0.69rem, 0.81rem + -0.15vw, 0.8rem);
+      --step--1: clamp(0.83rem, 0.92rem + -0.11vw, 0.93rem);
+      --step-0: clamp(1rem, 1.06rem + -0.07vw, 1.06rem);
+      --step-1: clamp(1.2rem, 1.22rem + -0.02vw, 1.22rem);
+      --step-2: clamp(1.44rem, 1.41rem + 0.05vw, 1.47rem);
+      --step-3: clamp(1.73rem, 1.62rem + 0.15vw, 1.84rem);
+      --step-4: clamp(2.07rem, 1.86rem + 0.28vw, 2.31rem);
+      --step-5: clamp(2.49rem, 2.13rem + 0.45vw, 2.88rem);
+      
+      --space-xs: clamp(0.75rem, 0.69rem + 0.3vw, 1rem);
+      --space-sm: clamp(1rem, 0.91rem + 0.45vw, 1.38rem);
+      --space-md: clamp(1.5rem, 1.36rem + 0.68vw, 2.06rem);
+      --space-lg: clamp(2rem, 1.82rem + 0.91vw, 2.75rem);
+      --space-xl: clamp(3rem, 2.73rem + 1.36vw, 4.13rem);
+    }
+
+    /* ===== NOTIFICATION ===== */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: white;
+      border-left: 4px solid var(--success);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      z-index: 1000;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      max-width: 400px;
+    }
+
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    .notification i {
+      font-size: 1.5rem;
+      color: var(--success);
+    }
+
+    .notification-content {
+      flex: 1;
+    }
+
+    .notification-title {
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.2rem;
+    }
+
+    .notification-message {
+      font-size: 0.9rem;
+      color: #5f6d5a;
+    }
+
+    .notification-close {
+      cursor: pointer;
+      color: #7a8a7a;
+    }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 24px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      animation: modalSlideUp 0.3s ease;
+      box-shadow: 0 30px 60px -20px rgba(0,0,0,0.3);
+    }
+
+    @keyframes modalSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--gray);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(135deg, var(--light) 0%, #ffffff 100%);
+      border-radius: 24px 24px 0 0;
+    }
+
+    .modal-header h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .modal-header i {
+      color: var(--accent);
+    }
+
+    .modal-close {
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #7a8a7a;
+      transition: color 0.2s;
+    }
+
+    .modal-close:hover {
+      color: var(--danger);
+    }
+
+    .modal-body {
+      padding: 2rem;
+    }
+
+    .modal-section {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--gray);
+    }
+
+    .modal-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .modal-section h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .modal-section h4 i {
+      color: var(--accent);
+    }
+
+    .modal-list {
+      list-style: none;
+    }
+
+    .modal-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 0.8rem;
+      color: #4a5f4a;
+    }
+
+    .modal-list i {
+      color: var(--accent);
+      width: 1.2rem;
+    }
+
+    .modal-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .modal-tag {
+      background: var(--light);
+      border: 1px solid var(--gray);
+      padding: 0.3rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: var(--primary);
+    }
+
+    .modal-footer {
+      padding: 1.5rem 2rem;
+      border-top: 1px solid var(--gray);
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    .modal-btn {
+      padding: 0.8rem 2rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .modal-btn-primary {
+      background: var(--accent);
+      color: var(--primary);
+    }
+
+    .modal-btn-primary:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+    }
+
+    .modal-btn-secondary {
+      background: var(--light);
+      color: var(--primary);
+      border: 1px solid var(--gray);
+    }
+
+    .modal-btn-secondary:hover {
+      background: var(--gray);
+    }
+
+    /* ===== UTILITY CLASSES ===== */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 var(--space-md);
+    }
+
+    /* ===== NAVIGATION ===== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--gray);
+    }
+
+    .nav-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: var(--space-xs) var(--space-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: var(--step-1);
+      color: var(--primary);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: var(--space-md);
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #4a5f4a;
+      font-size: var(--step--1);
+      font-weight: 500;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a.active::after {
+      width: 100%;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--primary);
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: var(--step-2);
+      color: var(--primary);
+      cursor: pointer;
+    }
+
+    /* ===== MOBILE NAV ===== */
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 280px;
+      height: 100vh;
+      background: var(--primary);
+      padding: var(--space-lg) var(--space-md);
+      transition: right 0.3s ease;
+      z-index: 200;
+      box-shadow: -5px 0 30px rgba(0,0,0,0.2);
+    }
+
+    .mobile-nav.active {
+      right: 0;
+    }
+
+    .mobile-nav-close {
+      text-align: right;
+      font-size: var(--step-2);
+      color: white;
+      margin-bottom: var(--space-lg);
+      cursor: pointer;
+    }
+
+    .mobile-nav a {
+      display: block;
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+      font-size: var(--step-0);
+      padding: var(--space-xs) 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      transition: 0.2s;
+    }
+
+    .mobile-nav a:hover,
+    .mobile-nav a.active {
+      color: var(--accent);
+      padding-left: 5px;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0,0,0,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.3s;
+      z-index: 150;
+    }
+
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 90vh;
+      background: 
+        linear-gradient(135deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 100%),
+        url('https://i.ibb.co/FLTJfTVp/f1e6ba64bed1c555c91e80d73bf2e98b.jpg') center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 var(--space-md);
+      color: white;
+      position: relative;
+    }
+
+    .hero-content {
+      max-width: 900px;
+      animation: fadeUp 1s ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: var(--step-5);
+      font-weight: 600;
+      margin-bottom: var(--space-sm);
+      text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+
+    .hero p {
+      font-size: var(--step-0);
+      margin-bottom: var(--space-md);
+      opacity: 0.95;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--space-sm) var(--space-md);
+      margin-top: var(--space-md);
+    }
+
+    .hero-feature {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(5px);
+      padding: 0.5rem 1.2rem;
+      border-radius: 50px;
+      border: 1px solid rgba(255,255,255,0.2);
+      font-size: var(--step--1);
+    }
+
+    .hero-feature i {
+      color: var(--accent);
+    }
+
+    /* ===== TRUST STRIP ===== */
+    .trust-strip {
+      background: white;
+      border-bottom: 1px solid var(--gray);
+      padding: var(--space-xs) var(--space-md);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--space-md) var(--space-lg);
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: var(--step--1);
+      color: #4a5f4a;
+    }
+
+    .trust-item i {
+      color: var(--accent);
+    }
+
+    /* ===== SECTION HEADERS ===== */
+    .section-header {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto var(--space-lg);
+    }
+
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: var(--step-3);
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .section-header p {
+      color: #5f6d5a;
+      font-size: var(--step-0);
+    }
+
+    /* ===== ABOUT SPLIT ===== */
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-lg);
+      align-items: center;
+      margin: var(--space-xl) 0;
+    }
+
+    .split-image {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.2);
+    }
+
+    .split-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 1s;
+    }
+
+    .split-image:hover img {
+      transform: scale(1.05);
+    }
+
+    .split-text p {
+      color: #4a5f4a;
+      margin-bottom: var(--space-sm);
+      font-size: var(--step-0);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-md);
+      margin-top: var(--space-md);
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: var(--step-3);
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.2rem;
+    }
+
+    .stat-label {
+      font-size: var(--step--2);
+      color: #7a8a7a;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ===== FEATURES GRID ===== */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-sm);
+      margin: var(--space-xl) 0;
+    }
+
+    .feature-card {
+      background: white;
+      border: 1px solid var(--gray);
+      padding: var(--space-md);
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 15px 30px -15px rgba(0,0,0,0.1);
+      transform: translateY(-4px);
+    }
+
+    .feature-icon {
+      background: var(--light);
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--space-sm);
+      font-size: var(--step-2);
+      color: var(--primary);
+      transition: 0.3s;
+    }
+
+    .feature-card:hover .feature-icon {
+      background: var(--primary);
+      color: white;
+    }
+
+    .feature-card h3 {
+      font-size: var(--step-1);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+
+    .feature-card p {
+      color: #5f6d5a;
+      font-size: var(--step--1);
+      margin-bottom: var(--space-sm);
+    }
+
+    .feature-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: var(--step--1);
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: gap 0.3s;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    .feature-link:hover {
+      gap: 0.8rem;
+    }
+
+    /* ===== SCHEDULE CARD ===== */
+    .schedule-card {
+      background: white;
+      border: 1px solid var(--gray);
+      padding: var(--space-lg);
+      margin: var(--space-xl) 0;
+    }
+
+    .schedule-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: var(--step-2);
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: var(--space-md);
+      text-align: center;
+    }
+
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-md);
+    }
+
+    .schedule-item {
+      text-align: center;
+    }
+
+    .schedule-item i {
+      font-size: var(--step-2);
+      color: var(--accent);
+      margin-bottom: var(--space-xs);
+    }
+
+    .schedule-item h4 {
+      font-size: var(--step-0);
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      color: var(--primary);
+    }
+
+    .schedule-item p {
+      color: #5f6d5a;
+      font-size: var(--step--1);
+    }
+
+    /* ===== TESTIMONIALS ===== */
+    .testimonials {
+      background: #f5f2e8;
+      padding: var(--space-xl) var(--space-md);
+    }
+
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-sm);
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .testimonial-card {
+      background: white;
+      border: 1px solid var(--gray);
+      padding: var(--space-md);
+      transition: 0.3s;
+    }
+
+    .testimonial-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 30px -15px rgba(0,0,0,0.1);
+    }
+
+    .testimonial-rating {
+      color: var(--accent);
+      margin-bottom: var(--space-xs);
+    }
+
+    .testimonial-text {
+      font-style: italic;
+      margin-bottom: var(--space-sm);
+      color: #4a5f4a;
+      font-size: var(--step--1);
+    }
+
+    .testimonial-author {
+      font-weight: 600;
+      color: var(--primary);
+      font-size: var(--step--1);
+    }
+
+    .testimonial-role {
+      font-size: var(--step--2);
+      color: #7a8a7a;
+    }
+
+    /* ===== CTA ===== */
+    .cta-block {
+      background: var(--primary);
+      color: white;
+      text-align: center;
+      padding: var(--space-xl) var(--space-md);
+    }
+
+    .cta-block h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: var(--step-3);
+      font-weight: 600;
+      margin-bottom: var(--space-xs);
+      color: white;
+    }
+
+    .cta-block p {
+      font-size: var(--step-0);
+      margin-bottom: var(--space-md);
+      opacity: 0.9;
+    }
+
+    .cta-btn {
+      background: var(--accent);
+      color: var(--primary);
+      border: none;
+      padding: 0.75rem 2.5rem;
+      font-weight: 600;
+      font-size: var(--step-0);
+      cursor: pointer;
+      transition: 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .cta-btn:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+    }
+
+    /* ===== LOCATION ROW ===== */
+    .location-row {
+      background: white;
+      border: 1px solid var(--gray);
+      padding: var(--space-md);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+      max-width: 1280px;
+      margin: var(--space-xl) auto;
+    }
+
+    .location-address {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .location-address i {
+      color: var(--accent);
+    }
+
+    .location-email {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .location-email a {
+      color: var(--primary);
+      text-decoration: none;
+      border-bottom: 1px solid var(--gray);
+    }
+
+    .location-email a:hover {
+      border-bottom-color: var(--accent);
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--primary);
+      color: white;
+      padding: var(--space-xl) var(--space-md) var(--space-md);
+      margin-top: var(--space-xl);
+    }
+
+    .footer-grid {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-lg);
+    }
+
+    .footer-col h4 {
+      font-size: var(--step-0);
+      font-weight: 600;
+      margin-bottom: var(--space-sm);
+      color: var(--accent);
+    }
+
+    .footer-col a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: var(--step--1);
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover {
+      color: white;
+    }
+
+    .footer-col p {
+      color: rgba(255,255,255,0.7);
+      font-size: var(--step--1);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .footer-col i {
+      color: var(--accent);
+      width: 1.2rem;
+    }
+
+    .footer-bottom {
+      max-width: 1280px;
+      margin: var(--space-lg) auto 0;
+      padding-top: var(--space-md);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      font-size: var(--step--2);
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .nav-links {
+        display: none;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .split-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+      }
+
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .testimonial-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .schedule-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-md);
+      }
+
+      .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .testimonial-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .schedule-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-sm);
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-features {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .hero-feature {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .location-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .modal-content {
+        margin: 1rem;
+      }
+      
+      .modal-footer {
+        flex-direction: column;
+      }
+      
+      .modal-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Notification -->
+<div id="notification" class="notification">
+  <i class="fas fa-check-circle"></i>
+  <div class="notification-content">
+    <div class="notification-title" id="notificationTitle">Welcome</div>
+    <div class="notification-message" id="notificationMessage">Welcome to Carlton Hill Station</div>
+  </div>
+  <span class="notification-close" onclick="hideNotification()"><i class="fas fa-times"></i></span>
+</div>
+
+<!-- Modal -->
+<div id="featureModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modalTitle"><i class="fas fa-info-circle"></i> Feature Details</h3>
+      <span class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></span>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <!-- Modal content will be inserted here -->
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn modal-btn-primary" id="modalActionBtn">Learn More</button>
+    </div>
+  </div>
+</div>
+
+<!-- navigation -->
+<div class="navbar">
+  <div class="nav-container">
+    <div class="logo">CARLTON HILL</div>
+    <div class="nav-links">
+      <a href="#" class="active">Home</a>
+      <a href="about.html">About</a>
+      <a href="careers.html">Careers</a>
+      <a href="applications.html">Applications</a>
+      <a href="resources.html">Resources</a>
+      <a href="testimonials.html">Testimonials</a>
+      <a href="tax-refund.html">Tax Portal</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <button class="mobile-menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+  </div>
+</div>
+
+<!-- mobile nav -->
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-close" id="closeBtn"><i class="fas fa-times"></i></div>
+  <a href="#" class="active">Home</a>
+  <a href="about.html">About</a>
+  <a href="careers.html">Careers</a>
+  <a href="applications.html">Applications</a>
+  <a href="resources.html">Resources</a>
+  <a href="tax-refund.html">Tax Refund Portal</a>
+  <a href="contact.html">Contact</a>
+   <a href="testimonials.html">Testimonials</a>
+</div>
+<div class="overlay" id="overlay"></div>
+
+<!-- hero -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>Carlton Hill Station</h1>
+    <p>A family-run working farm in Cambridge Gulf, Western Australia. Cattle, fruit picking, and crop planting since 1987.</p>
+    <div class="hero-features">
+      <div class="hero-feature">
+        <i class="fas fa-clock"></i>
+        <span>6AM - 4PM · Mon-Sat</span>
+      </div>
+      <div class="hero-feature">
+        <i class="fas fa-cabin"></i>
+        <span>Private Cabins</span>
+      </div>
+      <div class="hero-feature">
+        <i class="fas fa-hand-holding-heart"></i>
+        <span>Family-owned</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- trust strip -->
+<div class="trust-strip">
+  <div class="trust-item"><i class="fas fa-check-circle"></i> ABN 84 123 456 789</div>
+  <div class="trust-item"><i class="fas fa-building"></i> Est. 1987</div>
+  <div class="trust-item"><i class="fas fa-users"></i> 150+ workers</div>
+  <div class="trust-item"><i class="fas fa-file-contract"></i> Fair Work</div>
+  <div class="trust-item"><i class="fas fa-shield"></i> Workers Comp</div>
+</div>
+
+<!-- about section -->
+<div class="container">
+  <div class="section-header">
+    <h2>Welcome to Carlton Hill</h2>
+    <p>A place where tradition meets sustainable farming and genuine care for people</p>
+  </div>
+
+  <div class="split-grid">
+    <div class="split-image">
+      <img src="https://i.ibb.co/YFzSjwJC/d72bfbe89e9020ce4964a5d1891aaae3.jpg" alt="Carlton Hill farmland">
+    </div>
+    <div class="split-text">
+      <p>We are a family-run agricultural farm located in Cambridge Gulf, Western Australia. Operating across livestock rearing, fruit picking, and crop planting — we offer meaningful opportunities for individuals ready to grow in a hardworking, respectful environment.</p>
+      <p>Our farm spans 12,500 hectares and employs over 150 workers annually. We maintain a 4.7★ worker satisfaction rating through fair treatment, comfortable accommodations, and performance-based incentives.</p>
+      
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">1987</div>
+          <div class="stat-label">Established</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">150+</div>
+          <div class="stat-label">Workers</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">4.7★</div>
+          <div class="stat-label">Rating</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- what we offer -->
+<div class="container">
+  <div class="section-header">
+    <h2>What We Offer</h2>
+    <p>Comprehensive benefits for a rewarding agricultural career</p>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-cow"></i></div>
+      <h3>Cattle Operations</h3>
+      <p>Full-time roles in cattle farming and livestock care with experienced team leads.</p>
+      <button class="feature-link" onclick="openModal('cattle')">Learn more <i class="fas fa-arrow-right"></i></button>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-apple-whole"></i></div>
+      <h3>Fruit Picking</h3>
+      <p>Seasonal fruit picking including strawberries. Flexible scheduling options.</p>
+      <button class="feature-link" onclick="openModal('fruit')">Learn more <i class="fas fa-arrow-right"></i></button>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-seedling"></i></div>
+      <h3>Crop Planting</h3>
+      <p>Join our field teams in sustainable farming and crop rotation practices.</p>
+      <button class="feature-link" onclick="openModal('crop')">Learn more <i class="fas fa-arrow-right"></i></button>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-clock"></i></div>
+      <h3>Flexible Hours</h3>
+      <p>Full-time (6am-4pm) or part-time options. Sundays off for rest.</p>
+      <button class="feature-link" onclick="openModal('hours')">Learn more <i class="fas fa-arrow-right"></i></button>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-cabin"></i></div>
+      <h3>Private Cabins</h3>
+      <p>Modern accommodation at no cost. Fully furnished with all utilities.</p>
+      <button class="feature-link" onclick="openModal('cabins')">Learn more <i class="fas fa-arrow-right"></i></button>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-coins"></i></div>
+      <h3>Weekly Pay + Bonuses</h3>
+      <p>Reliable weekly wages plus performance-based bonuses.</p>
+      <button class="feature-link" onclick="openModal('pay')">Learn more <i class="fas fa-arrow-right"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- schedule card -->
+<div class="container">
+  <div class="schedule-card">
+    <h3>Work Schedule Overview</h3>
+    <div class="schedule-grid">
+      <div class="schedule-item">
+        <i class="fas fa-calendar-check"></i>
+        <h4>Monday - Saturday</h4>
+        <p>Work days</p>
+      </div>
+      <div class="schedule-item">
+        <i class="fas fa-clock"></i>
+        <h4>6:00 AM – 4:00 PM</h4>
+        <p>Full-time hours</p>
+      </div>
+      <div class="schedule-item">
+        <i class="fas fa-hourglass-half"></i>
+        <h4>Flexible shifts</h4>
+        <p>Part-time available</p>
+      </div>
+      <div class="schedule-item">
+        <i class="fas fa-heart"></i>
+        <h4>Sundays</h4>
+        <p>Rest day</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- testimonials -->
+<section class="testimonials">
+  <div class="section-header">
+    <h2>From Our Workers</h2>
+    <p>Real experiences from people who've built their future with us</p>
+  </div>
+
+  <div class="testimonial-grid">
+    <div class="testimonial-card">
+      <div class="testimonial-rating">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+      </div>
+      <p class="testimonial-text">"Clean cabins, fair hours, and they actually care about workers. Been coming back for 3 seasons."</p>
+      <div class="testimonial-author">— Jake Morrison</div>
+      <div class="testimonial-role">Cattle hand, 3 seasons</div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-rating">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+      </div>
+      <p class="testimonial-text">"The training was excellent. Started with no experience, now leading a picking team."</p>
+      <div class="testimonial-author">— Sarah Chen</div>
+      <div class="testimonial-role">Fruit picker → Team lead</div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-rating">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+      </div>
+      <p class="testimonial-text">"Good people, solid pay, and Sundays off makes a real difference."</p>
+      <div class="testimonial-author">— Miguel Santos</div>
+      <div class="testimonial-role">Planting crew, 2 years</div>
+    </div>
+  </div>
+</section>
+
+<!-- cta -->
+<div class="cta-block">
+  <h2>Begin Your Journey</h2>
+  <p>Join a team that values hard work, respects its people, and offers genuine opportunities for growth.</p>
+  <a href="applications.html" class="cta-btn">Apply Now</a>
+</div>
+
+<!-- location row -->
+<div class="container">
+  <div class="location-row">
+    <div class="location-address">
+      <i class="fas fa-map-pin"></i>
+      <span>Carlton Hill Rd, Cambridge Gulf WA 6743, Australia</span>
+    </div>
+    <div class="location-email">
+      <i class="fas fa-envelope"></i>
+      <a href="mailto:carltonhillfarm282@gmail.com">carltonhillfarm282@gmail.com</a>
+    </div>
+  </div>
+</div>
+
+<!-- footer -->
+<footer id="contact">
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h4>Carlton Hill</h4>
+      <p><i class="fas fa-tree"></i> Family-run since 1987</p>
+      <p><i class="fas fa-map"></i> Carlton Hill Rd, Cambridge Gulf WA 6743</p>
+      <p><i class="fas fa-envelope"></i> carltonhillfarm282@gmail.com</p>
+      <p><i class="fas fa-phone"></i> +61 8 9123 4567</p>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <a href="about.html">About Us</a>
+      <a href="careers.html">Careers</a>
+      <a href="applications.html">Applications</a>
+      <a href="resources.html">Resources</a>
+      <a href="testimonials.html">Testimonials</a>
+      <a href="tax-portal.html">Tax Portal</a>
+    </div>
+    <div class="footer-col">
+      <h4>Work Hours</h4>
+      <p>Mon - Sat: 6AM - 4PM</p>
+      <p>Sunday: Rest Day</p>
+      <p>Part-time options available</p>
+    </div>
+    <div class="footer-col">
+      <h4>Accreditations</h4>
+      <p>ABN: 84 123 456 789</p>
+      <p>Fair Work Accredited</p>
+      <p>Workers Comp Insured</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Carlton Hill Station — Registered Agricultural Employer</p>
+  </div>
+</footer>
+
+<!-- scripts -->
+<script>
+  // ==================== NOTIFICATION SYSTEM ====================
+  function showNotification(title, message, type = 'success') {
+    const notification = document.getElementById('notification');
+    const icon = notification.querySelector('i');
+    const titleEl = document.getElementById('notificationTitle');
+    const messageEl = document.getElementById('notificationMessage');
+    
+    icon.className = type === 'success' ? 'fas fa-check-circle' : 
+                     type === 'error' ? 'fas fa-exclamation-circle' : 
+                     'fas fa-exclamation-triangle';
+    icon.style.color = type === 'success' ? 'var(--success)' : 
+                       type === 'error' ? 'var(--danger)' : 
+                       'var(--warning)';
+    notification.style.borderLeftColor = type === 'success' ? 'var(--success)' : 
+                                         type === 'error' ? 'var(--danger)' : 
+                                         'var(--warning)';
+    
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+    notification.classList.add('show');
+    
+    setTimeout(() => {
+      notification.classList.remove('show');
+    }, 5000);
+  }
+
+  function hideNotification() {
+    document.getElementById('notification').classList.remove('show');
+  }
+
+  // ==================== MODAL SYSTEM ====================
+  function openModal(feature) {
+    const modal = document.getElementById('featureModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    const modalActionBtn = document.getElementById('modalActionBtn');
+    
+    let title = '';
+    let content = '';
+    let actionLink = '';
+    
+    switch(feature) {
+      case 'cattle':
+        title = 'Cattle Operations';
+        actionLink = 'careers.html#cattle';
+        content = `
+          <div class="modal-section">
+            <h4><i class="fas fa-info-circle"></i> Overview</h4>
+            <p>Our cattle operations are the heart of Carlton Hill Station. With over 35 years of experience, we pride ourselves on ethical livestock management and sustainable grazing practices.</p>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-tasks"></i> Responsibilities</h4>
+            <ul class="modal-list">
+              <li><i class="fas fa-check"></i> Mustering and herding cattle across 12,500 hectares</li>
+              <li><i class="fas fa-check"></i> Monitoring animal health and administering treatments</li>
+              <li><i class="fas fa-check"></i> Maintaining fences, yards, and water systems</li>
+              <li><i class="fas fa-check"></i> Assisting with calving and weaning operations</li>
+              <li><i class="fas fa-check"></i> Record keeping and data entry for herd management</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-star"></i> Requirements</h4>
+            <ul class="modal-list">
+              <li><i class="fas fa-check"></i> Physical fitness and ability to work outdoors</li>
+              <li><i class="fas fa-check"></i> Experience with horses or 4WD vehicles (preferred)</li>
+              <li><i class="fas fa-check"></i> Willingness to learn and follow safety protocols</li>
+              <li><i class="fas fa-check"></i> Team player with good communication skills</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-clock"></i> Schedule</h4>
+            <p>Full-time positions: 6AM - 4PM, Monday - Saturday<br>Overtime available during peak seasons</p>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-tag"></i> Benefits</h4>
+            <div class="modal-tags">
+              <span class="modal-tag">Private Cabin</span>
+              <span class="modal-tag">Weekly Pay</span>
+              <span class="modal-tag">Performance Bonus</span>
+              <span class="modal-tag">Training Provided</span>
+            </div>
+          </div>
+        `;
+        break;
+      case 'fruit':
+        title = 'Fruit Picking';
+        actionLink = 'careers.html#fruit';
+        content = `
+          <div class="modal-section">
+            <h4><i class="fas fa-info-circle"></i> Overview</h4>
+            <p>Join our fruit picking team during harvest seasons. We specialize in strawberries and seasonal fruits, offering flexible schedules and competitive piece rates.</p>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-tasks"></i> Responsibilities</h4>
+            <ul class="modal-list">
+              <li><i class="fas fa-check"></i> Hand-picking ripe fruits according to quality standards</li>
+              <li><i class="fas fa-check"></i> Sorting and packing fruits for transport</li>
+              <li><i class="fas fa-check"></i> Maintaining cleanliness in picking areas</li>
+              <li><i class="fas fa-check"></i> Following food safety and hygiene protocols</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-star"></i> Requirements</h4>
+            <ul class="modal-list">
+              <li><i class="fas fa-check"></i> No experience needed - full training provided</li>
+              <li><i class="fas fa-check"></i> Ability to work outdoors in various weather</li>
+              <li><i class="fas fa-check"></i> Attention to detail for quality picking</li>
+              <li><i class="fas fa-check"></i> Reliable and punctual</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-clock"></i> Schedule</h4>
+            <p>Part-time and full-time options available<br>Flexible hours within 6AM - 4PM, Monday - Saturday</p>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-tag"></i> Benefits</h4>
+            <div class="modal-tags">
+              <span class="modal-tag">Flexible Hours</span>
+              <span class="modal-tag">Piece Rate + Bonus</span>
+              <span class="modal-tag">Seasonal Work</span>
+              <span class="modal-tag">Training Provided</span>
+            </div>
+          </div>
+        `;
+        break;
+      case 'crop':
+        title = 'Crop Planting';
+        actionLink = 'careers.html#crop';
+        content = `
+          <div class="modal-section">
+            <h4><i class="fas fa-info-circle"></i> Overview</h4>
+            <p>Our crop planting team practices sustainable agriculture, rotating crops to maintain soil health and maximize yields. Learn modern farming techniques while working outdoors.</p>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-tasks"></i> Responsibilities</h4>
+            <ul class="modal-list">
+              <li><i class="fas fa-check"></i> Preparing soil through tilling and fertilizing</li>
+              <li><i class="fas fa-check"></i> Planting seeds and seedlings according to schedule</li>
+              <li><i class="fas fa-check"></i> Operating irrigation systems</li>
+              <li><i class="fas fa-check"></i> Monitoring crop growth and reporting issues</li>
+              <li><i class="fas fa-check"></i> Assisting with harvest during peak seasons</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-star"></i> Requirements</h4>
+            <ul class="modal-list">
+              <li><i class="fas fa-check"></i> Physical stamina for field work</li>
+              <li><i class="fas fa-check"></i> Interest in sustainable farming practices</li>
+              <li><i class="fas fa-check"></i> Ability to follow instructions and safety guidelines</li>
+              <li><i class="fas fa-check"></i> Team player mentality</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-clock"></i> Schedule</h4>
+            <p>Full-time positions: 6AM - 4PM, Monday - Saturday<br>Seasonal variations in workload</p>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-tag"></i> Benefits</h4>
+            <div class="modal-tags">
+              <span class="modal-tag">Private Cabin</span>
+              <span class="modal-tag">Weekly Pay</span>
+              <span class="modal-tag">Sustainability Training</span>
+              <span class="modal-tag">Career Growth</span>
+            </div>
+          </div>
+        `;
+        break;
+      case 'hours':
+        title = 'Flexible Hours';
+        actionLink = 'careers.html#hours';
+        content = `
+          <div class="modal-section">
+            <h4><i class="fas fa-info-circle"></i> Overview</h4>
+            <p>We understand the importance of work-life balance. That's why we offer flexible scheduling options to accommodate different needs and lifestyles.</p>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-clock"></i> Full-Time Schedule</h4>
+            <ul class="modal-list">
+              <li><i class="fas fa-check"></i> 6:00 AM - 4:00 PM, Monday - Saturday</li>
+              <li><i class="fas fa-check"></i> 30-minute breakfast break at 9:00 AM</li>
+              <li><i class="fas fa-check"></i> 1-hour lunch break at 12:00 PM</li>
+              <li><i class="fas fa-check"></i> 15-minute afternoon tea at 2:30 PM</li>
+              <li><i class="fas fa-check"></i> Sundays off for rest and personal time</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-hourglass-half"></i> Part-Time Options</h4>
+            <ul class="modal-list">
+              <li><i class="fas fa-check"></i> Minimum 4-hour shifts</li>
+              <li><i class="fas fa-check"></i> Flexible start times between 6-8 AM</li>
+              <li><i class="fas fa-check"></i> Ideal for students or those with other commitments</li>
+              <li><i class="fas fa-check"></i> Can combine with other roles</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-heart"></i> Benefits of Our Schedule</h4>
+            <div class="modal-tags">
+              <span class="modal-tag">Work-Life Balance</span>
+              <span class="modal-tag">Sundays Off</span>
+              <span class="modal-tag">Regular Breaks</span>
+              <span class="modal-tag">Predictable Hours</span>
+            </div>
+          </div>
+        `;
+        break;
+      case 'cabins':
+        title = 'Private Cabins';
+        actionLink = 'careers.html#accommodation';
+        content = `
+          <div class="modal-section">
+            <h4><i class="fas fa-info-circle"></i> Overview</h4>
+            <p>All employees receive comfortable, private accommodation at no cost. Our cabins are designed to provide a restful environment after a day's work.</p>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-home"></i> Cabin Features</h4>
+            <ul class="modal-list">
+              <li><i class="fas fa-check"></i> Private single-occupancy cabins</li>
+              <li><i class="fas fa-check"></i> Climate control (heating and cooling)</li>
+              <li><i class="fas fa-check"></i> Comfortable bed with quality linens</li>
+              <li><i class="fas fa-check"></i> Kitchenette with microwave and refrigerator</li>
+              <li><i class="fas fa-check"></i> Desk and storage space</li>
+              <li><i class="fas fa-check"></i> High-speed WiFi included</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-utensils"></i> Shared Facilities</h4>
+            <ul class="modal-list">
+              <li><i class="fas fa-check"></i> Modern bathroom and shower blocks</li>
+              <li><i class="fas fa-check"></i> Communal kitchen and dining area</li>
+              <li><i class="fas fa-check"></i> Laundry facilities (free to use)</li>
+              <li><i class="fas fa-check"></i> Common room with TV and games</li>
+              <li><i class="fas fa-check"></i> BBQ area for socializing</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-tag"></i> What's Included</h4>
+            <div class="modal-tags">
+              <span class="modal-tag">No Cost</span>
+              <span class="modal-tag">All Utilities</span>
+              <span class="modal-tag">Weekly Cleaning</span>
+              <span class="modal-tag">Linens Provided</span>
+              <span class="modal-tag">WiFi Included</span>
+            </div>
+          </div>
+        `;
+        break;
+      case 'pay':
+        title = 'Weekly Pay + Bonuses';
+        actionLink = 'careers.html#pay';
+        content = `
+          <div class="modal-section">
+            <h4><i class="fas fa-info-circle"></i> Overview</h4>
+            <p>We believe in rewarding hard work. Our compensation package includes reliable weekly pay and performance-based bonuses that recognize your contribution to the farm's success.</p>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-sack-dollar"></i> Weekly Pay</h4>
+            <ul class="modal-list">
+              <li><i class="fas fa-check"></i> Direct deposit every Friday</li>
+              <li><i class="fas fa-check"></i> Itemized payslips provided</li>
+              <li><i class="fas fa-check"></i> Superannuation contributions included</li>
+              <li><i class="fas fa-check"></i> Award rates with overtime pay</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-chart-line"></i> Performance Bonus</h4>
+            <ul class="modal-list">
+              <li><i class="fas fa-check"></i> Up to 15% bonus based on performance</li>
+              <li><i class="fas fa-check"></i> Measured by reliability, productivity, and teamwork</li>
+              <li><i class="fas fa-check"></i> Paid quarterly</li>
+              <li><i class="fas fa-check"></i> Optional investment program available</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-calculator"></i> Sample Earnings</h4>
+            <ul class="modal-list">
+              <li><i class="fas fa-check"></i> Entry-level: $45,000 - $55,000/year + bonus</li>
+              <li><i class="fas fa-check"></i> Experienced: $55,000 - $70,000/year + bonus</li>
+              <li><i class="fas fa-check"></i> Team leads: $70,000+ /year + bonus</li>
+            </ul>
+          </div>
+          <div class="modal-section">
+            <h4><i class="fas fa-tag"></i> Benefits</h4>
+            <div class="modal-tags">
+              <span class="modal-tag">Weekly Pay</span>
+              <span class="modal-tag">Performance Bonus</span>
+              <span class="modal-tag">Superannuation</span>
+              <span class="modal-tag">Overtime Rates</span>
+            </div>
+          </div>
+        `;
+        break;
+    }
+    
+    modalTitle.innerHTML = `<i class="fas fa-info-circle"></i> ${title}`;
+    modalBody.innerHTML = content;
+    modalActionBtn.onclick = function() {
+      window.location.href = actionLink;
+    };
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('featureModal').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  // Close modal when clicking outside
+  document.getElementById('featureModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeModal();
+    }
+  });
+
+  // ==================== MOBILE MENU ====================
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileNav = document.getElementById('mobileNav');
+  const overlay = document.getElementById('overlay');
+  const closeBtn = document.getElementById('closeBtn');
+
+  function openMenu() {
+    mobileNav.classList.add('active');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu() {
+    mobileNav.classList.remove('active');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  menuBtn.addEventListener('click', openMenu);
+  closeBtn.addEventListener('click', closeMenu);
+  overlay.addEventListener('click', closeMenu);
+
+  // smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+        closeMenu();
+      }
+    });
+  });
+
+  // Show welcome notification
+  setTimeout(() => {
+    showNotification('Welcome', 'Welcome to Carlton Hill Station. Explore our opportunities!', 'success');
+  }, 1000);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carlton Hill Station | Downloads & Resources</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #fcfaf7;
+      color: #1e2a1e;
+      line-height: 1.5;
+    }
+
+    /* ===== CUSTOM VARIABLES ===== */
+    :root {
+      --primary: #1a3a2a;
+      --primary-light: #2d5a3d;
+      --secondary: #5b7a5a;
+      --accent: #c49a6b;
+      --accent-light: #dbb68c;
+      --light: #f9f6ef;
+      --dark: #162015;
+      --gray: #eae7de;
+      --success: #4caf50;
+      --danger: #b04a4a;
+      --warning: #ff9800;
+      
+      --step--2: clamp(0.69rem, 0.81rem + -0.15vw, 0.8rem);
+      --step--1: clamp(0.83rem, 0.92rem + -0.11vw, 0.93rem);
+      --step-0: clamp(1rem, 1.06rem + -0.07vw, 1.06rem);
+      --step-1: clamp(1.2rem, 1.22rem + -0.02vw, 1.22rem);
+      --step-2: clamp(1.44rem, 1.41rem + 0.05vw, 1.47rem);
+      --step-3: clamp(1.73rem, 1.62rem + 0.15vw, 1.84rem);
+      --step-4: clamp(2.07rem, 1.86rem + 0.28vw, 2.31rem);
+      --step-5: clamp(2.49rem, 2.13rem + 0.45vw, 2.88rem);
+      
+      --space-xs: clamp(0.75rem, 0.69rem + 0.3vw, 1rem);
+      --space-sm: clamp(1rem, 0.91rem + 0.45vw, 1.38rem);
+      --space-md: clamp(1.5rem, 1.36rem + 0.68vw, 2.06rem);
+      --space-lg: clamp(2rem, 1.82rem + 0.91vw, 2.75rem);
+      --space-xl: clamp(3rem, 2.73rem + 1.36vw, 4.13rem);
+    }
+
+    /* ===== UTILITY CLASSES ===== */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 var(--space-md);
+    }
+
+    /* ===== NOTIFICATION ===== */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: white;
+      border-left: 4px solid var(--success);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      z-index: 1000;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      max-width: 400px;
+    }
+
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    .notification i {
+      font-size: 1.5rem;
+      color: var(--success);
+    }
+
+    .notification-content {
+      flex: 1;
+    }
+
+    .notification-title {
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.2rem;
+    }
+
+    .notification-message {
+      font-size: 0.9rem;
+      color: #5f6d5a;
+    }
+
+    .notification-close {
+      cursor: pointer;
+      color: #7a8a7a;
+    }
+
+    /* ===== NAVIGATION ===== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--gray);
+    }
+
+    .nav-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: var(--space-xs) var(--space-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: var(--step-1);
+      color: var(--primary);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: var(--space-md);
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #4a5f4a;
+      font-size: var(--step--1);
+      font-weight: 500;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a.active::after {
+      width: 100%;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--primary);
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: var(--step-2);
+      color: var(--primary);
+      cursor: pointer;
+    }
+
+    /* ===== MOBILE NAV ===== */
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 280px;
+      height: 100vh;
+      background: var(--primary);
+      padding: var(--space-lg) var(--space-md);
+      transition: right 0.3s ease;
+      z-index: 200;
+      box-shadow: -5px 0 30px rgba(0,0,0,0.2);
+    }
+
+    .mobile-nav.active {
+      right: 0;
+    }
+
+    .mobile-nav-close {
+      text-align: right;
+      font-size: var(--step-2);
+      color: white;
+      margin-bottom: var(--space-lg);
+      cursor: pointer;
+    }
+
+    .mobile-nav a {
+      display: block;
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+      font-size: var(--step-0);
+      padding: var(--space-xs) 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      transition: 0.2s;
+    }
+
+    .mobile-nav a:hover,
+    .mobile-nav a.active {
+      color: var(--accent);
+      padding-left: 5px;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0,0,0,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.3s;
+      z-index: 150;
+    }
+
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ===== PAGE HEADER ===== */
+    .page-header {
+      background: linear-gradient(135deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 100%),
+                  url('https://i.ibb.co/6JYV5VsL/7e2070a0b04af3aa237b3c40a2d7e056.jpg') center/cover no-repeat;
+      min-height: 40vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+    }
+
+    .header-content {
+      max-width: 800px;
+      padding: var(--space-xl) var(--space-md);
+    }
+
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: var(--step-5);
+      font-weight: 600;
+      margin-bottom: var(--space-sm);
+      text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+
+    .page-header p {
+      font-size: var(--step-0);
+      opacity: 0.95;
+    }
+
+    /* ===== TRUST STRIP ===== */
+    .trust-strip {
+      background: white;
+      border-bottom: 1px solid var(--gray);
+      padding: var(--space-xs) var(--space-md);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--space-md) var(--space-lg);
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: var(--step--1);
+      color: #4a5f4a;
+    }
+
+    .trust-item i {
+      color: var(--accent);
+    }
+
+    /* ===== SECTION HEADERS ===== */
+    .section-header {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto var(--space-lg);
+    }
+
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: var(--step-3);
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .section-header p {
+      color: #5f6d5a;
+      font-size: var(--step-0);
+    }
+
+    /* ===== INTRO CARD ===== */
+    .intro-card {
+      background: white;
+      border: 1px solid var(--gray);
+      padding: var(--space-lg);
+      margin: var(--space-xl) 0;
+      text-align: center;
+    }
+
+    .intro-card p {
+      color: #4a5f4a;
+      font-size: var(--step-0);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* ===== DOCUMENTS GRID ===== */
+    .documents-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-sm);
+      margin: var(--space-xl) 0;
+    }
+
+    .document-card {
+      background: white;
+      border: 1px solid var(--gray);
+      padding: var(--space-md);
+      transition: all 0.3s;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .document-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 15px 30px -15px rgba(0,0,0,0.1);
+      transform: translateY(-4px);
+    }
+
+    .document-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: var(--success);
+      color: white;
+      padding: 0.2rem 0.5rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .document-icon {
+      background: var(--light);
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--space-sm);
+      font-size: var(--step-2);
+      color: var(--primary);
+      transition: 0.3s;
+    }
+
+    .document-card:hover .document-icon {
+      background: var(--primary);
+      color: white;
+    }
+
+    .document-card h3 {
+      font-size: var(--step-0);
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      color: var(--primary);
+      padding-right: 2rem;
+    }
+
+    .document-desc {
+      color: #5f6d5a;
+      font-size: var(--step--1);
+      margin-bottom: var(--space-sm);
+      flex-grow: 1;
+    }
+
+    .document-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: var(--space-sm);
+      font-size: var(--step--2);
+      color: #7a8a7a;
+    }
+
+    .document-meta i {
+      color: var(--accent);
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: var(--light);
+      color: var(--primary);
+      border: 1px solid var(--gray);
+      padding: 0.6rem 1rem;
+      font-weight: 500;
+      font-size: var(--step--1);
+      transition: 0.2s;
+      margin-top: auto;
+      cursor: pointer;
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .download-btn:hover {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .download-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .download-btn i {
+      font-size: var(--step--1);
+    }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 4rem;
+      color: #7a8a7a;
+      border: 1px dashed var(--gray);
+      font-size: var(--step-0);
+    }
+
+    /* ===== LOADING STATE ===== */
+    .loading-state {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 4rem;
+      color: #7a8a7a;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--gray);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ===== COMING SOON SECTION ===== */
+    .coming-soon {
+      background: var(--light);
+      border: 1px solid var(--gray);
+      padding: var(--space-lg);
+      margin: var(--space-xl) 0;
+      text-align: center;
+    }
+
+    .coming-soon h3 {
+      font-size: var(--step-1);
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .coming-soon p {
+      color: #5f6d5a;
+      font-size: var(--step--1);
+      margin-bottom: var(--space-sm);
+    }
+
+    .coming-soon-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+
+    .tag {
+      background: white;
+      border: 1px solid var(--gray);
+      padding: 0.3rem 1rem;
+      font-size: var(--step--2);
+      color: var(--primary);
+    }
+
+    /* ===== HELP SECTION ===== */
+    .help-section {
+      background: white;
+      border: 1px solid var(--gray);
+      padding: var(--space-lg);
+      margin: var(--space-xl) 0;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+    }
+
+    .help-text {
+      flex: 1;
+    }
+
+    .help-text h3 {
+      font-size: var(--step-1);
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .help-text p {
+      color: #5f6d5a;
+      font-size: var(--step--1);
+    }
+
+    .help-btn {
+      background: var(--accent);
+      color: var(--primary);
+      text-decoration: none;
+      padding: 0.8rem 2rem;
+      font-weight: 600;
+      font-size: var(--step-0);
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+    }
+
+    .help-btn:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+    }
+
+    /* ===== CTA ===== */
+    .cta-block {
+      background: var(--primary);
+      color: white;
+      text-align: center;
+      padding: var(--space-xl) var(--space-md);
+      margin: var(--space-xl) 0;
+    }
+
+    .cta-block h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: var(--step-3);
+      font-weight: 600;
+      margin-bottom: var(--space-xs);
+      color: white;
+    }
+
+    .cta-block p {
+      font-size: var(--step-0);
+      margin-bottom: var(--space-md);
+      opacity: 0.9;
+    }
+
+    .cta-btn {
+      background: var(--accent);
+      color: var(--primary);
+      border: none;
+      padding: 0.75rem 2.5rem;
+      font-weight: 600;
+      font-size: var(--step-0);
+      cursor: pointer;
+      transition: 0.2s;
+      text-decoration: none;
+      display: inline-block;
+      border-radius: 8px;
+    }
+
+    .cta-btn:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--primary);
+      color: white;
+      padding: var(--space-xl) var(--space-md) var(--space-md);
+      margin-top: var(--space-xl);
+    }
+
+    .footer-grid {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-lg);
+    }
+
+    .footer-col h4 {
+      font-size: var(--step-0);
+      font-weight: 600;
+      margin-bottom: var(--space-sm);
+      color: var(--accent);
+    }
+
+    .footer-col a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: var(--step--1);
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover {
+      color: white;
+    }
+
+    .footer-col p {
+      color: rgba(255,255,255,0.7);
+      font-size: var(--step--1);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .footer-col i {
+      color: var(--accent);
+      width: 1.2rem;
+    }
+
+    .footer-bottom {
+      max-width: 1280px;
+      margin: var(--space-lg) auto 0;
+      padding-top: var(--space-md);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      font-size: var(--step--2);
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .nav-links {
+        display: none;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .documents-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .help-section {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .documents-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Notification System -->
+<div id="notification" class="notification">
+  <i class="fas fa-check-circle"></i>
+  <div class="notification-content">
+    <div class="notification-title" id="notificationTitle">Success</div>
+    <div class="notification-message" id="notificationMessage">Document downloaded successfully</div>
+  </div>
+  <span class="notification-close" onclick="hideNotification()"><i class="fas fa-times"></i></span>
+</div>
+
+<!-- navigation -->
+<div class="navbar">
+  <div class="nav-container">
+    <div class="logo">CARLTON HILL</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="careers.html">Careers</a>
+      <a href="applications.html">Applications</a>
+      <a href="contact.html">Contact</a>
+      <a href="#" class="active">Resources</a>
+    </div>
+      
+    <button class="mobile-menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+  </div>
+</div>
+
+<!-- mobile nav -->
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-close" id="closeBtn"><i class="fas fa-times"></i></div>
+  <a href="index.html">Home</a>
+  <a href="about.html">About Us</a>
+  <a href="careers.html">Careers</a>
+  <a href="applications.html">Applications</a>
+  <a href="#" class="active">Resources</a>
+  <a href="tax-refund.html">Tax Refund Portal</a>
+  <a href="contact.html">Contact</a>
+   <a href="testimonials.html">Testimonials</a>
+  
+</div>
+<div class="overlay" id="overlay"></div>
+
+<!-- page header -->
+<div class="page-header">
+  <div class="header-content">
+    <h1>📂 Downloads & Resources</h1>
+    <p>Everything you need before or after joining our farm — documents, guides, and information</p>
+  </div>
+</div>
+
+<!-- trust strip -->
+<div class="trust-strip">
+  <div class="trust-item"><i class="fas fa-check-circle"></i> ABN 84 123 456 789</div>
+  <div class="trust-item"><i class="fas fa-building"></i> Est. 1987</div>
+  <div class="trust-item"><i class="fas fa-users"></i> 150+ workers</div>
+  <div class="trust-item"><i class="fas fa-file-contract"></i> Fair Work</div>
+  <div class="trust-item"><i class="fas fa-shield"></i> Workers Comp</div>
+</div>
+
+<!-- main content -->
+<div class="container">
+
+  <!-- intro card -->
+  <div class="intro-card">
+    <p>Welcome to the Carlton Hill Station Farm Resources Page. Here, you can access all the important documents you may need before or after joining our farm. Whether you're a new applicant, a current worker, or someone looking for more information, these resources will guide you every step of the way.</p>
+  </div>
+
+  <!-- available downloads -->
+  <div class="section-header">
+    <h2>📄 Available Downloads</h2>
+    <p>Essential documents for applicants and current workers</p>
+  </div>
+
+  <!-- Dynamic Documents Grid -->
+  <div class="documents-grid" id="documentsGrid">
+    <div class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Loading documents...</p>
+    </div>
+  </div>
+
+  <!-- coming soon section -->
+  <div class="coming-soon">
+    <h3>📁 More Coming Soon</h3>
+    <p>We're always adding more helpful content — check back regularly for updates</p>
+    <div class="coming-soon-tags">
+      <span class="tag">Worker Benefits</span>
+      <span class="tag">Investment Bonuses</span>
+      <span class="tag">Seasonal Fruit Info</span>
+      <span class="tag">Training Guides</span>
+    </div>
+  </div>
+
+  <!-- help section -->
+  <div class="help-section">
+    <div class="help-text">
+      <h3>💬 Need help with a document?</h3>
+      <p>Contact us and we'll assist you with any questions about our resources.</p>
+    </div>
+    <a href="contact.html" class="help-btn">
+      <i class="fas fa-envelope"></i> Contact Us
+    </a>
+  </div>
+
+  <!-- cta -->
+  <div class="cta-block">
+    <h2>Ready to join our team?</h2>
+    <p>Current openings: cattle hands, fruit pickers, planting crew. No experience required.</p>
+    <a href="careers.html" class="cta-btn">View positions →</a>
+  </div>
+</div>
+
+<!-- footer -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h4>Carlton Hill</h4>
+      <p><i class="fas fa-tree"></i> Family-run since 1987</p>
+      <p><i class="fas fa-map"></i> Carlton Hill Rd, Cambridge Gulf</p>
+      <p><i class="fas fa-envelope"></i> carltonhillfarm282@gmail.com</p>
+      <p><i class="fas fa-phone"></i> +61 8 9123 4567</p>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="careers.html">Careers</a>
+      <a href="applications.html">Applications</a>
+      <a href="contact.html">Contact</a>
+      <a href="testimonials.html">Testimonials</a>
+    </div>
+    <div class="footer-col">
+      <h4>Work Hours</h4>
+      <p>Mon - Sat: 6AM - 4PM</p>
+      <p>Sunday: Rest Day</p>
+      <p>Part-time options</p>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <p><i class="fab fa-facebook-f"></i> Facebook</p>
+      <p><i class="fab fa-instagram"></i> Instagram</p>
+      <p><i class="fab fa-linkedin-in"></i> LinkedIn</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Carlton Hill Station — Registered Agricultural Employer · ABN 84 123 456 789</p>
+  </div>
+</footer>
+
+<!-- scripts -->
+<script>
+  // ==================== CONFIGURATION ====================
+  const STORAGE_KEY = 'carltonHillRealDocuments';
+  const REFRESH_INTERVAL = 5000; // 5 seconds
+  const DOWNLOAD_HISTORY_KEY = 'downloadHistory';
+
+  // ==================== NOTIFICATION SYSTEM ====================
+  function showNotification(title, message, type = 'success') {
+    const notification = document.getElementById('notification');
+    const icon = notification.querySelector('i');
+    const titleEl = document.getElementById('notificationTitle');
+    const messageEl = document.getElementById('notificationMessage');
+    
+    // Set icon and colors based on type
+    if (type === 'success') {
+      icon.className = 'fas fa-check-circle';
+      icon.style.color = 'var(--success)';
+      notification.style.borderLeftColor = 'var(--success)';
+    } else if (type === 'error') {
+      icon.className = 'fas fa-exclamation-circle';
+      icon.style.color = 'var(--danger)';
+      notification.style.borderLeftColor = 'var(--danger)';
+    } else if (type === 'warning') {
+      icon.className = 'fas fa-exclamation-triangle';
+      icon.style.color = 'var(--warning)';
+      notification.style.borderLeftColor = 'var(--warning)';
+    }
+    
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+    
+    notification.classList.add('show');
+    
+    // Auto hide after 5 seconds
+    setTimeout(() => {
+      notification.classList.remove('show');
+    }, 5000);
+  }
+
+  function hideNotification() {
+    document.getElementById('notification').classList.remove('show');
+  }
+
+  // ==================== DOCUMENT MANAGEMENT ====================
+  let documents = [];
+  let isLoading = false;
+  let refreshTimer = null;
+
+  // Load documents from admin panel storage
+  async function loadDocuments() {
+    if (isLoading) return;
+    
+    isLoading = true;
+    const grid = document.getElementById('documentsGrid');
+    
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      documents = saved ? JSON.parse(saved) : [];
+      
+      // Sort documents by date (newest first)
+      documents.sort((a, b) => parseInt(b.id) - parseInt(a.id));
+      
+      renderDocuments();
+    } catch (error) {
+      console.error('Error loading documents:', error);
+      showNotification('Error', 'Failed to load documents. Please refresh the page.', 'error');
+      if (grid) {
+        grid.innerHTML = '<div class="empty-state">❌ Error loading documents. Please try again.</div>';
+      }
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  // Display documents on the page
+  function renderDocuments() {
+    const grid = document.getElementById('documentsGrid');
+    if (!grid) return;
+
+    if (!documents || documents.length === 0) {
+      grid.innerHTML = '<div class="empty-state">📁 No documents available yet. Please check back soon.</div>';
+      return;
+    }
+
+    grid.innerHTML = documents.map(doc => {
+      // Determine if document is new (less than 7 days old)
+      const isNew = Date.now() - parseInt(doc.id) < 7 * 24 * 60 * 60 * 1000;
+      
+      return `
+      <div class="document-card">
+        ${isNew ? '<span class="document-badge">NEW</span>' : ''}
+        <div class="document-icon"><i class="fas ${doc.icon || 'fa-file-pdf'}"></i></div>
+        <h3>${escapeHtml(doc.name)}</h3>
+        <p class="document-desc">${escapeHtml(doc.description || 'No description available')}</p>
+        <div class="document-meta">
+          <i class="fas fa-file"></i> <span>${escapeHtml(doc.type || 'FILE')}</span>
+          <i class="fas fa-download"></i> <span>${escapeHtml(doc.size || '0 KB')}</span>
+        </div>
+        <button class="download-btn" onclick="downloadDocument('${doc.id}')" id="download-${doc.id}">
+          <i class="fas fa-download"></i> Download
+        </button>
+      </div>
+    `}).join('');
+  }
+
+  // Escape HTML to prevent XSS
+  function escapeHtml(unsafe) {
+    if (!unsafe) return '';
+    return unsafe
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  // Track download in history
+  function trackDownload(docId, docName) {
+    const history = JSON.parse(localStorage.getItem(DOWNLOAD_HISTORY_KEY) || '[]');
+    history.push({
+      docId,
+      docName,
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent
+    });
+    
+    // Keep only last 100 downloads
+    if (history.length > 100) {
+      history.shift();
+    }
+    
+    localStorage.setItem(DOWNLOAD_HISTORY_KEY, JSON.stringify(history));
+  }
+
+  // REAL DOWNLOAD FUNCTION - creates actual downloadable files
+  async function downloadDocument(id) {
+    const button = document.getElementById(`download-${id}`);
+    if (!button) return;
+    
+    // Disable button and show loading state
+    button.disabled = true;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+    
+    try {
+      const doc = documents.find(d => d.id === id);
+      
+      if (!doc) {
+        throw new Error('Document not found');
+      }
+
+      // Track download
+      trackDownload(id, doc.name);
+
+      // Create a real file with the document content
+      const content = `CARLTON HILL STATION FARM
+==============================
+Document: ${doc.name}
+Description: ${doc.description || 'No description'}
+Type: ${doc.type || 'FILE'}
+Size: ${doc.size || '0 KB'}
+Upload Date: ${new Date(parseInt(doc.id)).toLocaleDateString()}
+Download Date: ${new Date().toLocaleString()}
+Download ID: ${Date.now()}
+
+${doc.content || `This document is from Carlton Hill Station Farm.
+For more information, visit www.carltonhill.com.au
+Contact: carltonhillfarm282@gmail.com
+
+IMPORTANT NOTICE:
+This is an official document from Carlton Hill Station Farm.
+If you have any questions about this document, please contact our admin team.
+`}
+
+------------------------------
+Carlton Hill Station Farm
+ABN: 84 123 456 789
+www.carltonhill.com.au
+`;
+      
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = doc.fileName ? doc.fileName.replace('.pdf', '.txt') : `${doc.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+      
+      showNotification('Download Complete', `Successfully downloaded ${doc.name}`, 'success');
+      
+    } catch (error) {
+      console.error('Download error:', error);
+      showNotification('Download Failed', error.message || 'Failed to download document. Please try again.', 'error');
+    } finally {
+      // Re-enable button and restore original text
+      button.disabled = false;
+      button.innerHTML = originalText;
+    }
+  }
+
+  // ==================== MOBILE MENU FUNCTIONALITY ====================
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileNav = document.getElementById('mobileNav');
+  const overlay = document.getElementById('overlay');
+  const closeBtn = document.getElementById('closeBtn');
+
+  function openMenu() {
+    mobileNav.classList.add('active');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu() {
+    mobileNav.classList.remove('active');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  menuBtn.addEventListener('click', openMenu);
+  closeBtn.addEventListener('click', closeMenu);
+  overlay.addEventListener('click', closeMenu);
+
+  // ==================== SMOOTH SCROLL ====================
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+        closeMenu();
+      }
+    });
+  });
+
+  // ==================== STORAGE EVENT LISTENER ====================
+  window.addEventListener('storage', (e) => {
+    if (e.key === STORAGE_KEY) {
+      console.log('Storage changed, reloading documents');
+      loadDocuments();
+      showNotification('Content Updated', 'New documents have been added. Refresh the page to see them.', 'info');
+    }
+  });
+
+  // ==================== INITIALIZATION ====================
+  document.addEventListener('DOMContentLoaded', () => {
+    loadDocuments();
+    
+    // Set up periodic refresh
+    refreshTimer = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        loadDocuments();
+      }
+    }, REFRESH_INTERVAL);
+  });
+
+  // ==================== CLEANUP ON PAGE HIDE ====================
+  window.addEventListener('beforeunload', () => {
+    if (refreshTimer) {
+      clearInterval(refreshTimer);
+    }
+  });
+
+  // ==================== VISIBILITY CHANGE HANDLER ====================
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      loadDocuments();
+    }
+  });
+
+  // ==================== ERROR HANDLING ====================
+  window.addEventListener('error', (e) => {
+    console.error('Global error:', e.error);
+    showNotification('System Error', 'An unexpected error occurred. Please refresh the page.', 'error');
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carlton Hill Station | Contact Us</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Leaflet for interactive map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #fcfaf7;
+      color: #1e2a1e;
+      line-height: 1.5;
+    }
+
+    /* ===== CUSTOM VARIABLES ===== */
+    :root {
+      --primary: #1a3a2a;
+      --primary-light: #2d5a3d;
+      --secondary: #5b7a5a;
+      --accent: #c49a6b;
+      --accent-light: #dbb68c;
+      --light: #f9f6ef;
+      --dark: #162015;
+      --gray: #eae7de;
+      --success: #4caf50;
+      --danger: #b04a4a;
+      --warning: #ff9800;
+      
+      --step--2: clamp(0.69rem, 0.81rem + -0.15vw, 0.8rem);
+      --step--1: clamp(0.83rem, 0.92rem + -0.11vw, 0.93rem);
+      --step-0: clamp(1rem, 1.06rem + -0.07vw, 1.06rem);
+      --step-1: clamp(1.2rem, 1.22rem + -0.02vw, 1.22rem);
+      --step-2: clamp(1.44rem, 1.41rem + 0.05vw, 1.47rem);
+      --step-3: clamp(1.73rem, 1.62rem + 0.15vw, 1.84rem);
+      --step-4: clamp(2.07rem, 1.86rem + 0.28vw, 2.31rem);
+      --step-5: clamp(2.49rem, 2.13rem + 0.45vw, 2.88rem);
+      
+      --space-xs: clamp(0.75rem, 0.69rem + 0.3vw, 1rem);
+      --space-sm: clamp(1rem, 0.91rem + 0.45vw, 1.38rem);
+      --space-md: clamp(1.5rem, 1.36rem + 0.68vw, 2.06rem);
+      --space-lg: clamp(2rem, 1.82rem + 0.91vw, 2.75rem);
+      --space-xl: clamp(3rem, 2.73rem + 1.36vw, 4.13rem);
+    }
+
+    /* ===== NOTIFICATION ===== */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: white;
+      border-left: 4px solid var(--success);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      z-index: 1000;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      max-width: 400px;
+    }
+
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    .notification i {
+      font-size: 1.5rem;
+    }
+
+    .notification-content {
+      flex: 1;
+    }
+
+    .notification-title {
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.2rem;
+    }
+
+    .notification-message {
+      font-size: 0.9rem;
+      color: #5f6d5a;
+    }
+
+    .notification-close {
+      cursor: pointer;
+      color: #7a8a7a;
+    }
+
+    /* ===== LOADING SPINNER ===== */
+    .loading-spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--gray);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ===== UTILITY CLASSES ===== */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 var(--space-md);
+    }
+
+    /* ===== NAVIGATION ===== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--gray);
+    }
+
+    .nav-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: var(--space-xs) var(--space-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: var(--step-1);
+      color: var(--primary);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: var(--space-md);
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #4a5f4a;
+      font-size: var(--step--1);
+      font-weight: 500;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a.active::after {
+      width: 100%;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--primary);
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: var(--step-2);
+      color: var(--primary);
+      cursor: pointer;
+    }
+
+    /* ===== MOBILE NAV ===== */
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 280px;
+      height: 100vh;
+      background: var(--primary);
+      padding: var(--space-lg) var(--space-md);
+      transition: right 0.3s ease;
+      z-index: 200;
+      box-shadow: -5px 0 30px rgba(0,0,0,0.2);
+    }
+
+    .mobile-nav.active {
+      right: 0;
+    }
+
+    .mobile-nav-close {
+      text-align: right;
+      font-size: var(--step-2);
+      color: white;
+      margin-bottom: var(--space-lg);
+      cursor: pointer;
+    }
+
+    .mobile-nav a {
+      display: block;
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+      font-size: var(--step-0);
+      padding: var(--space-xs) 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      transition: 0.2s;
+    }
+
+    .mobile-nav a:hover,
+    .mobile-nav a.active {
+      color: var(--accent);
+      padding-left: 5px;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0,0,0,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.3s;
+      z-index: 150;
+    }
+
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ===== PAGE HEADER ===== */
+    .page-header {
+      background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 100%),
+                  url('https://i.ibb.co/k2ym0rfb/34f59573c922634a6406fc6c20a54c84.jpg') center/cover no-repeat;
+      min-height: 40vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+    }
+
+    .header-content {
+      max-width: 800px;
+      padding: var(--space-xl) var(--space-md);
+    }
+
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: var(--step-5);
+      font-weight: 600;
+      margin-bottom: var(--space-sm);
+      text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+
+    .page-header p {
+      font-size: var(--step-0);
+      opacity: 0.95;
+    }
+
+    /* ===== TRUST STRIP ===== */
+    .trust-strip {
+      background: white;
+      border-bottom: 1px solid var(--gray);
+      padding: var(--space-xs) var(--space-md);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--space-md) var(--space-lg);
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: var(--step--1);
+      color: #4a5f4a;
+    }
+
+    .trust-item i {
+      color: var(--accent);
+    }
+
+    /* ===== SECTION HEADERS ===== */
+    .section-header {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto var(--space-lg);
+    }
+
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: var(--step-3);
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .section-header p {
+      color: #5f6d5a;
+      font-size: var(--step-0);
+    }
+
+    /* ===== CONTACT GRID ===== */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-lg);
+      margin: var(--space-xl) 0;
+    }
+
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .info-card {
+      background: white;
+      border: 1px solid var(--gray);
+      padding: var(--space-md);
+      transition: 0.3s;
+      border-radius: 12px;
+    }
+
+    .info-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px -10px var(--primary);
+    }
+
+    .info-icon {
+      background: var(--light);
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--space-sm);
+      font-size: var(--step-2);
+      color: var(--primary);
+    }
+
+    .info-card h3 {
+      font-size: var(--step-1);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+
+    .info-card p {
+      color: #4a5f4a;
+      font-size: var(--step--1);
+      margin-bottom: 0.3rem;
+    }
+
+    .info-card a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: var(--step-0);
+      transition: 0.2s;
+    }
+
+    .info-card a:hover {
+      color: var(--primary);
+    }
+
+    .hours-list {
+      list-style: none;
+    }
+
+    .hours-list li {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px dashed var(--gray);
+      color: #4a5f4a;
+      font-size: var(--step--1);
+    }
+
+    .hours-list li:last-child {
+      border-bottom: none;
+    }
+
+    .hours-list strong {
+      color: var(--primary);
+    }
+
+    /* ===== CONTACT FORM ===== */
+    .form-card {
+      background: white;
+      border: 1px solid var(--gray);
+      padding: var(--space-lg);
+      border-radius: 16px;
+    }
+
+    .form-card h3 {
+      font-size: var(--step-1);
+      font-weight: 600;
+      margin-bottom: var(--space-md);
+      color: var(--primary);
+    }
+
+    .form-group {
+      margin-bottom: var(--space-sm);
+    }
+
+    .form-group label {
+      display: block;
+      font-size: var(--step--1);
+      font-weight: 500;
+      color: var(--primary);
+      margin-bottom: 0.3rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid var(--gray);
+      background: var(--light);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: var(--step--1);
+      transition: 0.2s;
+      border-radius: 8px;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: white;
+    }
+
+    .form-group input.error,
+    .form-group textarea.error {
+      border-color: var(--danger);
+      background: #fff5f5;
+    }
+
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .error-message {
+      color: var(--danger);
+      font-size: var(--step--2);
+      margin-top: 0.3rem;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    .submit-btn {
+      background: var(--accent);
+      color: var(--primary);
+      border: none;
+      padding: 0.8rem 2rem;
+      font-weight: 600;
+      font-size: var(--step-0);
+      cursor: pointer;
+      transition: 0.2s;
+      width: 100%;
+      border-radius: 8px;
+      position: relative;
+    }
+
+    .submit-btn:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+    }
+
+    .submit-btn:disabled {
+      background: var(--gray);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .form-note {
+      margin-top: var(--space-sm);
+      font-size: var(--step--2);
+      color: #7a8a7a;
+      text-align: center;
+    }
+
+    /* ===== MAP SECTION ===== */
+    .map-section {
+      margin: var(--space-xl) 0;
+    }
+
+    .map-card {
+      background: white;
+      border: 1px solid var(--gray);
+      padding: var(--space-md);
+      border-radius: 16px;
+    }
+
+    #map {
+      width: 100%;
+      height: 400px;
+      border-radius: 12px;
+      z-index: 1;
+    }
+
+    .map-note {
+      margin-top: var(--space-sm);
+      color: #4a5f4a;
+      font-size: var(--step--1);
+      text-align: center;
+    }
+
+    /* ===== CTA ===== */
+    .cta-block {
+      background: var(--primary);
+      color: white;
+      text-align: center;
+      padding: var(--space-xl) var(--space-md);
+      margin: var(--space-xl) 0;
+      border-radius: 16px;
+    }
+
+    .cta-block h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: var(--step-3);
+      font-weight: 600;
+      margin-bottom: var(--space-xs);
+      color: white;
+    }
+
+    .cta-block p {
+      font-size: var(--step-0);
+      margin-bottom: var(--space-md);
+      opacity: 0.9;
+    }
+
+    .cta-btn {
+      background: var(--accent);
+      color: var(--primary);
+      border: none;
+      padding: 0.75rem 2.5rem;
+      font-weight: 600;
+      font-size: var(--step-0);
+      cursor: pointer;
+      transition: 0.2s;
+      text-decoration: none;
+      display: inline-block;
+      border-radius: 50px;
+    }
+
+    .cta-btn:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2);
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--primary);
+      color: white;
+      padding: var(--space-xl) var(--space-md) var(--space-md);
+      margin-top: var(--space-xl);
+    }
+
+    .footer-grid {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-lg);
+    }
+
+    .footer-col h4 {
+      font-size: var(--step-0);
+      font-weight: 600;
+      margin-bottom: var(--space-sm);
+      color: var(--accent);
+    }
+
+    .footer-col a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: var(--step--1);
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover {
+      color: white;
+    }
+
+    .footer-col p {
+      color: rgba(255,255,255,0.7);
+      font-size: var(--step--1);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .footer-col i {
+      color: var(--accent);
+      width: 1.2rem;
+    }
+
+    .footer-bottom {
+      max-width: 1280px;
+      margin: var(--space-lg) auto 0;
+      padding-top: var(--space-md);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      font-size: var(--step--2);
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .nav-links {
+        display: none;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .contact-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+      }
+
+      .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      #map {
+        height: 300px;
+      }
+
+      .hours-list li {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Notification -->
+<div id="notification" class="notification">
+  <i class="fas fa-check-circle"></i>
+  <div class="notification-content">
+    <div class="notification-title" id="notificationTitle">Welcome</div>
+    <div class="notification-message" id="notificationMessage">Welcome to Carlton Hill Station</div>
+  </div>
+  <span class="notification-close" onclick="hideNotification()"><i class="fas fa-times"></i></span>
+</div>
+
+<!-- navigation -->
+<div class="navbar">
+  <div class="nav-container">
+    <div class="logo">CARLTON HILL</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="careers.html">Careers</a>
+      <a href="applications.html">Applications</a>
+      <a href="resources.html">Resources</a>
+      <a href="tax-portal.html">Tax Portal</a>
+      <a href="testimonials.html">Testimonials</a>
+      <a href="#" class="active">Contact</a>
+    </div>
+    <button class="mobile-menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+  </div>
+</div>
+
+<!-- mobile nav -->
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-close" id="closeBtn"><i class="fas fa-times"></i></div>
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="careers.html">Careers</a>
+  <a href="applications.html">Applications</a>
+  <a href="resources.html">Resources</a>
+  <a href="tax-refund.html">Tax Refund Portal</a>
+   <a href="#" class="active">Contact</a>
+  <a href="testimonials.html">Testimonials</a>
+ 
+</div>
+<div class="overlay" id="overlay"></div>
+
+<!-- page header -->
+<div class="page-header">
+  <div class="header-content">
+    <h1>📞 Contact Us</h1>
+    <p>We'd love to hear from you — whether about work, the farm, or just to say hello</p>
+  </div>
+</div>
+
+<!-- trust strip -->
+<div class="trust-strip">
+  <div class="trust-item"><i class="fas fa-check-circle"></i> ABN 84 123 456 789</div>
+  <div class="trust-item"><i class="fas fa-building"></i> Est. 1987</div>
+  <div class="trust-item"><i class="fas fa-users"></i> 150+ workers</div>
+  <div class="trust-item"><i class="fas fa-file-contract"></i> Fair Work</div>
+  <div class="trust-item"><i class="fas fa-shield"></i> Workers Comp</div>
+</div>
+
+<!-- main content -->
+<div class="container">
+  <div class="section-header">
+    <h2>Get in Touch</h2>
+    <p>We're here to assist with employment inquiries, farm activities, or general questions</p>
+  </div>
+
+  <!-- contact grid -->
+  <div class="contact-grid">
+    <!-- left column - contact info -->
+    <div class="contact-info">
+      <div class="info-card">
+        <div class="info-icon"><i class="fas fa-map-pin"></i></div>
+        <h3>🏡 Farm Address</h3>
+        <p>Carlton Hill Station Farm</p>
+        <p>Carlton Hill Rd, Cambridge Gulf WA 6743</p>
+        <p>Western Australia, Australia</p>
+      </div>
+
+      <div class="info-card">
+        <div class="info-icon"><i class="fas fa-envelope"></i></div>
+        <h3>📧 Email</h3>
+        <p>General inquiries and applications</p>
+        <a href="mailto:carltonhillfarm282@gmail.com">carltonhillfarm282@gmail.com</a>
+      </div>
+
+      <div class="info-card">
+        <div class="info-icon"><i class="fas fa-phone-alt"></i></div>
+        <h3>📱 Phone</h3>
+        <p>Call or message during business hours</p>
+        <a href="tel:+61891234567">+61 8 9123 4567</a>
+      </div>
+
+      <div class="info-card">
+        <div class="info-icon"><i class="fas fa-clock"></i></div>
+        <h3>⏰ Working Hours</h3>
+        <ul class="hours-list">
+          <li><span>Monday – Saturday</span> <strong>6AM – 4PM</strong></li>
+          <li><span>Sunday</span> <strong>Closed (Rest Day)</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- right column - contact form -->
+    <div class="form-card">
+      <h3>📬 Send Us a Message</h3>
+      <p style="margin-bottom: var(--space-md); color: #5f6d5a;">We aim to respond within 24 hours</p>
+      
+      <form id="contactForm" onsubmit="handleContactSubmit(event)">
+        <div class="form-group">
+          <label for="name">Your Name *</label>
+          <input type="text" id="name" name="name" required>
+          <div class="error-message" id="nameError">Please enter your name</div>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Email Address *</label>
+          <input type="email" id="email" name="email" required>
+          <div class="error-message" id="emailError">Please enter a valid email address</div>
+        </div>
+        
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" name="phone">
+        </div>
+        
+        <div class="form-group">
+          <label for="subject">Subject *</label>
+          <input type="text" id="subject" name="subject" required>
+          <div class="error-message" id="subjectError">Please enter a subject</div>
+        </div>
+        
+        <div class="form-group">
+          <label for="message">Message *</label>
+          <textarea id="message" name="message" required></textarea>
+          <div class="error-message" id="messageError">Please enter your message</div>
+        </div>
+        
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span class="btn-text"><i class="fas fa-paper-plane"></i> Send Message</span>
+          <span class="spinner" style="display: none;"><i class="fas fa-spinner fa-spin"></i> Sending...</span>
+        </button>
+        <p class="form-note">All fields marked * are required. Your information is secure.</p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- map section -->
+<div class="container">
+  <div class="section-header">
+    <h2>Find Us</h2>
+    <p>Located in the scenic Cambridge Gulf region of Western Australia</p>
+  </div>
+
+  <div class="map-section">
+    <div class="map-card">
+      <div id="map"></div>
+      <p class="map-note">📍 Carlton Hill Rd, Cambridge Gulf WA 6743, Western Australia</p>
+    </div>
+  </div>
+</div>
+
+<!-- cta -->
+<div class="cta-block">
+  <h2>Ready to join our team?</h2>
+  <p>Current openings: cattle hands, fruit pickers, planting crew. No experience required.</p>
+  <a href="careers.html" class="cta-btn">View positions →</a>
+</div>
+
+<!-- footer -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h4>Carlton Hill</h4>
+      <p><i class="fas fa-tree"></i> Family-run since 1987</p>
+      <p><i class="fas fa-map"></i> Carlton Hill Rd, Cambridge Gulf</p>
+      <p><i class="fas fa-envelope"></i> carltonhillfarm282@gmail.com</p>
+      <p><i class="fas fa-phone"></i> +61 8 9123 4567</p>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="careers.html">Careers</a>
+      <a href="applications.html">Applications</a>
+      <a href="resources.html">Resources</a>
+      <a href="tax-portal.html">Tax Portal</a>
+      <a href="testimonials.html">Testimonials</a>
+    </div>
+    <div class="footer-col">
+      <h4>Work Hours</h4>
+      <p>Mon - Sat: 6AM - 4PM</p>
+      <p>Sunday: Rest Day</p>
+      <p>Part-time options</p>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <p><i class="fab fa-facebook-f"></i> Facebook</p>
+      <p><i class="fab fa-instagram"></i> Instagram</p>
+      <p><i class="fab fa-linkedin-in"></i> LinkedIn</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Carlton Hill Station — Registered Agricultural Employer · ABN 84 123 456 789</p>
+  </div>
+</footer>
+
+<!-- scripts -->
+<script>
+  // ==================== CONFIGURATION ====================
+  const STORAGE_KEY = 'contactMessages';
+  const NOTIFICATIONS_KEY = 'adminNotifications';
+
+  // ==================== NOTIFICATION SYSTEM ====================
+  function showNotification(title, message, type = 'success') {
+    const notification = document.getElementById('notification');
+    const icon = notification.querySelector('i');
+    const titleEl = document.getElementById('notificationTitle');
+    const messageEl = document.getElementById('notificationMessage');
+    
+    icon.className = type === 'success' ? 'fas fa-check-circle' : 
+                     type === 'error' ? 'fas fa-exclamation-circle' : 
+                     'fas fa-exclamation-triangle';
+    icon.style.color = type === 'success' ? 'var(--success)' : 
+                       type === 'error' ? 'var(--danger)' : 
+                       'var(--warning)';
+    notification.style.borderLeftColor = type === 'success' ? 'var(--success)' : 
+                                         type === 'error' ? 'var(--danger)' : 
+                                         'var(--warning)';
+    
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+    notification.classList.add('show');
+    
+    setTimeout(() => {
+      notification.classList.remove('show');
+    }, 5000);
+  }
+
+  function hideNotification() {
+    document.getElementById('notification').classList.remove('show');
+  }
+
+  // ==================== FORM VALIDATION ====================
+  function validateForm() {
+    let isValid = true;
+    
+    // Clear previous errors
+    document.querySelectorAll('.error-message').forEach(el => el.classList.remove('show'));
+    document.querySelectorAll('input, textarea').forEach(el => el.classList.remove('error'));
+
+    // Validate name
+    const name = document.getElementById('name').value.trim();
+    if (!name) {
+      document.getElementById('nameError').classList.add('show');
+      document.getElementById('name').classList.add('error');
+      isValid = false;
+    }
+
+    // Validate email
+    const email = document.getElementById('email').value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      document.getElementById('emailError').classList.add('show');
+      document.getElementById('email').classList.add('error');
+      isValid = false;
+    }
+
+    // Validate subject
+    const subject = document.getElementById('subject').value.trim();
+    if (!subject) {
+      document.getElementById('subjectError').classList.add('show');
+      document.getElementById('subject').classList.add('error');
+      isValid = false;
+    }
+
+    // Validate message
+    const message = document.getElementById('message').value.trim();
+    if (!message) {
+      document.getElementById('messageError').classList.add('show');
+      document.getElementById('message').classList.add('error');
+      isValid = false;
+    }
+
+    return isValid;
+  }
+
+  // ==================== FORM SUBMISSION ====================
+  function handleContactSubmit(event) {
+    event.preventDefault();
+
+    if (!validateForm()) {
+      showNotification('Validation Error', 'Please fill in all required fields correctly', 'error');
+      return;
+    }
+
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const spinner = submitBtn.querySelector('.spinner');
+
+    // Show loading state
+    submitBtn.disabled = true;
+    btnText.style.display = 'none';
+    spinner.style.display = 'inline-block';
+
+    // Collect form data
+    const formData = {
+      id: 'MSG-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6),
+      name: document.getElementById('name').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
+      subject: document.getElementById('subject').value.trim(),
+      message: document.getElementById('message').value.trim(),
+      timestamp: new Date().toISOString(),
+      status: 'unread',
+      ip: '192.168.1.' + Math.floor(Math.random() * 255),
+      userAgent: navigator.userAgent
+    };
+
+    // Simulate network delay
+    setTimeout(() => {
+      try {
+        // Save to localStorage (simulates database)
+        const messages = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        messages.push(formData);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+
+        // Send to admin notifications
+        const notifications = JSON.parse(localStorage.getItem(NOTIFICATIONS_KEY) || '[]');
+        notifications.push({
+          type: 'new_contact',
+          message: `New contact message from ${formData.name}`,
+          timestamp: new Date().toISOString(),
+          data: {
+            id: formData.id,
+            name: formData.name,
+            email: formData.email,
+            subject: formData.subject
+          }
+        });
+        localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(notifications));
+
+        // Show success message
+        showNotification(
+          'Message Sent!', 
+          `Thank you ${formData.name}. We'll respond within 24 hours.`,
+          'success'
+        );
+
+        // Reset form
+        document.getElementById('contactForm').reset();
+
+      } catch (error) {
+        console.error('Error saving message:', error);
+        showNotification('Error', 'Failed to send message. Please try again.', 'error');
+      } finally {
+        // Reset button
+        submitBtn.disabled = false;
+        btnText.style.display = 'inline-block';
+        spinner.style.display = 'none';
+      }
+    }, 1500);
+  }
+
+  // ==================== MAP INITIALIZATION ====================
+  function initMap() {
+    // Coordinates for Cambridge Gulf, Western Australia (approximate)
+    const lat = -15.5;
+    const lng = 128.5;
+    
+    const map = L.map('map').setView([lat, lng], 10);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    
+    // Add marker for Carlton Hill Station
+    const marker = L.marker([lat, lng]).addTo(map);
+    marker.bindPopup(`
+      <b>Carlton Hill Station Farm</b><br>
+      Carlton Hill Rd<br>
+      Cambridge Gulf WA 6743<br>
+      Western Australia
+    `).openPopup();
+  }
+
+  // ==================== MOBILE MENU ====================
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileNav = document.getElementById('mobileNav');
+  const overlay = document.getElementById('overlay');
+  const closeBtn = document.getElementById('closeBtn');
+
+  function openMenu() {
+    mobileNav.classList.add('active');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu() {
+    mobileNav.classList.remove('active');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  menuBtn.addEventListener('click', openMenu);
+  closeBtn.addEventListener('click', closeMenu);
+  overlay.addEventListener('click', closeMenu);
+
+  // smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+        closeMenu();
+      }
+    });
+  });
+
+  // ==================== REAL-TIME VALIDATION ====================
+  document.querySelectorAll('input, textarea').forEach(field => {
+    field.addEventListener('input', function() {
+      this.classList.remove('error');
+      const errorId = this.id + 'Error';
+      const errorEl = document.getElementById(errorId);
+      if (errorEl) errorEl.classList.remove('show');
+    });
+  });
+
+  // ==================== INITIALIZATION ====================
+  document.addEventListener('DOMContentLoaded', () => {
+    // Initialize map
+    initMap();
+    
+    // Welcome notification
+    setTimeout(() => {
+      showNotification('Contat Us', 'We\'re here to help! Send us a message.', 'success');
+    }, 1000);
+
+    // Load contact info from admin settings if available
+    const contactInfo = JSON.parse(localStorage.getItem('contactInfo') || '{}');
+    if (contactInfo.phone) {
+      const phoneLink = document.querySelector('a[href="tel:+61891234567"]');
+      if (phoneLink) phoneLink.href = `tel:${contactInfo.phone}`;
+    }
+    if (contactInfo.email) {
+      const emailLink = document.querySelector('a[href="mailto:carltonhillfarm282@gmail.com"]');
+      if (emailLink) emailLink.href = `mailto:${contactInfo.email}`;
+    }
+  });
+
+  // Handle visibility change for map
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 100);
+    }
+  });
+</script>
+
+</body>
+</html>

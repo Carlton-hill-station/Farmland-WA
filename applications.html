@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carlton Hill Station | Employment Application</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #fcfaf7;
+      color: #1e2a1e;
+      line-height: 1.5;
+    }
+
+    /* ===== CUSTOM VARIABLES ===== */
+    :root {
+      --primary: #1a3a2a;
+      --primary-light: #2d5a3d;
+      --secondary: #5b7a5a;
+      --accent: #c49a6b;
+      --accent-light: #dbb68c;
+      --light: #f9f6ef;
+      --dark: #162015;
+      --gray: #eae7de;
+      --success: #4caf50;
+      --success-light: #e8f5e9;
+      --warning: #ff9800;
+      --warning-light: #fff3e0;
+      --danger: #b04a4a;
+      --danger-light: #fef2f2;
+      
+      --step--2: clamp(0.69rem, 0.81rem + -0.15vw, 0.8rem);
+      --step--1: clamp(0.83rem, 0.92rem + -0.11vw, 0.93rem);
+      --step-0: clamp(1rem, 1.06rem + -0.07vw, 1.06rem);
+      --step-1: clamp(1.2rem, 1.22rem + -0.02vw, 1.22rem);
+      --step-2: clamp(1.44rem, 1.41rem + 0.05vw, 1.47rem);
+      --step-3: clamp(1.73rem, 1.62rem + 0.15vw, 1.84rem);
+      --step-4: clamp(2.07rem, 1.86rem + 0.28vw, 2.31rem);
+      --step-5: clamp(2.49rem, 2.13rem + 0.45vw, 2.88rem);
+      
+      --space-xs: clamp(0.75rem, 0.69rem + 0.3vw, 1rem);
+      --space-sm: clamp(1rem, 0.91rem + 0.45vw, 1.38rem);
+      --space-md: clamp(1.5rem, 1.36rem + 0.68vw, 2.06rem);
+      --space-lg: clamp(2rem, 1.82rem + 0.91vw, 2.75rem);
+      --space-xl: clamp(3rem, 2.73rem + 1.36vw, 4.13rem);
+    }
+
+    /* ===== NOTIFICATION ===== */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: white;
+      border-left: 4px solid var(--success);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      z-index: 1000;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      max-width: 400px;
+    }
+
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    .notification i {
+      font-size: 1.5rem;
+      color: var(--success);
+    }
+
+    .notification-content {
+      flex: 1;
+    }
+
+    .notification-title {
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.2rem;
+    }
+
+    .notification-message {
+      font-size: 0.9rem;
+      color: #5f6d5a;
+    }
+
+    .notification-close {
+      cursor: pointer;
+      color: #7a8a7a;
+    }
+
+    /* ===== UTILITY CLASSES ===== */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 var(--space-md);
+    }
+
+    /* ===== NAVIGATION ===== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--gray);
+    }
+
+    .nav-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: var(--space-xs) var(--space-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: var(--step-1);
+      color: var(--primary);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: var(--space-md);
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #4a5f4a;
+      font-size: var(--step--1);
+      font-weight: 500;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    .nav-links a.active {
+      color: var(--accent);
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: var(--step-2);
+      color: var(--primary);
+      cursor: pointer;
+    }
+
+    /* ===== MOBILE NAV ===== */
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 280px;
+      height: 100vh;
+      background: var(--primary);
+      padding: var(--space-lg) var(--space-md);
+      transition: right 0.3s ease;
+      z-index: 200;
+      box-shadow: -5px 0 30px rgba(0,0,0,0.2);
+    }
+
+    .mobile-nav.active {
+      right: 0;
+    }
+
+    .mobile-nav-close {
+      text-align: right;
+      font-size: var(--step-2);
+      color: white;
+      margin-bottom: var(--space-lg);
+      cursor: pointer;
+    }
+
+    .mobile-nav a {
+      display: block;
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+      font-size: var(--step-0);
+      padding: var(--space-xs) 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      transition: 0.2s;
+    }
+
+    .mobile-nav a:hover {
+      color: var(--accent);
+      padding-left: 5px;
+    }
+
+    .mobile-nav a.active {
+      color: var(--accent);
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0,0,0,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.3s;
+      z-index: 150;
+    }
+
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ===== PAGE HEADER ===== */
+    .page-header {
+      background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 100%),
+                  url('https://i.ibb.co/ZRqhYmKt/2800585c1e05db6f1c59ebb4f8a77c4c.jpg') center/cover no-repeat;
+      min-height: 40vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+    }
+
+    .header-content {
+      max-width: 900px;
+      padding: var(--space-xl) var(--space-md);
+    }
+
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: var(--step-5);
+      font-weight: 600;
+      margin-bottom: var(--space-sm);
+      text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+
+    .page-header p {
+      font-size: var(--step-0);
+      opacity: 0.95;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* ===== TRUST STRIP ===== */
+    .trust-strip {
+      background: white;
+      border-bottom: 1px solid var(--gray);
+      padding: var(--space-xs) var(--space-md);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--space-md) var(--space-lg);
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: var(--step--1);
+      color: #4a5f4a;
+    }
+
+    .trust-item i {
+      color: var(--accent);
+    }
+
+    /* ===== SECTION HEADERS ===== */
+    .section-header {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto var(--space-lg);
+    }
+
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: var(--step-3);
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .section-header p {
+      color: #5f6d5a;
+      font-size: var(--step-0);
+    }
+
+    /* ===== INTRO CARD ===== */
+    .intro-card {
+      background: white;
+      border: 1px solid var(--gray);
+      padding: var(--space-lg);
+      margin: var(--space-xl) 0;
+      text-align: center;
+    }
+
+    .intro-card p {
+      color: #4a5f4a;
+      font-size: var(--step-0);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* ===== FORM CONTAINER ===== */
+    .form-container {
+      background: white;
+      border: 1px solid var(--gray);
+      padding: var(--space-lg);
+      margin: var(--space-xl) 0;
+    }
+
+    .form-section {
+      margin-bottom: var(--space-xl);
+      padding-bottom: var(--space-lg);
+      border-bottom: 2px solid var(--gray);
+    }
+
+    .form-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+
+    .section-title .icon {
+      width: 48px;
+      height: 48px;
+      background: var(--light);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--step-1);
+      color: var(--accent);
+    }
+
+    .section-title h3 {
+      font-size: var(--step-1);
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .section-desc {
+      color: #5f6d5a;
+      font-size: var(--step--1);
+      margin-bottom: var(--space-md);
+      padding: var(--space-sm);
+      background: var(--light);
+      border-left: 3px solid var(--accent);
+    }
+
+    /* ===== FORM GRID ===== */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-md);
+    }
+
+    .form-group {
+      margin-bottom: var(--space-sm);
+    }
+
+    .form-group.full-width {
+      grid-column: span 2;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: var(--step--1);
+      font-weight: 500;
+      color: var(--primary);
+      margin-bottom: 0.3rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid var(--gray);
+      background: var(--light);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: var(--step--1);
+      transition: 0.2s;
+      border-radius: 8px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: white;
+    }
+
+    .form-group input.error,
+    .form-group select.error,
+    .form-group textarea.error {
+      border-color: var(--danger);
+      background: var(--danger-light);
+    }
+
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .field-note {
+      font-size: var(--step--2);
+      color: #7a8a7a;
+      margin-top: 0.3rem;
+    }
+
+    .error-message {
+      color: var(--danger);
+      font-size: var(--step--2);
+      margin-top: 0.3rem;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    /* ===== FILE UPLOAD ===== */
+    .file-upload {
+      border: 2px dashed var(--gray);
+      padding: var(--space-md);
+      text-align: center;
+      background: var(--light);
+      cursor: pointer;
+      transition: 0.2s;
+      border-radius: 8px;
+      position: relative;
+    }
+
+    .file-upload:hover {
+      border-color: var(--accent);
+      background: #f0f7f0;
+    }
+
+    .file-upload i {
+      font-size: var(--step-2);
+      color: var(--accent);
+      margin-bottom: var(--space-xs);
+    }
+
+    .file-upload p {
+      color: #5f6d5a;
+      font-size: var(--step--1);
+      margin-bottom: 0.3rem;
+    }
+
+    .file-upload small {
+      color: #7a8a7a;
+      font-size: var(--step--2);
+    }
+
+    .file-name {
+      margin-top: 0.5rem;
+      font-size: var(--step--2);
+      color: var(--success);
+      word-break: break-all;
+    }
+
+    /* ===== OPTIONAL CARD ===== */
+    .optional-card {
+      background: var(--light);
+      border: 1px solid var(--gray);
+      padding: var(--space-md);
+      margin-bottom: var(--space-md);
+      border-radius: 8px;
+    }
+
+    .optional-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+
+    .optional-header i {
+      color: var(--accent);
+      font-size: var(--step-1);
+    }
+
+    .optional-header h4 {
+      font-size: var(--step-0);
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .optional-desc {
+      color: #5f6d5a;
+      font-size: var(--step--1);
+      margin-bottom: var(--space-sm);
+    }
+
+    /* ===== RADIO GROUP ===== */
+    .radio-group {
+      display: flex;
+      gap: var(--space-md);
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .radio-option input[type="radio"] {
+      width: auto;
+      margin-right: 0.3rem;
+    }
+
+    /* ===== CHECKBOX ===== */
+    .checkbox-group {
+      margin: var(--space-md) 0;
+    }
+
+    .checkbox-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .checkbox-option input[type="checkbox"] {
+      width: auto;
+      margin-top: 0.2rem;
+    }
+
+    .checkbox-option label {
+      font-size: var(--step--1);
+      color: #4a5f4a;
+    }
+
+    /* ===== DECLARATION ===== */
+    .declaration-box {
+      background: var(--light);
+      border: 1px solid var(--gray);
+      padding: var(--space-md);
+      margin: var(--space-md) 0;
+      border-radius: 8px;
+    }
+
+    .declaration-box p {
+      color: #4a5f4a;
+      font-size: var(--step--1);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .declaration-box i {
+      color: var(--accent);
+    }
+
+    /* ===== SUBMIT BUTTON ===== */
+    .submit-btn {
+      background: var(--accent);
+      color: var(--primary);
+      border: none;
+      padding: 1rem 2rem;
+      font-weight: 600;
+      font-size: var(--step-0);
+      cursor: pointer;
+      transition: 0.2s;
+      width: 100%;
+      margin-top: var(--space-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      border-radius: 8px;
+    }
+
+    .submit-btn:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+    }
+
+    .submit-btn:disabled {
+      background: var(--gray);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .submit-btn i {
+      font-size: var(--step-0);
+    }
+
+    /* ===== SECURITY NOTE ===== */
+    .security-note {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      background: var(--light);
+      padding: var(--space-sm);
+      margin-top: var(--space-sm);
+      color: #5f6d5a;
+      font-size: var(--step--2);
+      border-radius: 8px;
+    }
+
+    .security-note i {
+      color: var(--accent);
+      font-size: var(--step-0);
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--primary);
+      color: white;
+      padding: var(--space-xl) var(--space-md) var(--space-md);
+      margin-top: var(--space-xl);
+    }
+
+    .footer-grid {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-lg);
+    }
+
+    .footer-col h4 {
+      font-size: var(--step-0);
+      font-weight: 600;
+      margin-bottom: var(--space-sm);
+      color: var(--accent);
+    }
+
+    .footer-col a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: var(--step--1);
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover {
+      color: white;
+    }
+
+    .footer-col p {
+      color: rgba(255,255,255,0.7);
+      font-size: var(--step--1);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .footer-col i {
+      color: var(--accent);
+      width: 1.2rem;
+    }
+
+    .footer-bottom {
+      max-width: 1280px;
+      margin: var(--space-lg) auto 0;
+      padding-top: var(--space-md);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      font-size: var(--step--2);
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .nav-links {
+        display: none;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-group.full-width {
+        grid-column: span 1;
+      }
+
+      .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .radio-group {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Notification System -->
+<div id="notification" class="notification">
+  <i class="fas fa-check-circle"></i>
+  <div class="notification-content">
+    <div class="notification-title" id="notificationTitle">Success</div>
+    <div class="notification-message" id="notificationMessage">Application submitted successfully</div>
+  </div>
+  <span class="notification-close" onclick="hideNotification()"><i class="fas fa-times"></i></span>
+</div>
+
+<!-- navigation -->
+<div class="navbar">
+  <div class="nav-container">
+    <div class="logo">CARLTON HILL</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="careers.html">Careers</a>
+      <a href="#" class="active">Apply</a>
+      <a href="resources.html">Resources</a>
+      <a href="contact.html">Contact</a>
+      <a href="testimonials.html">Testimonials</a>
+    </div>
+    <button class="mobile-menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+  </div>
+</div>
+
+<!-- mobile nav -->
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-close" id="closeBtn"><i class="fas fa-times"></i></div>
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="careers.html">Careers</a>
+  <a href="#" class="active">Applications</a>
+  <a href="resources.html">Resources</a>
+  <a href="tax-refund.html">Tax Refund Portal</a>
+  <a href="contact.html">Contact</a>
+   <a href="testimonials.html">Testimonials</a> 
+ 
+</div>
+<div class="overlay" id="overlay"></div>
+
+<!-- page header -->
+<div class="page-header">
+  <div class="header-content">
+    <h1>📝 Employment Application</h1>
+    <p>Join Our Team at Carlton Hill Station Farm — Fill out the form below to apply for a position. We value transparency, safety, and performance.</p>
+  </div>
+</div>
+
+<!-- trust strip -->
+<div class="trust-strip">
+  <div class="trust-item"><i class="fas fa-check-circle"></i> ABN 84 123 456 789</div>
+  <div class="trust-item"><i class="fas fa-building"></i> Est. 1987</div>
+  <div class="trust-item"><i class="fas fa-users"></i> 150+ workers</div>
+  <div class="trust-item"><i class="fas fa-file-contract"></i> Fair Work</div>
+  <div class="trust-item"><i class="fas fa-shield"></i> Workers Comp</div>
+</div>
+
+<!-- main content -->
+<div class="container">
+
+  <!-- intro card -->
+  <div class="intro-card">
+    <p>Every detail you provide helps us create a secure, supportive, and rewarding work environment for all staff. All information is encrypted and securely stored.</p>
+  </div>
+
+  <!-- application form -->
+  <div class="form-container">
+    <form id="applicationForm" onsubmit="handleSubmit(event)">
+
+      <!-- personal information -->
+      <div class="form-section">
+        <div class="section-title">
+          <div class="icon"><i class="fas fa-user"></i></div>
+          <h3>🔹 Personal Information</h3>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="fullName" placeholder="First and Last Name" required>
+            <div class="error-message" id="fullNameError">Please enter your full name</div>
+          </div>
+          <div class="form-group">
+            <label>Date of Birth *</label>
+            <input type="date" id="dob" required>
+            <div class="error-message" id="dobError">Please enter your date of birth</div>
+          </div>
+          <div class="form-group">
+            <label>Nationality *</label>
+            <input type="text" id="nationality" placeholder="Country" required>
+            <div class="error-message" id="nationalityError">Please enter your nationality</div>
+          </div>
+          <div class="form-group">
+            <label>Gender (Optional)</label>
+            <select id="gender">
+              <option value="">Prefer not to say</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Phone Number *</label>
+            <input type="tel" id="phone" placeholder="Mobile Contact" required>
+            <div class="error-message" id="phoneError">Please enter a valid phone number</div>
+          </div>
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" id="email" placeholder="Active Email for Updates" required>
+            <div class="error-message" id="emailError">Please enter a valid email address</div>
+          </div>
+          <div class="form-group full-width">
+            <label>Home Address *</label>
+            <input type="text" id="address" placeholder="Street, City, State, Country" required>
+            <div class="error-message" id="addressError">Please enter your address</div>
+          </div>
+          <div class="form-group full-width">
+            <label>Emergency Contact Name & Number *</label>
+            <input type="text" id="emergency" placeholder="For Safety and Support" required>
+            <div class="error-message" id="emergencyError">Please enter emergency contact</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- identification details -->
+      <div class="form-section">
+        <div class="section-title">
+          <div class="icon"><i class="fas fa-id-card"></i></div>
+          <h3>🔹 Identification Details</h3>
+        </div>
+
+        <div class="section-desc">
+          <i class="fas fa-shield-alt"></i> We require valid ID to verify your identity and comply with government employment laws. Your ID helps us prevent fraud and protect everyone's safety. All information is securely stored and not shared without your consent.
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Government-Issued ID Number *</label>
+            <input type="text" id="idNumber" placeholder="Passport, National ID, Driver's License, etc." required>
+            <div class="error-message" id="idNumberError">Please enter your ID number</div>
+          </div>
+          <div class="form-group">
+            <label>Type of ID *</label>
+            <select id="idType" required>
+              <option value="">Select one</option>
+              <option value="passport">Passport</option>
+              <option value="national">National ID</option>
+              <option value="drivers">Driver's License</option>
+              <option value="other">Others</option>
+            </select>
+            <div class="error-message" id="idTypeError">Please select ID type</div>
+          </div>
+          <div class="form-group">
+            <label>Upload ID Copy *</label>
+            <div class="file-upload" onclick="document.getElementById('idUpload').click()">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <p>Click to upload or drag and drop</p>
+              <small>PDF or clear image (max 5MB)</small>
+              <div id="idFileName" class="file-name"></div>
+              <input type="file" id="idUpload" style="display: none;" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileUpload('id', this)">
+            </div>
+            <div class="error-message" id="idUploadError">Please upload your ID copy</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- tax file number -->
+      <div class="form-section">
+        <div class="section-title">
+          <div class="icon"><i class="fas fa-file-invoice"></i></div>
+          <h3>🔹 Tax File Number (TFN)</h3>
+        </div>
+
+        <div class="section-desc">
+          <i class="fas fa-info-circle"></i> This is needed to ensure your tax is paid correctly in Australia. Without a TFN, you may be taxed at a higher rate. We use this to register your employment legally and assist with end-of-year tax returns.
+        </div>
+
+        <div class="form-group">
+          <label>TFN *</label>
+          <input type="text" id="tfn" placeholder="Enter your Australian Tax File Number" required>
+          <div class="error-message" id="tfnError">Please enter your TFN</div>
+        </div>
+      </div>
+
+      <!-- health insurance -->
+      <div class="form-section">
+        <div class="section-title">
+          <div class="icon"><i class="fas fa-hospital"></i></div>
+          <h3>🔹 Health Insurance Details</h3>
+        </div>
+
+        <div class="section-desc">
+          <i class="fas fa-heartbeat"></i> All workers must have valid health insurance to meet farm safety standards. This ensures that in case of medical emergencies, you're fully covered and supported. We only verify coverage – we do not store medical records.
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Health Insurance Provider *</label>
+            <input type="text" id="insuranceProvider" placeholder="e.g., Medicare, Bupa, Allianz, etc." required>
+            <div class="error-message" id="insuranceProviderError">Please enter provider</div>
+          </div>
+          <div class="form-group">
+            <label>Insurance Number *</label>
+            <input type="text" id="insuranceNumber" placeholder="Policy ID or Reference Number" required>
+            <div class="error-message" id="insuranceNumberError">Please enter insurance number</div>
+          </div>
+          <div class="form-group full-width">
+            <label>Upload Health Card *</label>
+            <div class="file-upload" onclick="document.getElementById('healthUpload').click()">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <p>Click to upload or drag and drop</p>
+              <small>PDF or clear image (max 5MB)</small>
+              <div id="healthFileName" class="file-name"></div>
+              <input type="file" id="healthUpload" style="display: none;" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileUpload('health', this)">
+            </div>
+            <div class="error-message" id="healthUploadError">Please upload your health card</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- performance bonus -->
+      <div class="form-section">
+        <div class="section-title">
+          <div class="icon"><i class="fas fa-chart-line"></i></div>
+          <h3>🔹 Performance-Based Investment Bonus (Optional)</h3>
+        </div>
+
+        <div class="section-desc">
+          <i class="fas fa-gift"></i> Earn more for doing more. Choose to invest part of your salary into a farm-linked performance bonus tied to your work performance, reliability, and attendance.
+        </div>
+
+        <div class="optional-card">
+          <div class="optional-header">
+            <i class="fas fa-coins"></i>
+            <h4>Bonus Program Details</h4>
+          </div>
+          <div class="optional-desc">
+            This bonus encourages you to grow while giving you the opportunity to save and earn more. Based on your performance, you can earn additional income on top of your regular wages.
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Do You Want to Join?</label>
+              <div class="radio-group">
+                <label class="radio-option">
+                  <input type="radio" name="bonus" value="yes" id="bonusYes"> Yes
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="bonus" value="no" id="bonusNo" checked> No
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Preferred Investment %</label>
+              <select id="bonusPercentage">
+                <option value="5">5%</option>
+                <option value="10">10%</option>
+                <option value="15">15%</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Bank Name</label>
+              <input type="text" id="bankName" placeholder="For bonus payout">
+            </div>
+            <div class="form-group">
+              <label>Bank Account Number</label>
+              <input type="text" id="bankAccount" placeholder="For bonus payout">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- work preference -->
+      <div class="form-section">
+        <div class="section-title">
+          <div class="icon"><i class="fas fa-briefcase"></i></div>
+          <h3>🔹 Work Preference</h3>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Position Applying For *</label>
+            <select id="position" required>
+              <option value="">Select position</option>
+              <option value="cattle">Cattle Hand</option>
+              <option value="fruit">Fruit Picker</option>
+              <option value="general">General Farm Hand</option>
+              <option value="planting">Planting & Field Worker</option>
+              <option value="tractor">Tractor Operator</option>
+              <option value="seasonal">Seasonal Worker</option>
+            </select>
+            <div class="error-message" id="positionError">Please select a position</div>
+          </div>
+          <div class="form-group">
+            <label>Work Type *</label>
+            <select id="workType" required>
+              <option value="">Select type</option>
+              <option value="full">Full-Time</option>
+              <option value="part">Part-Time</option>
+              <option value="seasonal">Seasonal</option>
+            </select>
+            <div class="error-message" id="workTypeError">Please select work type</div>
+          </div>
+          <div class="form-group">
+            <label>Available Start Date *</label>
+            <input type="date" id="startDate" required>
+            <div class="error-message" id="startDateError">Please select start date</div>
+          </div>
+          <div class="form-group">
+            <label>Do You Need Accommodation?</label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="accommodation" value="yes" id="accYes"> Yes
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="accommodation" value="no" id="accNo" checked> No
+              </label>
+            </div>
+            <div class="field-note">🏡 On-site accommodation is available in comfortable private cabins for full-time and seasonal staff.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- declaration -->
+      <div class="form-section">
+        <div class="section-title">
+          <div class="icon"><i class="fas fa-check-circle"></i></div>
+          <h3>🔹 Declaration and Consent</h3>
+        </div>
+
+        <div class="declaration-box">
+          <p><i class="fas fa-check"></i> I declare that the information provided is true and complete to the best of my knowledge.</p>
+          <p><i class="fas fa-check"></i> I understand that providing false information may lead to disqualification or termination.</p>
+          <p><i class="fas fa-check"></i> I consent to the farm using this information for employment purposes only.</p>
+        </div>
+
+        <div class="checkbox-group">
+          <label class="checkbox-option">
+            <input type="checkbox" id="terms" required>
+            <span>I Agree to the Terms & Conditions *</span>
+          </label>
+          <div class="error-message" id="termsError">You must agree to the terms</div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <i class="fas fa-paper-plane"></i> Submit Application
+        </button>
+
+        <div class="security-note">
+          <i class="fas fa-lock"></i>
+          <span>All information is encrypted and securely stored under Australian privacy laws. We never share your data without consent.</span>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- footer -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h4>Carlton Hill</h4>
+      <p><i class="fas fa-tree"></i> Family-run since 1987</p>
+      <p><i class="fas fa-map"></i> Carlton Hill Rd, Cambridge Gulf</p>
+      <p><i class="fas fa-envelope"></i> carltonhillfarm282@gmail.com</p>
+      <p><i class="fas fa-phone"></i> +61 8 9123 4567</p>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="careers.html">Careers</a>
+      <a href="resources.html">Resources</a>
+      <a href="contact.html">Contact</a>
+      <a href="testimonials.html">Testimonials</a>
+    </div>
+    <div class="footer-col">
+      <h4>Work Hours</h4>
+      <p>Mon - Sat: 6AM - 4PM</p>
+      <p>Sunday: Rest Day</p>
+      <p>Part-time options</p>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <p><i class="fab fa-facebook-f"></i> Facebook</p>
+      <p><i class="fab fa-instagram"></i> Instagram</p>
+      <p><i class="fab fa-linkedin-in"></i> LinkedIn</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Carlton Hill Station — Registered Agricultural Employer · ABN 84 123 456 789</p>
+  </div>
+</footer>
+
+<!-- scripts -->
+<script>
+  // ==================== CONFIGURATION ====================
+  const STORAGE_KEY = 'jobApplications';
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+  // ==================== NOTIFICATION SYSTEM ====================
+  function showNotification(title, message, type = 'success') {
+    const notification = document.getElementById('notification');
+    const icon = notification.querySelector('i');
+    const titleEl = document.getElementById('notificationTitle');
+    const messageEl = document.getElementById('notificationMessage');
+    
+    icon.className = type === 'success' ? 'fas fa-check-circle' : 
+                     type === 'error' ? 'fas fa-exclamation-circle' : 
+                     'fas fa-exclamation-triangle';
+    icon.style.color = type === 'success' ? 'var(--success)' : 
+                       type === 'error' ? 'var(--danger)' : 
+                       'var(--warning)';
+    notification.style.borderLeftColor = type === 'success' ? 'var(--success)' : 
+                                         type === 'error' ? 'var(--danger)' : 
+                                         'var(--warning)';
+    
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+    notification.classList.add('show');
+    
+    setTimeout(() => {
+      notification.classList.remove('show');
+    }, 5000);
+  }
+
+  function hideNotification() {
+    document.getElementById('notification').classList.remove('show');
+  }
+
+  // ==================== FILE UPLOAD HANDLING ====================
+  const uploadedFiles = {
+    id: null,
+    health: null
+  };
+
+  function handleFileUpload(type, input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE) {
+      showNotification('Error', 'File size must be less than 5MB', 'error');
+      input.value = '';
+      return;
+    }
+
+    // Validate file type
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      showNotification('Error', 'Please upload a PDF or image file', 'error');
+      input.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      uploadedFiles[type] = {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        data: e.target.result,
+        uploadTime: new Date().toISOString()
+      };
+
+      // Show filename
+      const fileNameElement = document.getElementById(type + 'FileName');
+      if (fileNameElement) {
+        fileNameElement.textContent = `✓ ${file.name}`;
+      }
+
+      showNotification('Success', `${type.toUpperCase()} file uploaded successfully`);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // ==================== FORM VALIDATION ====================
+  function validateForm() {
+    let isValid = true;
+    const errors = [];
+
+    // Clear all error messages
+    document.querySelectorAll('.error-message').forEach(el => el.classList.remove('show'));
+    document.querySelectorAll('input, select').forEach(el => el.classList.remove('error'));
+
+    // Validate Full Name
+    const fullName = document.getElementById('fullName').value.trim();
+    if (!fullName) {
+      document.getElementById('fullNameError').classList.add('show');
+      document.getElementById('fullName').classList.add('error');
+      isValid = false;
+      errors.push('Full name is required');
+    }
+
+    // Validate Date of Birth
+    const dob = document.getElementById('dob').value;
+    if (!dob) {
+      document.getElementById('dobError').classList.add('show');
+      document.getElementById('dob').classList.add('error');
+      isValid = false;
+      errors.push('Date of birth is required');
+    }
+
+    // Validate Nationality
+    const nationality = document.getElementById('nationality').value.trim();
+    if (!nationality) {
+      document.getElementById('nationalityError').classList.add('show');
+      document.getElementById('nationality').classList.add('error');
+      isValid = false;
+      errors.push('Nationality is required');
+    }
+
+    // Validate Phone
+    const phone = document.getElementById('phone').value.trim();
+    if (!phone) {
+      document.getElementById('phoneError').classList.add('show');
+      document.getElementById('phone').classList.add('error');
+      isValid = false;
+      errors.push('Phone number is required');
+    }
+
+    // Validate Email
+    const email = document.getElementById('email').value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      document.getElementById('emailError').classList.add('show');
+      document.getElementById('email').classList.add('error');
+      isValid = false;
+      errors.push('Valid email is required');
+    }
+
+    // Validate Address
+    const address = document.getElementById('address').value.trim();
+    if (!address) {
+      document.getElementById('addressError').classList.add('show');
+      document.getElementById('address').classList.add('error');
+      isValid = false;
+      errors.push('Address is required');
+    }
+
+    // Validate Emergency Contact
+    const emergency = document.getElementById('emergency').value.trim();
+    if (!emergency) {
+      document.getElementById('emergencyError').classList.add('show');
+      document.getElementById('emergency').classList.add('error');
+      isValid = false;
+      errors.push('Emergency contact is required');
+    }
+
+    // Validate ID
+    const idNumber = document.getElementById('idNumber').value.trim();
+    if (!idNumber) {
+      document.getElementById('idNumberError').classList.add('show');
+      document.getElementById('idNumber').classList.add('error');
+      isValid = false;
+      errors.push('ID number is required');
+    }
+
+    const idType = document.getElementById('idType').value;
+    if (!idType) {
+      document.getElementById('idTypeError').classList.add('show');
+      document.getElementById('idType').classList.add('error');
+      isValid = false;
+      errors.push('ID type is required');
+    }
+
+    if (!uploadedFiles.id) {
+      document.getElementById('idUploadError').classList.add('show');
+      isValid = false;
+      errors.push('ID copy is required');
+    }
+
+    // Validate TFN
+    const tfn = document.getElementById('tfn').value.trim();
+    if (!tfn) {
+      document.getElementById('tfnError').classList.add('show');
+      document.getElementById('tfn').classList.add('error');
+      isValid = false;
+      errors.push('TFN is required');
+    }
+
+    // Validate Health Insurance
+    const insuranceProvider = document.getElementById('insuranceProvider').value.trim();
+    if (!insuranceProvider) {
+      document.getElementById('insuranceProviderError').classList.add('show');
+      document.getElementById('insuranceProvider').classList.add('error');
+      isValid = false;
+      errors.push('Insurance provider is required');
+    }
+
+    const insuranceNumber = document.getElementById('insuranceNumber').value.trim();
+    if (!insuranceNumber) {
+      document.getElementById('insuranceNumberError').classList.add('show');
+      document.getElementById('insuranceNumber').classList.add('error');
+      isValid = false;
+      errors.push('Insurance number is required');
+    }
+
+    if (!uploadedFiles.health) {
+      document.getElementById('healthUploadError').classList.add('show');
+      isValid = false;
+      errors.push('Health card is required');
+    }
+
+    // Validate Work Preference
+    const position = document.getElementById('position').value;
+    if (!position) {
+      document.getElementById('positionError').classList.add('show');
+      document.getElementById('position').classList.add('error');
+      isValid = false;
+      errors.push('Position is required');
+    }
+
+    const workType = document.getElementById('workType').value;
+    if (!workType) {
+      document.getElementById('workTypeError').classList.add('show');
+      document.getElementById('workType').classList.add('error');
+      isValid = false;
+      errors.push('Work type is required');
+    }
+
+    const startDate = document.getElementById('startDate').value;
+    if (!startDate) {
+      document.getElementById('startDateError').classList.add('show');
+      document.getElementById('startDate').classList.add('error');
+      isValid = false;
+      errors.push('Start date is required');
+    }
+
+    // Validate Terms
+    const terms = document.getElementById('terms').checked;
+    if (!terms) {
+      document.getElementById('termsError').classList.add('show');
+      isValid = false;
+      errors.push('You must agree to the terms');
+    }
+
+    return { isValid, errors };
+  }
+
+  // ==================== FORM SUBMISSION ====================
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    // Validate form
+    const { isValid, errors } = validateForm();
+
+    if (!isValid) {
+      showNotification('Validation Error', 'Please fill in all required fields', 'error');
+      return;
+    }
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+    // Collect form data
+    const applicationData = {
+      id: 'APP-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+      timestamp: new Date().toISOString(),
+      personalInfo: {
+        fullName: document.getElementById('fullName').value.trim(),
+        dob: document.getElementById('dob').value,
+        nationality: document.getElementById('nationality').value.trim(),
+        gender: document.getElementById('gender').value,
+        phone: document.getElementById('phone').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        address: document.getElementById('address').value.trim(),
+        emergency: document.getElementById('emergency').value.trim()
+      },
+      identification: {
+        idNumber: document.getElementById('idNumber').value.trim(),
+        idType: document.getElementById('idType').value,
+        idFile: uploadedFiles.id
+      },
+      tax: {
+        tfn: document.getElementById('tfn').value.trim()
+      },
+      health: {
+        provider: document.getElementById('insuranceProvider').value.trim(),
+        number: document.getElementById('insuranceNumber').value.trim(),
+        cardFile: uploadedFiles.health
+      },
+      bonus: {
+        join: document.querySelector('input[name="bonus"]:checked').value,
+        percentage: document.getElementById('bonusPercentage').value,
+        bankName: document.getElementById('bankName').value.trim(),
+        bankAccount: document.getElementById('bankAccount').value.trim()
+      },
+      workPreference: {
+        position: document.getElementById('position').value,
+        workType: document.getElementById('workType').value,
+        startDate: document.getElementById('startDate').value,
+        needsAccommodation: document.querySelector('input[name="accommodation"]:checked').value
+      },
+      status: 'pending',
+      ip: '192.168.1.' + Math.floor(Math.random() * 255),
+      userAgent: navigator.userAgent
+    };
+
+    // Save to localStorage (simulates database)
+    setTimeout(() => {
+      try {
+        // Get existing applications
+        const applications = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        applications.push(applicationData);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(applications));
+
+        // Also send to admin notifications
+        const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
+        notifications.push({
+          type: 'new_application',
+          message: `New application from ${applicationData.personalInfo.fullName}`,
+          timestamp: new Date().toISOString(),
+          data: {
+            id: applicationData.id,
+            name: applicationData.personalInfo.fullName,
+            email: applicationData.personalInfo.email,
+            position: applicationData.workPreference.position
+          }
+        });
+        localStorage.setItem('adminNotifications', JSON.stringify(notifications));
+
+        // Show success message
+        showNotification(
+          'Application Submitted!', 
+          `Thank you ${applicationData.personalInfo.fullName}. We'll review your application and contact you soon.`,
+          'success'
+        );
+
+        // Reset form
+        document.getElementById('applicationForm').reset();
+        uploadedFiles.id = null;
+        uploadedFiles.health = null;
+        document.getElementById('idFileName').textContent = '';
+        document.getElementById('healthFileName').textContent = '';
+
+        // Log to console (for debugging)
+        console.log('Application submitted:', applicationData);
+
+      } catch (error) {
+        console.error('Error saving application:', error);
+        showNotification('Error', 'Failed to submit application. Please try again.', 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Application';
+      }
+    }, 1500); // Simulate network delay
+  }
+
+  // ==================== MOBILE MENU ====================
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileNav = document.getElementById('mobileNav');
+  const overlay = document.getElementById('overlay');
+  const closeBtn = document.getElementById('closeBtn');
+
+  function openMenu() {
+    mobileNav.classList.add('active');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu() {
+    mobileNav.classList.remove('active');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  menuBtn.addEventListener('click', openMenu);
+  closeBtn.addEventListener('click', closeMenu);
+  overlay.addEventListener('click', closeMenu);
+
+  // smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+        closeMenu();
+      }
+    });
+  });
+
+  // Drag and drop for file uploads
+  document.querySelectorAll('.file-upload').forEach(upload => {
+    upload.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      upload.style.borderColor = 'var(--accent)';
+      upload.style.background = '#f0f7f0';
+    });
+
+    upload.addEventListener('dragleave', () => {
+      upload.style.borderColor = 'var(--gray)';
+      upload.style.background = 'var(--light)';
+    });
+
+    upload.addEventListener('drop', (e) => {
+      e.preventDefault();
+      upload.style.borderColor = 'var(--gray)';
+      upload.style.background = 'var(--light)';
+      
+      const input = upload.querySelector('input[type="file"]');
+      if (input && e.dataTransfer.files.length > 0) {
+        input.files = e.dataTransfer.files;
+        const event = new Event('change', { bubbles: true });
+        input.dispatchEvent(event);
+      }
+    });
+  });
+
+  // Real-time validation on input
+  document.querySelectorAll('input, select').forEach(field => {
+    field.addEventListener('input', function() {
+      this.classList.remove('error');
+      const errorId = this.id + 'Error';
+      const errorEl = document.getElementById(errorId);
+      if (errorEl) errorEl.classList.remove('show');
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carlton Hill Station | Master Admin Panel</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #f0f2f5;
+      color: #1e2a1e;
+      line-height: 1.5;
+    }
+
+    :root {
+      --primary: #1a3a2a;
+      --primary-light: #2d5a3d;
+      --accent: #c49a6b;
+      --accent-light: #dbb68c;
+      --light: #f9f6ef;
+      --gray: #eae7de;
+      --danger: #b04a4a;
+      --success: #4caf50;
+    }
+
+    /* Login Page */
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--primary) 0%, #2d5a3d 100%);
+      padding: 1rem;
+    }
+
+    .login-card {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+
+    .login-card h2 {
+      text-align: center;
+      color: var(--primary);
+      margin-bottom: 2rem;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .login-input {
+      width: 100%;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border: 2px solid var(--gray);
+      border-radius: 5px;
+      font-family: inherit;
+    }
+
+    .login-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 1rem;
+      background: var(--accent);
+      color: var(--primary);
+      border: none;
+      border-radius: 5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .login-btn:hover {
+      background: var(--accent-light);
+    }
+
+    .login-error {
+      background: #ffebee;
+      border-left: 4px solid var(--danger);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      color: var(--danger);
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .login-note {
+      text-align: center;
+      margin-top: 1rem;
+      color: #7a8a7a;
+      font-size: 0.85rem;
+    }
+
+    /* Admin Dashboard */
+    .admin-nav {
+      background: white;
+      border-bottom: 1px solid var(--gray);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .logout-btn {
+      background: none;
+      border: 1px solid var(--danger);
+      color: var(--danger);
+      padding: 0.5rem 1.5rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    .admin-container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--light);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-size: 1.5rem;
+    }
+
+    .stat-info h3 {
+      font-size: 1.8rem;
+      color: var(--primary);
+      line-height: 1.2;
+    }
+
+    .stat-info p {
+      color: #7a8a7a;
+      font-size: 0.9rem;
+    }
+
+    /* Tab Navigation */
+    .tab-nav {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: 0.8rem 1.5rem;
+      background: white;
+      border: 1px solid var(--gray);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+      font-weight: 500;
+      color: #5f6d5a;
+    }
+
+    .tab-btn:hover {
+      border-color: var(--accent);
+      color: var(--primary);
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Admin Cards */
+    .admin-card {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+      margin-bottom: 2rem;
+      display: none;
+    }
+
+    .admin-card.active {
+      display: block;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--gray);
+    }
+
+    .card-header h2 {
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .refresh-btn {
+      background: var(--light);
+      border: 1px solid var(--gray);
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .refresh-btn:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    /* Tables */
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      text-align: left;
+      padding: 1rem;
+      background: var(--light);
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--gray);
+      color: #4a5f4a;
+    }
+
+    tr:hover td {
+      background: #f8faf8;
+    }
+
+    .badge {
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .badge-success {
+      background: #e6f7e6;
+      color: #2e7d32;
+    }
+
+    .badge-warning {
+      background: #fff3e0;
+      color: #ed6c02;
+    }
+
+    .badge-info {
+      background: #e3f2fd;
+      color: #0288d1;
+    }
+
+    .view-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.3rem 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    .view-btn:hover {
+      background: var(--primary-light);
+    }
+
+    /* Upload Area */
+    .upload-area {
+      border: 2px dashed var(--accent);
+      padding: 2.5rem;
+      text-align: center;
+      background: var(--light);
+      cursor: pointer;
+      transition: 0.2s;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+    }
+
+    .upload-area:hover {
+      background: #f0e9e0;
+      border-color: var(--primary);
+    }
+
+    .upload-area i {
+      font-size: 3rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    /* Documents List */
+    .doc-list {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .doc-item {
+      background: var(--light);
+      border: 1px solid var(--gray);
+      padding: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: 0.2s;
+      border-radius: 8px;
+    }
+
+    .doc-item:hover {
+      border-color: var(--accent);
+    }
+
+    .doc-info {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+    }
+
+    .doc-info i {
+      font-size: 1.8rem;
+      color: var(--accent);
+    }
+
+    .doc-details h4 {
+      color: var(--primary);
+      margin-bottom: 0.2rem;
+    }
+
+    .doc-details p {
+      color: #7a8a7a;
+      font-size: 0.85rem;
+    }
+
+    .doc-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .edit-btn, .delete-btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .edit-btn {
+      background: var(--accent);
+      color: var(--primary);
+    }
+
+    .edit-btn:hover {
+      background: var(--accent-light);
+    }
+
+    .delete-btn {
+      background: var(--danger);
+      color: white;
+    }
+
+    .delete-btn:hover {
+      background: #c04444;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-header h3 {
+      color: var(--primary);
+    }
+
+    .modal-close {
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #7a8a7a;
+    }
+
+    .modal-body {
+      margin-bottom: 1.5rem;
+    }
+
+    .detail-row {
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--gray);
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.2rem;
+    }
+
+    .detail-value {
+      color: #4a5f4a;
+      word-break: break-word;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #7a8a7a;
+    }
+
+    @media (max-width: 900px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .doc-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+      }
+      .doc-info {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Login Page -->
+  <div id="loginPage" class="login-container">
+    <div class="login-card">
+      <h2>Master Admin Login</h2>
+      <div id="loginError" class="login-error">
+        <i class="fas fa-exclamation-circle"></i> Invalid credentials
+      </div>
+      <input type="text" id="username" class="login-input" placeholder="Username" value="admin">
+      <input type="password" id="password" class="login-input" placeholder="Password" value="admin123">
+      <button class="login-btn" onclick="handleLogin()">Access Master Dashboard</button>
+      <p class="login-note">Use: admin / admin123</p>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div id="dashboardPage" style="display: none;">
+    <div class="admin-nav">
+      <div class="logo">CARLTON HILL · MASTER ADMIN</div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+
+    <div class="admin-container">
+      <!-- Stats Overview -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-file-invoice"></i></div>
+          <div class="stat-info">
+            <h3 id="taxCount">0</h3>
+            <p>Tax Submissions</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-file-signature"></i></div>
+          <div class="stat-info">
+            <h3 id="applicationCount">0</h3>
+            <p>Job Applications</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-envelope"></i></div>
+          <div class="stat-info">
+            <h3 id="contactCount">0</h3>
+            <p>Contact Messages</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-users"></i></div>
+          <div class="stat-info">
+            <h3 id="loginCount">0</h3>
+            <p>User Logins</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('tax')">💰 Tax Refund Submissions</button>
+        <button class="tab-btn" onclick="switchTab('applications')">📝 Job Applications</button>
+        <button class="tab-btn" onclick="switchTab('contact')">📬 Contact Messages</button>
+        <button class="tab-btn" onclick="switchTab('documents')">📄 Resource Documents</button>
+        <button class="tab-btn" onclick="switchTab('logins')">🔐 User Logins</button>
+      </div>
+
+      <!-- Tax Submissions Tab -->
+      <div id="taxTab" class="admin-card active">
+        <div class="card-header">
+          <h2><i class="fas fa-file-invoice"></i> Tax Refund Submissions</h2>
+          <button class="refresh-btn" onclick="loadTaxSubmissions()"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+        <div class="table-responsive">
+          <table id="taxTable">
+            <thead>
+              <tr>
+                <th>Submission ID</th>
+                <th>Email</th>
+                <th>Date</th>
+                <th>Documents</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="taxBody">
+              <!-- Tax submissions will be loaded here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Job Applications Tab -->
+      <div id="applicationsTab" class="admin-card">
+        <div class="card-header">
+          <h2><i class="fas fa-file-signature"></i> Job Applications</h2>
+          <button class="refresh-btn" onclick="loadApplications()"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+        <div class="table-responsive">
+          <table id="applicationsTable">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Position</th>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="applicationsBody">
+              <!-- Applications will be loaded here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Contact Messages Tab -->
+      <div id="contactTab" class="admin-card">
+        <div class="card-header">
+          <h2><i class="fas fa-envelope"></i> Contact Messages</h2>
+          <button class="refresh-btn" onclick="loadContacts()"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+        <div class="table-responsive">
+          <table id="contactTable">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Subject</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="contactBody">
+              <!-- Contact messages will be loaded here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Resource Documents Tab -->
+      <div id="documentsTab" class="admin-card">
+        <div class="card-header">
+          <h2><i class="fas fa-file-alt"></i> Resource Documents</h2>
+          <button class="refresh-btn" onclick="loadDocuments()"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+
+        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <p>Click to upload files (PDF, Word, Images, Text)</p>
+          <small>Files are stored and available for download immediately</small>
+          <input type="file" id="fileInput" multiple style="display: none;" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt">
+        </div>
+
+        <div id="docList" class="doc-list">
+          <!-- Documents will be listed here -->
+        </div>
+      </div>
+
+      <!-- User Logins Tab -->
+      <div id="loginsTab" class="admin-card">
+        <div class="card-header">
+          <h2><i class="fas fa-users"></i> User Login History</h2>
+          <button class="refresh-btn" onclick="loadLogins()"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+        <div class="table-responsive">
+          <table id="loginsTable">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Login Time</th>
+                <th>IP Address</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="loginsBody">
+              <!-- Logins will be loaded here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div id="detailModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Details</h3>
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Modal content will be loaded here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==================== DATA STORAGE KEYS ====================
+    const STORAGE_KEYS = {
+      TAX_SUBMISSIONS: 'taxSubmissions',
+      JOB_APPLICATIONS: 'jobApplications',
+      CONTACT_MESSAGES: 'contactMessages',
+      RESOURCE_DOCUMENTS: 'carltonHillRealDocuments',
+      USER_LOGINS: 'userLogins',
+      NOTIFICATIONS: 'adminNotifications'
+    };
+
+    // ==================== INITIALIZE DEFAULT DATA ====================
+    function initializeData() {
+      // Tax Submissions
+      if (!localStorage.getItem(STORAGE_KEYS.TAX_SUBMISSIONS)) {
+        localStorage.setItem(STORAGE_KEYS.TAX_SUBMISSIONS, JSON.stringify([]));
+      }
+
+      // Job Applications
+      if (!localStorage.getItem(STORAGE_KEYS.JOB_APPLICATIONS)) {
+        const sampleApplications = [
+          {
+            id: 'APP-' + Date.now(),
+            name: 'Michael Chen',
+            email: 'michael.chen@email.com',
+            phone: '+61 412 345 678',
+            position: 'Cattle Farm Assistant',
+            type: 'Full-time',
+            experience: '2 years',
+            date: new Date().toISOString(),
+            status: 'pending'
+          },
+          {
+            id: 'APP-' + (Date.now() + 1),
+            name: 'Sarah Williams',
+            email: 'sarah.w@email.com',
+            phone: '+61 423 456 789',
+            position: 'Fruit Picker',
+            type: 'Part-time',
+            experience: '1 year',
+            date: new Date().toISOString(),
+            status: 'reviewed'
+          }
+        ];
+        localStorage.setItem(STORAGE_KEYS.JOB_APPLICATIONS, JSON.stringify(sampleApplications));
+      }
+
+      // Contact Messages
+      if (!localStorage.getItem(STORAGE_KEYS.CONTACT_MESSAGES)) {
+        const sampleMessages = [
+          {
+            id: 'MSG-' + Date.now(),
+            name: 'John Smith',
+            email: 'john.smith@email.com',
+            subject: 'Accommodation Inquiry',
+            message: 'I would like to know more about the private cabins available.',
+            date: new Date().toISOString(),
+            status: 'unread'
+          }
+        ];
+        localStorage.setItem(STORAGE_KEYS.CONTACT_MESSAGES, JSON.stringify(sampleMessages));
+      }
+
+      // User Logins
+      if (!localStorage.getItem(STORAGE_KEYS.USER_LOGINS)) {
+        localStorage.setItem(STORAGE_KEYS.USER_LOGINS, JSON.stringify([]));
+      }
+
+      // Resource Documents
+      if (!localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS)) {
+        const defaultDocs = [
+          {
+            id: Date.now().toString(),
+            name: 'Sample Employment Letter',
+            description: 'Official employment offer template',
+            type: 'PDF',
+            size: '245 KB',
+            icon: 'fa-file-pdf',
+            fileName: 'employment-letter.pdf',
+            content: 'EMPLOYMENT OFFER LETTER\n\nDear Applicant,\n\nWe are pleased to offer you a position...'
+          },
+          {
+            id: (Date.now() + 1).toString(),
+            name: 'Farm Safety Rules',
+            description: 'Essential safety guidelines',
+            type: 'PDF',
+            size: '312 KB',
+            icon: 'fa-file-pdf',
+            fileName: 'safety-rules.pdf',
+            content: 'FARM SAFETY RULES\n\n1. Always wear appropriate PPE...'
+          }
+        ];
+        localStorage.setItem(STORAGE_KEYS.RESOURCE_DOCUMENTS, JSON.stringify(defaultDocs));
+      }
+    }
+
+    // ==================== LOAD FUNCTIONS ====================
+    function loadTaxSubmissions() {
+      const submissions = JSON.parse(localStorage.getItem(STORAGE_KEYS.TAX_SUBMISSIONS) || '[]');
+      const tbody = document.getElementById('taxBody');
+      const count = document.getElementById('taxCount');
+      
+      count.textContent = submissions.length;
+
+      if (submissions.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No tax submissions yet</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = submissions.map(sub => `
+        <tr>
+          <td><code>${sub.id}</code></td>
+          <td>${sub.email}</td>
+          <td>${new Date(sub.timestamp).toLocaleString()}</td>
+          <td>${Object.keys(sub.documents || {}).filter(k => sub.documents[k]).length} files</td>
+          <td><span class="badge badge-${sub.status === 'pending_review' ? 'warning' : 'success'}">${sub.status}</span></td>
+          <td>
+            <button class="view-btn" onclick="viewTaxDetails('${sub.id}')">
+              <i class="fas fa-eye"></i> View
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function loadApplications() {
+      const apps = JSON.parse(localStorage.getItem(STORAGE_KEYS.JOB_APPLICATIONS) || '[]');
+      const tbody = document.getElementById('applicationsBody');
+      const count = document.getElementById('applicationCount');
+      
+      count.textContent = apps.length;
+
+      if (apps.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No job applications yet</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = apps.map(app => `
+        <tr>
+          <td>${app.name}</td>
+          <td>${app.email}</td>
+          <td>${app.position}</td>
+          <td>${app.type}</td>
+          <td>${new Date(app.date).toLocaleDateString()}</td>
+          <td><span class="badge badge-${app.status === 'pending' ? 'warning' : 'success'}">${app.status}</span></td>
+          <td>
+            <button class="view-btn" onclick="viewApplicationDetails('${app.id}')">
+              <i class="fas fa-eye"></i> View
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function loadContacts() {
+      const msgs = JSON.parse(localStorage.getItem(STORAGE_KEYS.CONTACT_MESSAGES) || '[]');
+      const tbody = document.getElementById('contactBody');
+      const count = document.getElementById('contactCount');
+      
+      count.textContent = msgs.length;
+
+      if (msgs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No contact messages yet</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = msgs.map(msg => `
+        <tr>
+          <td>${msg.name}</td>
+          <td>${msg.email}</td>
+          <td>${msg.subject}</td>
+          <td>${new Date(msg.date).toLocaleString()}</td>
+          <td><span class="badge badge-${msg.status === 'unread' ? 'warning' : 'info'}">${msg.status}</span></td>
+          <td>
+            <button class="view-btn" onclick="viewMessageDetails('${msg.id}')">
+              <i class="fas fa-eye"></i> View
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function loadLogins() {
+      const logins = JSON.parse(localStorage.getItem(STORAGE_KEYS.USER_LOGINS) || '[]');
+      const tbody = document.getElementById('loginsBody');
+      const count = document.getElementById('loginCount');
+      
+      count.textContent = logins.length;
+
+      if (logins.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No login records yet</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = logins.slice().reverse().map(login => `
+        <tr>
+          <td>${login.email}</td>
+          <td>${new Date(login.timestamp).toLocaleString()}</td>
+          <td>${login.ip || '192.168.1.' + Math.floor(Math.random() * 255)}</td>
+          <td><span class="badge badge-success">Success</span></td>
+        </tr>
+      `).join('');
+    }
+
+    // ==================== DOCUMENT MANAGEMENT ====================
+    let documents = [];
+
+    function loadDocuments() {
+      const saved = localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS);
+      documents = saved ? JSON.parse(saved) : [];
+      renderDocuments();
+    }
+
+    function renderDocuments() {
+      const list = document.getElementById('docList');
+
+      if (documents.length === 0) {
+        list.innerHTML = '<div class="empty-state">📁 No documents yet. Upload your first file.</div>';
+        return;
+      }
+
+      list.innerHTML = documents.map((doc, index) => `
+        <div class="doc-item">
+          <div class="doc-info">
+            <i class="fas ${doc.icon || 'fa-file-pdf'}"></i>
+            <div class="doc-details">
+              <h4>${doc.name}</h4>
+              <p>${doc.type} · ${doc.size} · Added: ${new Date(parseInt(doc.id)).toLocaleDateString()}</p>
+            </div>
+          </div>
+          <div class="doc-actions">
+            <button class="edit-btn" onclick="editDocument(${index})">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="delete-btn" onclick="deleteDocument(${index})">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function handleFileUpload(files) {
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const newDoc = {
+            id: Date.now().toString(),
+            name: file.name.replace(/\.[^/.]+$/, ""),
+            description: `Uploaded on ${new Date().toLocaleDateString()}`,
+            type: file.type.split('/')[1]?.toUpperCase() || file.name.split('.').pop()?.toUpperCase() || 'FILE',
+            size: (file.size / 1024).toFixed(0) + ' KB',
+            icon: file.type.includes('pdf') ? 'fa-file-pdf' : 
+                  file.type.includes('image') ? 'fa-file-image' : 
+                  file.type.includes('word') ? 'fa-file-word' : 'fa-file',
+            fileName: file.name,
+            content: e.target.result
+          };
+          documents.push(newDoc);
+          saveDocuments();
+          renderDocuments();
+          
+          // Create notification
+          addNotification('document_upload', `New document uploaded: ${newDoc.name}`);
+        };
+        reader.readAsText(file);
+      });
+    }
+
+    function saveDocuments() {
+      localStorage.setItem(STORAGE_KEYS.RESOURCE_DOCUMENTS, JSON.stringify(documents));
+    }
+
+    function editDocument(index) {
+      const doc = documents[index];
+      const newName = prompt('Edit document name:', doc.name);
+      if (newName) doc.name = newName;
+      const newDesc = prompt('Edit description:', doc.description);
+      if (newDesc) doc.description = newDesc;
+      saveDocuments();
+      renderDocuments();
+    }
+
+    function deleteDocument(index) {
+      if (confirm('Delete this document? This cannot be undone.')) {
+        const doc = documents[index];
+        documents.splice(index, 1);
+        saveDocuments();
+        renderDocuments();
+        addNotification('document_delete', `Document deleted: ${doc.name}`);
+      }
+    }
+
+    // ==================== DETAIL VIEW FUNCTIONS ====================
+    function viewTaxDetails(id) {
+      const submissions = JSON.parse(localStorage.getItem(STORAGE_KEYS.TAX_SUBMISSIONS) || '[]');
+      const sub = submissions.find(s => s.id === id);
+      
+      if (!sub) return;
+
+      let docsHtml = '';
+      for (let [type, file] of Object.entries(sub.documents || {})) {
+        if (file) {
+          docsHtml += `<div>✓ ${type.toUpperCase()}: ${file.name} (${(file.size/1024).toFixed(0)} KB)</div>`;
+        }
+      }
+
+      const modalBody = `
+        <div class="detail-row">
+          <div class="detail-label">Submission ID</div>
+          <div class="detail-value">${sub.id}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Email</div>
+          <div class="detail-value">${sub.email}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Date</div>
+          <div class="detail-value">${new Date(sub.timestamp).toLocaleString()}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Status</div>
+          <div class="detail-value">${sub.status}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">IP Address</div>
+          <div class="detail-value">${sub.ip || 'N/A'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Uploaded Documents</div>
+          <div class="detail-value">${docsHtml || 'No documents'}</div>
+        </div>
+      `;
+
+      document.getElementById('modalTitle').textContent = 'Tax Submission Details';
+      document.getElementById('modalBody').innerHTML = modalBody;
+      document.getElementById('detailModal').classList.add('active');
+    }
+
+    function viewApplicationDetails(id) {
+      const apps = JSON.parse(localStorage.getItem(STORAGE_KEYS.JOB_APPLICATIONS) || '[]');
+      const app = apps.find(a => a.id === id);
+
+      const modalBody = `
+        <div class="detail-row">
+          <div class="detail-label">Name</div>
+          <div class="detail-value">${app.name}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Email</div>
+          <div class="detail-value">${app.email}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Phone</div>
+          <div class="detail-value">${app.phone}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Position</div>
+          <div class="detail-value">${app.position}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Type</div>
+          <div class="detail-value">${app.type}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Experience</div>
+          <div class="detail-value">${app.experience}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Application Date</div>
+          <div class="detail-value">${new Date(app.date).toLocaleString()}</div>
+        </div>
+      `;
+
+      document.getElementById('modalTitle').textContent = 'Application Details';
+      document.getElementById('modalBody').innerHTML = modalBody;
+      document.getElementById('detailModal').classList.add('active');
+    }
+
+    function viewMessageDetails(id) {
+      const msgs = JSON.parse(localStorage.getItem(STORAGE_KEYS.CONTACT_MESSAGES) || '[]');
+      const msg = msgs.find(m => m.id === id);
+
+      // Mark as read
+      msg.status = 'read';
+      localStorage.setItem(STORAGE_KEYS.CONTACT_MESSAGES, JSON.stringify(msgs));
+      loadContacts();
+
+      const modalBody = `
+        <div class="detail-row">
+          <div class="detail-label">Name</div>
+          <div class="detail-value">${msg.name}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Email</div>
+          <div class="detail-value">${msg.email}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Subject</div>
+          <div class="detail-value">${msg.subject}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Date</div>
+          <div class="detail-value">${new Date(msg.date).toLocaleString()}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Message</div>
+          <div class="detail-value">${msg.message}</div>
+        </div>
+      `;
+
+      document.getElementById('modalTitle').textContent = 'Contact Message';
+      document.getElementById('modalBody').innerHTML = modalBody;
+      document.getElementById('detailModal').classList.add('active');
+    }
+
+    // ==================== HELPER FUNCTIONS ====================
+    function addNotification(type, message) {
+      const notifications = JSON.parse(localStorage.getItem(STORAGE_KEYS.NOTIFICATIONS) || '[]');
+      notifications.push({
+        type,
+        message,
+        timestamp: new Date().toISOString()
+      });
+      localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(notifications));
+    }
+
+    function switchTab(tab) {
+      // Update tab buttons
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      // Hide all tabs
+      document.querySelectorAll('.admin-card').forEach(card => card.classList.remove('active'));
+
+      // Show selected tab
+      document.getElementById(tab + 'Tab').classList.add('active');
+
+      // Load data for tab
+      switch(tab) {
+        case 'tax':
+          loadTaxSubmissions();
+          break;
+        case 'applications':
+          loadApplications();
+          break;
+        case 'contact':
+          loadContacts();
+          break;
+        case 'documents':
+          loadDocuments();
+          break;
+        case 'logins':
+          loadLogins();
+          break;
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('detailModal').classList.remove('active');
+    }
+
+    // ==================== LOGIN SYSTEM ====================
+    function handleLogin() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      
+      if (username === 'admin' && password === 'admin123') {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('dashboardPage').style.display = 'block';
+        
+        // Initialize all data
+        initializeData();
+        
+        // Load all tabs
+        loadTaxSubmissions();
+        loadApplications();
+        loadContacts();
+        loadDocuments();
+        loadLogins();
+
+        // Add admin login notification
+        addNotification('admin_login', 'Admin logged in');
+      } else {
+        document.getElementById('loginError').style.display = 'flex';
+      }
+    }
+
+    function logout() {
+      document.getElementById('loginPage').style.display = 'flex';
+      document.getElementById('dashboardPage').style.display = 'none';
+      addNotification('admin_logout', 'Admin logged out');
+    }
+
+    // ==================== INITIALIZATION ====================
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set up file upload
+      const fileInput = document.getElementById('fileInput');
+      if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+          handleFileUpload(e.target.files);
+          fileInput.value = '';
+        });
+      }
+
+      // Drag and drop
+      const uploadArea = document.querySelector('.upload-area');
+      if (uploadArea) {
+        uploadArea.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          uploadArea.style.borderColor = 'var(--primary)';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+          uploadArea.style.borderColor = 'var(--accent)';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+          e.preventDefault();
+          uploadArea.style.borderColor = 'var(--accent)';
+          handleFileUpload(e.dataTransfer.files);
+        });
+      }
+    });
+
+    // Auto-refresh every 30 seconds
+    setInterval(() => {
+      if (document.getElementById('dashboardPage').style.display === 'block') {
+        loadTaxSubmissions();
+        loadApplications();
+        loadContacts();
+        loadLogins();
+      }
+    }, 30000);
+  </script>
+</body>
+</html>
