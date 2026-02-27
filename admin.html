@@ -378,13 +378,6 @@
       background: var(--primary-light);
     }
 
-    .status-select {
-      padding: 0.3rem;
-      border: 1px solid var(--gray);
-      border-radius: 4px;
-      font-size: 0.8rem;
-    }
-
     /* Upload Area */
     .upload-area {
       border: 2px dashed var(--accent);
@@ -794,16 +787,6 @@
   </div>
 
   <script>
-    // ==================== CONFIGURATION ====================
-    const STORAGE_KEYS = {
-      TAX_SUBMISSIONS: 'carltonHillTaxSubmissions',
-      JOB_APPLICATIONS: 'carltonHillJobApplications',
-      CONTACT_MESSAGES: 'carltonHillContactMessages',
-      RESOURCE_DOCUMENTS: 'carltonHillResources',
-      USER_LOGINS: 'carltonHillUserLogins',
-      NOTIFICATIONS: 'carltonHillNotifications'
-    };
-
     // ==================== NOTIFICATION SYSTEM ====================
     function showNotification(title, message, type = 'success') {
       const notification = document.getElementById('notification');
@@ -834,8 +817,30 @@
       document.getElementById('notification').classList.remove('show');
     }
 
-    // ==================== LOAD ALL DATA ====================
+    // ==================== ALL POSSIBLE STORAGE KEYS FROM YOUR PAGES ====================
+    const STORAGE_KEYS = {
+      // Job Applications (from applications.html)
+      JOB_APPLICATIONS: 'jobApplications',
+      
+      // Contact Messages (from contact.html)
+      CONTACT_MESSAGES: 'contactMessages',
+      
+      // Tax Submissions (from tax-portal.html)
+      TAX_SUBMISSIONS: 'taxSubmissions',
+      
+      // Resource Documents (from resources.html)
+      RESOURCE_DOCUMENTS: 'carltonHillRealDocuments',
+      
+      // User Logins (from tax portal)
+      USER_LOGINS: 'userLogins',
+      
+      // Admin Notifications
+      NOTIFICATIONS: 'adminNotifications'
+    };
+
+    // ==================== LOAD ALL DATA FROM ALL POSSIBLE SOURCES ====================
     function loadAllData() {
+      console.log('Loading all data...');
       loadTaxSubmissions();
       loadApplications();
       loadContacts();
@@ -845,7 +850,28 @@
 
     function loadTaxSubmissions() {
       try {
-        const submissions = JSON.parse(localStorage.getItem(STORAGE_KEYS.TAX_SUBMISSIONS)) || [];
+        // Try multiple possible keys where tax data might be stored
+        let submissions = [];
+        
+        // Try the key from tax portal
+        const taxData = localStorage.getItem(STORAGE_KEYS.TAX_SUBMISSIONS);
+        if (taxData) {
+          submissions = JSON.parse(taxData);
+        }
+        
+        // Also check for any other tax-related keys
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && (key.toLowerCase().includes('tax') || key.includes('Submissions'))) {
+            try {
+              const data = JSON.parse(localStorage.getItem(key));
+              if (Array.isArray(data)) {
+                submissions = [...submissions, ...data];
+              }
+            } catch (e) {}
+          }
+        }
+
         const tbody = document.getElementById('taxBody');
         const count = document.getElementById('taxCount');
         
@@ -879,7 +905,28 @@
 
     function loadApplications() {
       try {
-        const apps = JSON.parse(localStorage.getItem(STORAGE_KEYS.JOB_APPLICATIONS)) || [];
+        // Try multiple possible keys where application data might be stored
+        let apps = [];
+        
+        // Try the key from applications.html
+        const appData = localStorage.getItem(STORAGE_KEYS.JOB_APPLICATIONS);
+        if (appData) {
+          apps = JSON.parse(appData);
+        }
+        
+        // Also check for any other application-related keys
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && (key.toLowerCase().includes('application') || key.includes('job'))) {
+            try {
+              const data = JSON.parse(localStorage.getItem(key));
+              if (Array.isArray(data)) {
+                apps = [...apps, ...data];
+              }
+            } catch (e) {}
+          }
+        }
+
         const tbody = document.getElementById('applicationsBody');
         const count = document.getElementById('applicationCount');
         
@@ -916,7 +963,28 @@
 
     function loadContacts() {
       try {
-        const msgs = JSON.parse(localStorage.getItem(STORAGE_KEYS.CONTACT_MESSAGES)) || [];
+        // Try multiple possible keys where contact data might be stored
+        let msgs = [];
+        
+        // Try the key from contact.html
+        const contactData = localStorage.getItem(STORAGE_KEYS.CONTACT_MESSAGES);
+        if (contactData) {
+          msgs = JSON.parse(contactData);
+        }
+        
+        // Also check for any other contact-related keys
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && (key.toLowerCase().includes('contact') || key.includes('message'))) {
+            try {
+              const data = JSON.parse(localStorage.getItem(key));
+              if (Array.isArray(data)) {
+                msgs = [...msgs, ...data];
+              }
+            } catch (e) {}
+          }
+        }
+
         const tbody = document.getElementById('contactBody');
         const count = document.getElementById('contactCount');
         
@@ -948,7 +1016,14 @@
 
     function loadLogins() {
       try {
-        const logins = JSON.parse(localStorage.getItem(STORAGE_KEYS.USER_LOGINS)) || [];
+        // Try multiple possible keys where login data might be stored
+        let logins = [];
+        
+        const loginData = localStorage.getItem(STORAGE_KEYS.USER_LOGINS);
+        if (loginData) {
+          logins = JSON.parse(loginData);
+        }
+
         const tbody = document.getElementById('loginsBody');
         const count = document.getElementById('loginCount');
         
@@ -977,8 +1052,29 @@
 
     function loadDocuments() {
       try {
-        const saved = localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS);
-        documents = saved ? JSON.parse(saved) : [];
+        // Try multiple possible keys where documents might be stored
+        let allDocs = [];
+        
+        // Try the main key from resources.html
+        const mainDocs = localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS);
+        if (mainDocs) {
+          allDocs = JSON.parse(mainDocs);
+        }
+        
+        // Also check for any other document-related keys
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && (key.toLowerCase().includes('document') || key.includes('resource'))) {
+            try {
+              const data = JSON.parse(localStorage.getItem(key));
+              if (Array.isArray(data)) {
+                allDocs = [...allDocs, ...data];
+              }
+            } catch (e) {}
+          }
+        }
+        
+        documents = allDocs;
         renderDocuments();
       } catch (e) {
         console.error('Error loading documents:', e);
@@ -993,7 +1089,12 @@
         return;
       }
 
-      list.innerHTML = documents.map((doc, index) => `
+      // Remove duplicates by id
+      const uniqueDocs = documents.filter((doc, index, self) => 
+        index === self.findIndex(d => d.id === doc.id)
+      );
+
+      list.innerHTML = uniqueDocs.map((doc, index) => `
         <div class="doc-item">
           <div class="doc-info">
             <i class="fas ${doc.icon || 'fa-file-pdf'}"></i>
@@ -1003,10 +1104,10 @@
             </div>
           </div>
           <div class="doc-actions">
-            <button class="edit-btn" onclick="editDocument(${index})">
+            <button class="edit-btn" onclick="editDocument('${doc.id}')">
               <i class="fas fa-edit"></i> Edit
             </button>
-            <button class="delete-btn" onclick="deleteDocument(${index})">
+            <button class="delete-btn" onclick="deleteDocument('${doc.id}')">
               <i class="fas fa-trash"></i> Delete
             </button>
           </div>
@@ -1030,8 +1131,13 @@
             fileName: file.name,
             content: e.target.result
           };
+          
+          // Get existing documents
+          const existing = JSON.parse(localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS) || '[]');
+          existing.push(newDoc);
+          localStorage.setItem(STORAGE_KEYS.RESOURCE_DOCUMENTS, JSON.stringify(existing));
+          
           documents.push(newDoc);
-          saveDocuments();
           renderDocuments();
           showNotification('Success', `Document uploaded: ${newDoc.name}`, 'success');
         };
@@ -1039,100 +1145,122 @@
       });
     }
 
-    function saveDocuments() {
-      localStorage.setItem(STORAGE_KEYS.RESOURCE_DOCUMENTS, JSON.stringify(documents));
-    }
-
-    function editDocument(index) {
-      const doc = documents[index];
+    function editDocument(id) {
+      const doc = documents.find(d => d.id === id);
+      if (!doc) return;
+      
       const newName = prompt('Edit document name:', doc.name);
       if (newName) doc.name = newName;
       const newDesc = prompt('Edit description:', doc.description);
       if (newDesc) doc.description = newDesc;
-      saveDocuments();
+      
+      // Update in localStorage
+      const existing = JSON.parse(localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS) || '[]');
+      const index = existing.findIndex(d => d.id === id);
+      if (index !== -1) {
+        existing[index] = doc;
+        localStorage.setItem(STORAGE_KEYS.RESOURCE_DOCUMENTS, JSON.stringify(existing));
+      }
+      
       renderDocuments();
       showNotification('Success', 'Document updated successfully', 'success');
     }
 
-    function deleteDocument(index) {
+    function deleteDocument(id) {
       if (confirm('Delete this document? This cannot be undone.')) {
-        const doc = documents[index];
-        documents.splice(index, 1);
-        saveDocuments();
+        const existing = JSON.parse(localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS) || '[]');
+        const newDocs = existing.filter(d => d.id !== id);
+        localStorage.setItem(STORAGE_KEYS.RESOURCE_DOCUMENTS, JSON.stringify(newDocs));
+        
+        documents = documents.filter(d => d.id !== id);
         renderDocuments();
-        showNotification('Success', `Document deleted: ${doc.name}`, 'success');
+        showNotification('Success', 'Document deleted successfully', 'success');
       }
     }
 
     // ==================== DETAIL VIEW FUNCTIONS ====================
     function viewTaxDetails(id) {
-      const submissions = JSON.parse(localStorage.getItem(STORAGE_KEYS.TAX_SUBMISSIONS)) || [];
-      const sub = submissions.find(s => s.id === id);
-      if (!sub) return;
+      try {
+        const submissions = JSON.parse(localStorage.getItem(STORAGE_KEYS.TAX_SUBMISSIONS)) || [];
+        const sub = submissions.find(s => s.id === id);
+        if (!sub) return;
 
-      let docsHtml = '';
-      if (sub.documents) {
-        for (let [type, file] of Object.entries(sub.documents)) {
-          if (file && file.name) {
-            docsHtml += `<div>✓ ${type}: ${file.name}</div>`;
+        let docsHtml = '';
+        if (sub.documents) {
+          for (let [type, file] of Object.entries(sub.documents)) {
+            if (file && file.name) {
+              docsHtml += `<div>✓ ${type}: ${file.name}</div>`;
+            }
           }
         }
-      }
 
-      document.getElementById('modalTitle').textContent = 'Tax Submission Details';
-      document.getElementById('modalBody').innerHTML = `
-        <div class="detail-row"><div class="detail-label">ID</div><div class="detail-value">${sub.id}</div></div>
-        <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${sub.email}</div></div>
-        <div class="detail-row"><div class="detail-label">Date</div><div class="detail-value">${new Date(sub.timestamp).toLocaleString()}</div></div>
-        <div class="detail-row"><div class="detail-label">Status</div><div class="detail-value">${sub.status}</div></div>
-        <div class="detail-row"><div class="detail-label">Documents</div><div class="detail-value">${docsHtml || 'None'}</div></div>
-      `;
-      document.getElementById('detailModal').classList.add('active');
+        document.getElementById('modalTitle').textContent = 'Tax Submission Details';
+        document.getElementById('modalBody').innerHTML = `
+          <div class="detail-row"><div class="detail-label">ID</div><div class="detail-value">${sub.id}</div></div>
+          <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${sub.email}</div></div>
+          <div class="detail-row"><div class="detail-label">Date</div><div class="detail-value">${new Date(sub.timestamp).toLocaleString()}</div></div>
+          <div class="detail-row"><div class="detail-label">Status</div><div class="detail-value">${sub.status}</div></div>
+          <div class="detail-row"><div class="detail-label">Documents</div><div class="detail-value">${docsHtml || 'None'}</div></div>
+        `;
+        document.getElementById('detailModal').classList.add('active');
+      } catch (e) {
+        console.error('Error viewing tax details:', e);
+      }
     }
 
     function viewApplicationDetails(id) {
-      const apps = JSON.parse(localStorage.getItem(STORAGE_KEYS.JOB_APPLICATIONS)) || [];
-      const app = apps.find(a => a.id === id);
-      if (!app) return;
+      try {
+        const apps = JSON.parse(localStorage.getItem(STORAGE_KEYS.JOB_APPLICATIONS)) || [];
+        const app = apps.find(a => a.id === id);
+        if (!app) return;
 
-      const personal = app.personalInfo || {};
-      const work = app.workPreference || {};
-      const health = app.health || {};
-      const bonus = app.bonus || {};
+        const personal = app.personalInfo || {};
+        const work = app.workPreference || {};
+        const health = app.health || {};
+        const bonus = app.bonus || {};
 
-      document.getElementById('modalTitle').textContent = 'Application Details';
-      document.getElementById('modalBody').innerHTML = `
-        <div class="detail-row"><div class="detail-label">Name</div><div class="detail-value">${personal.fullName || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${personal.email || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Phone</div><div class="detail-value">${personal.phone || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Position</div><div class="detail-value">${work.position || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Type</div><div class="detail-value">${work.workType || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Start Date</div><div class="detail-value">${work.startDate || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Accommodation</div><div class="detail-value">${work.needsAccommodation || 'No'}</div></div>
-        <div class="detail-row"><div class="detail-label">Insurance</div><div class="detail-value">${health.provider || 'N/A'} - ${health.number || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Bonus</div><div class="detail-value">${bonus.join === 'yes' ? `Yes (${bonus.percentage})` : 'No'}</div></div>
-      `;
-      document.getElementById('detailModal').classList.add('active');
+        document.getElementById('modalTitle').textContent = 'Application Details';
+        document.getElementById('modalBody').innerHTML = `
+          <div class="detail-row"><div class="detail-label">Name</div><div class="detail-value">${personal.fullName || 'N/A'}</div></div>
+          <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${personal.email || 'N/A'}</div></div>
+          <div class="detail-row"><div class="detail-label">Phone</div><div class="detail-value">${personal.phone || 'N/A'}</div></div>
+          <div class="detail-row"><div class="detail-label">Position</div><div class="detail-value">${work.position || 'N/A'}</div></div>
+          <div class="detail-row"><div class="detail-label">Type</div><div class="detail-value">${work.workType || 'N/A'}</div></div>
+          <div class="detail-row"><div class="detail-label">Start Date</div><div class="detail-value">${work.startDate || 'N/A'}</div></div>
+          <div class="detail-row"><div class="detail-label">Accommodation</div><div class="detail-value">${work.needsAccommodation || 'No'}</div></div>
+          <div class="detail-row"><div class="detail-label">Insurance</div><div class="detail-value">${health.provider || 'N/A'} - ${health.number || 'N/A'}</div></div>
+          <div class="detail-row"><div class="detail-label">Bonus</div><div class="detail-value">${bonus.join === 'yes' ? `Yes (${bonus.percentage})` : 'No'}</div></div>
+        `;
+        document.getElementById('detailModal').classList.add('active');
+      } catch (e) {
+        console.error('Error viewing application details:', e);
+      }
     }
 
     function viewMessageDetails(id) {
-      const msgs = JSON.parse(localStorage.getItem(STORAGE_KEYS.CONTACT_MESSAGES)) || [];
-      const msg = msgs.find(m => m.id === id);
-      if (!msg) return;
+      try {
+        const msgs = JSON.parse(localStorage.getItem(STORAGE_KEYS.CONTACT_MESSAGES)) || [];
+        const msg = msgs.find(m => m.id === id);
+        if (!msg) return;
 
-      // Mark as read
-      msg.status = 'read';
-      localStorage.setItem(STORAGE_KEYS.CONTACT_MESSAGES, JSON.stringify(msgs));
-      loadContacts();
+        // Mark as read
+        msg.status = 'read';
+        localStorage.setItem(STORAGE_KEYS.CONTACT_MESSAGES, JSON.stringify(msgs));
 
-      document.getElementById('modalTitle').textContent = 'Contact Message';
-      document.getElementById('modalBody').innerHTML = `
-        <div class="detail-row"><div class="detail-label">Name</div><div class="detail-value">${msg.name}</div></div>
-        <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${msg.email}</div></div>
-        <div class="detail-row"><div class="detail-label">Subject</div><div class="detail-value">${msg.subject}</div></div>
-        <div class="detail-row"><div class="detail-label">Message</div><div class="detail-value" style="white-space: pre-wrap;">${msg.message}</div></div>
-      `;
-      document.getElementById('detailModal').classList.add('active');
+        document.getElementById('modalTitle').textContent = 'Contact Message';
+        document.getElementById('modalBody').innerHTML = `
+          <div class="detail-row"><div class="detail-label">Name</div><div class="detail-value">${msg.name}</div></div>
+          <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${msg.email}</div></div>
+          <div class="detail-row"><div class="detail-label">Subject</div><div class="detail-value">${msg.subject}</div></div>
+          <div class="detail-row"><div class="detail-label">Message</div><div class="detail-value" style="white-space: pre-wrap;">${msg.message}</div></div>
+        `;
+        document.getElementById('detailModal').classList.add('active');
+        
+        // Reload contacts to update status
+        loadContacts();
+      } catch (e) {
+        console.error('Error viewing message details:', e);
+      }
     }
 
     // ==================== TAB SWITCHING ====================
@@ -1189,10 +1317,20 @@
 
       // Listen for storage events from other tabs/windows
       window.addEventListener('storage', (e) => {
-        if (e.key && e.key.includes('carltonHill')) {
+        if (e.key) {
           console.log('Storage changed:', e.key);
           loadAllData();
-          showNotification('New Data', `Updated: ${e.key.replace('carltonHill', '')}`, 'info');
+          
+          // Show notification based on what changed
+          if (e.key.includes('tax') || e.key.includes('Tax')) {
+            showNotification('New Data', 'Tax submission received', 'info');
+          } else if (e.key.includes('application') || e.key.includes('Application')) {
+            showNotification('New Data', 'Job application received', 'info');
+          } else if (e.key.includes('contact') || e.key.includes('Contact')) {
+            showNotification('New Data', 'Contact message received', 'info');
+          } else if (e.key.includes('document') || e.key.includes('Document')) {
+            showNotification('New Data', 'Document updated', 'info');
+          }
         }
       });
     }
@@ -1215,31 +1353,11 @@
         startRealtimeUpdates();
       }
 
-      // Create default resources if none exist
-      if (!localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS)) {
-        const defaultDocs = [
-          {
-            id: 'doc1-' + Date.now(),
-            name: 'Sample Employment Letter',
-            description: 'Official employment offer template',
-            type: 'PDF',
-            size: '245 KB',
-            icon: 'fa-file-pdf',
-            fileName: 'employment-letter.pdf',
-            content: 'EMPLOYMENT OFFER LETTER\n\nDear Applicant,\n\nWe are pleased to offer you a position at Carlton Hill Station Farm...'
-          },
-          {
-            id: 'doc2-' + Date.now(),
-            name: 'Farm Safety Rules',
-            description: 'Essential safety guidelines',
-            type: 'PDF',
-            size: '312 KB',
-            icon: 'fa-file-pdf',
-            fileName: 'safety-rules.pdf',
-            content: 'FARM SAFETY RULES\n\n1. Always wear appropriate PPE\n2. Report all accidents...'
-          }
-        ];
-        localStorage.setItem(STORAGE_KEYS.RESOURCE_DOCUMENTS, JSON.stringify(defaultDocs));
+      // Log all localStorage keys for debugging
+      console.log('All localStorage keys:');
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        console.log(key, ':', localStorage.getItem(key));
       }
     });
   </script>
