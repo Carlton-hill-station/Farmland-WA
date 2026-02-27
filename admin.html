@@ -382,13 +382,6 @@
       background: var(--primary-light);
     }
 
-    .status-select {
-      padding: 0.3rem;
-      border: 1px solid var(--gray);
-      border-radius: 4px;
-      font-size: 0.8rem;
-    }
-
     /* Upload Area */
     .upload-area {
       border: 2px dashed var(--accent);
@@ -830,41 +823,21 @@
 
     // ==================== DATA STORAGE KEYS ====================
     const STORAGE_KEYS = {
-      TAX_SUBMISSIONS: 'taxSubmissions',
-      JOB_APPLICATIONS: 'jobApplications',
-      CONTACT_MESSAGES: 'contactMessages',
-      RESOURCE_DOCUMENTS: 'carltonHillRealDocuments',
-      USER_LOGINS: 'userLogins',
-      NOTIFICATIONS: 'adminNotifications'
+      TAX_SUBMISSIONS: 'carltonHillTaxSubmissions',
+      JOB_APPLICATIONS: 'carltonHillJobApplications',
+      CONTACT_MESSAGES: 'carltonHillContactMessages',
+      RESOURCE_DOCUMENTS: 'carltonHillResources',
+      USER_LOGINS: 'carltonHillUserLogins',
+      NOTIFICATIONS: 'carltonHillNotifications'
     };
 
     // ==================== INITIALIZE DEFAULT DATA ====================
     function initializeData() {
-      // Tax Submissions
-      if (!localStorage.getItem(STORAGE_KEYS.TAX_SUBMISSIONS)) {
-        localStorage.setItem(STORAGE_KEYS.TAX_SUBMISSIONS, JSON.stringify([]));
-      }
-
-      // Job Applications
-      if (!localStorage.getItem(STORAGE_KEYS.JOB_APPLICATIONS)) {
-        localStorage.setItem(STORAGE_KEYS.JOB_APPLICATIONS, JSON.stringify([]));
-      }
-
-      // Contact Messages
-      if (!localStorage.getItem(STORAGE_KEYS.CONTACT_MESSAGES)) {
-        localStorage.setItem(STORAGE_KEYS.CONTACT_MESSAGES, JSON.stringify([]));
-      }
-
-      // User Logins
-      if (!localStorage.getItem(STORAGE_KEYS.USER_LOGINS)) {
-        localStorage.setItem(STORAGE_KEYS.USER_LOGINS, JSON.stringify([]));
-      }
-
-      // Resource Documents - Create default documents
+      // Resource Documents - Create default documents if none exist
       if (!localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS)) {
         const defaultDocs = [
           {
-            id: 'doc-' + Date.now(),
+            id: 'doc-1-' + Date.now(),
             name: 'Sample Employment Letter',
             description: 'Official employment offer template with terms and conditions',
             type: 'PDF',
@@ -874,7 +847,7 @@
             content: 'EMPLOYMENT OFFER LETTER\n\nDear Applicant,\n\nWe are pleased to offer you a position at Carlton Hill Station Farm. This letter outlines the terms and conditions of your employment...\n\nStart Date: [TBD]\nPosition: [Role]\nHours: 6AM - 4PM Mon-Sat\nAccommodation: Private cabin provided\n\nPlease sign and return this letter to confirm your acceptance.\n\nSincerely,\nCarlton Hill Station Farm'
           },
           {
-            id: 'doc-' + (Date.now() + 1),
+            id: 'doc-2-' + Date.now(),
             name: 'Farm Safety Rules',
             description: 'Essential safety guidelines for all workers',
             type: 'PDF',
@@ -884,7 +857,7 @@
             content: 'CARLTON HILL STATION FARM\nSAFETY RULES AND GUIDELINES\n\n1. Always wear appropriate Personal Protective Equipment (PPE)\n2. Report all accidents and near misses immediately\n3. Follow equipment operating procedures at all times\n4. Stay hydrated and take breaks in shaded areas\n5. Never operate machinery under influence\n6. Emergency contacts: Farm Office: 08 9123 4567\n\nThese rules are for your protection and the safety of all workers.'
           },
           {
-            id: 'doc-' + (Date.now() + 2),
+            id: 'doc-3-' + Date.now(),
             name: 'Work Schedule Overview',
             description: 'Hours, shifts, and weekly routines',
             type: 'PDF',
@@ -896,124 +869,165 @@
         ];
         localStorage.setItem(STORAGE_KEYS.RESOURCE_DOCUMENTS, JSON.stringify(defaultDocs));
       }
+
+      // Initialize empty arrays for other data if they don't exist
+      if (!localStorage.getItem(STORAGE_KEYS.TAX_SUBMISSIONS)) {
+        localStorage.setItem(STORAGE_KEYS.TAX_SUBMISSIONS, JSON.stringify([]));
+      }
+      if (!localStorage.getItem(STORAGE_KEYS.JOB_APPLICATIONS)) {
+        localStorage.setItem(STORAGE_KEYS.JOB_APPLICATIONS, JSON.stringify([]));
+      }
+      if (!localStorage.getItem(STORAGE_KEYS.CONTACT_MESSAGES)) {
+        localStorage.setItem(STORAGE_KEYS.CONTACT_MESSAGES, JSON.stringify([]));
+      }
+      if (!localStorage.getItem(STORAGE_KEYS.USER_LOGINS)) {
+        localStorage.setItem(STORAGE_KEYS.USER_LOGINS, JSON.stringify([]));
+      }
+      if (!localStorage.getItem(STORAGE_KEYS.NOTIFICATIONS)) {
+        localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify([]));
+      }
     }
 
     // ==================== LOAD FUNCTIONS ====================
     function loadTaxSubmissions() {
-      const submissions = JSON.parse(localStorage.getItem(STORAGE_KEYS.TAX_SUBMISSIONS) || '[]');
-      const tbody = document.getElementById('taxBody');
-      const count = document.getElementById('taxCount');
-      
-      count.textContent = submissions.length;
+      try {
+        const submissions = JSON.parse(localStorage.getItem(STORAGE_KEYS.TAX_SUBMISSIONS) || '[]');
+        const tbody = document.getElementById('taxBody');
+        const count = document.getElementById('taxCount');
+        
+        count.textContent = submissions.length;
 
-      if (submissions.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No tax submissions yet</td></tr>';
-        return;
+        if (submissions.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No tax submissions yet</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = submissions.map(sub => `
+          <tr>
+            <td><code>${sub.id || 'N/A'}</code></td>
+            <td>${sub.email || 'N/A'}</td>
+            <td>${sub.timestamp ? new Date(sub.timestamp).toLocaleString() : 'N/A'}</td>
+            <td>${sub.documents ? Object.keys(sub.documents).length : 0} files</td>
+            <td><span class="badge badge-${sub.status === 'pending' ? 'warning' : 'success'}">${sub.status || 'pending'}</span></td>
+            <td>
+              <button class="view-btn" onclick="viewTaxDetails('${sub.id}')">
+                <i class="fas fa-eye"></i> View
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        console.error('Error loading tax submissions:', e);
       }
-
-      tbody.innerHTML = submissions.map(sub => `
-        <tr>
-          <td><code>${sub.id || 'N/A'}</code></td>
-          <td>${sub.email || 'N/A'}</td>
-          <td>${sub.timestamp ? new Date(sub.timestamp).toLocaleString() : 'N/A'}</td>
-          <td>${sub.documents ? Object.keys(sub.documents).filter(k => sub.documents[k]).length : 0} files</td>
-          <td><span class="badge badge-${sub.status === 'pending_review' ? 'warning' : sub.status === 'approved' ? 'success' : 'info'}">${sub.status || 'pending'}</span></td>
-          <td>
-            <button class="view-btn" onclick="viewTaxDetails('${sub.id}')">
-              <i class="fas fa-eye"></i> View
-            </button>
-          </td>
-        </tr>
-      `).join('');
     }
 
     function loadApplications() {
-      const apps = JSON.parse(localStorage.getItem(STORAGE_KEYS.JOB_APPLICATIONS) || '[]');
-      const tbody = document.getElementById('applicationsBody');
-      const count = document.getElementById('applicationCount');
-      
-      count.textContent = apps.length;
+      try {
+        const apps = JSON.parse(localStorage.getItem(STORAGE_KEYS.JOB_APPLICATIONS) || '[]');
+        const tbody = document.getElementById('applicationsBody');
+        const count = document.getElementById('applicationCount');
+        
+        count.textContent = apps.length;
 
-      if (apps.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No job applications yet</td></tr>';
-        return;
+        if (apps.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No job applications yet</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = apps.map(app => {
+          const personalInfo = app.personalInfo || {};
+          const workPref = app.workPreference || {};
+          
+          return `
+          <tr>
+            <td>${personalInfo.fullName || app.name || 'N/A'}</td>
+            <td>${personalInfo.email || app.email || 'N/A'}</td>
+            <td>${workPref.position || app.position || 'N/A'}</td>
+            <td>${workPref.workType || app.type || 'N/A'}</td>
+            <td>${app.timestamp ? new Date(app.timestamp).toLocaleDateString() : 'N/A'}</td>
+            <td><span class="badge badge-${app.status === 'pending' ? 'warning' : 'success'}">${app.status || 'pending'}</span></td>
+            <td>
+              <button class="view-btn" onclick="viewApplicationDetails('${app.id}')">
+                <i class="fas fa-eye"></i> View
+              </button>
+            </td>
+          </tr>
+        `}).join('');
+      } catch (e) {
+        console.error('Error loading applications:', e);
       }
-
-      tbody.innerHTML = apps.map(app => `
-        <tr>
-          <td>${app.personalInfo?.fullName || app.name || 'N/A'}</td>
-          <td>${app.personalInfo?.email || app.email || 'N/A'}</td>
-          <td>${app.workPreference?.position || app.position || 'N/A'}</td>
-          <td>${app.workPreference?.workType || app.type || 'N/A'}</td>
-          <td>${app.timestamp ? new Date(app.timestamp).toLocaleDateString() : app.date ? new Date(app.date).toLocaleDateString() : 'N/A'}</td>
-          <td><span class="badge badge-${app.status === 'pending' ? 'warning' : app.status === 'approved' ? 'success' : 'info'}">${app.status || 'pending'}</span></td>
-          <td>
-            <button class="view-btn" onclick="viewApplicationDetails('${app.id}')">
-              <i class="fas fa-eye"></i> View
-            </button>
-          </td>
-        </tr>
-      `).join('');
     }
 
     function loadContacts() {
-      const msgs = JSON.parse(localStorage.getItem(STORAGE_KEYS.CONTACT_MESSAGES) || '[]');
-      const tbody = document.getElementById('contactBody');
-      const count = document.getElementById('contactCount');
-      
-      count.textContent = msgs.length;
+      try {
+        const msgs = JSON.parse(localStorage.getItem(STORAGE_KEYS.CONTACT_MESSAGES) || '[]');
+        const tbody = document.getElementById('contactBody');
+        const count = document.getElementById('contactCount');
+        
+        count.textContent = msgs.length;
 
-      if (msgs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No contact messages yet</td></tr>';
-        return;
+        if (msgs.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No contact messages yet</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = msgs.map(msg => `
+          <tr>
+            <td>${msg.name || 'N/A'}</td>
+            <td>${msg.email || 'N/A'}</td>
+            <td>${msg.subject || 'N/A'}</td>
+            <td>${msg.timestamp ? new Date(msg.timestamp).toLocaleString() : 'N/A'}</td>
+            <td><span class="badge badge-${msg.status === 'unread' ? 'warning' : 'success'}">${msg.status || 'unread'}</span></td>
+            <td>
+              <button class="view-btn" onclick="viewMessageDetails('${msg.id}')">
+                <i class="fas fa-eye"></i> View
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        console.error('Error loading contacts:', e);
       }
-
-      tbody.innerHTML = msgs.map(msg => `
-        <tr>
-          <td>${msg.name || 'N/A'}</td>
-          <td>${msg.email || 'N/A'}</td>
-          <td>${msg.subject || 'N/A'}</td>
-          <td>${msg.timestamp ? new Date(msg.timestamp).toLocaleString() : msg.date ? new Date(msg.date).toLocaleString() : 'N/A'}</td>
-          <td><span class="badge badge-${msg.status === 'unread' ? 'warning' : msg.status === 'read' ? 'info' : 'success'}">${msg.status || 'unread'}</span></td>
-          <td>
-            <button class="view-btn" onclick="viewMessageDetails('${msg.id}')">
-              <i class="fas fa-eye"></i> View
-            </button>
-          </td>
-        </tr>
-      `).join('');
     }
 
     function loadLogins() {
-      const logins = JSON.parse(localStorage.getItem(STORAGE_KEYS.USER_LOGINS) || '[]');
-      const tbody = document.getElementById('loginsBody');
-      const count = document.getElementById('loginCount');
-      
-      count.textContent = logins.length;
+      try {
+        const logins = JSON.parse(localStorage.getItem(STORAGE_KEYS.USER_LOGINS) || '[]');
+        const tbody = document.getElementById('loginsBody');
+        const count = document.getElementById('loginCount');
+        
+        count.textContent = logins.length;
 
-      if (logins.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No login records yet</td></tr>';
-        return;
+        if (logins.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No login records yet</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = logins.slice().reverse().map(login => `
+          <tr>
+            <td>${login.email || 'N/A'}</td>
+            <td>${login.timestamp ? new Date(login.timestamp).toLocaleString() : 'N/A'}</td>
+            <td>${login.ip || 'N/A'}</td>
+            <td><span class="badge badge-success">Success</span></td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        console.error('Error loading logins:', e);
       }
-
-      tbody.innerHTML = logins.slice().reverse().map(login => `
-        <tr>
-          <td>${login.email || 'N/A'}</td>
-          <td>${login.timestamp ? new Date(login.timestamp).toLocaleString() : 'N/A'}</td>
-          <td>${login.ip || '192.168.1.' + Math.floor(Math.random() * 255)}</td>
-          <td><span class="badge badge-success">Success</span></td>
-        </tr>
-      `).join('');
     }
 
     // ==================== DOCUMENT MANAGEMENT ====================
-    let documents = [];
-
     function loadDocuments() {
-      const saved = localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS);
-      documents = saved ? JSON.parse(saved) : [];
-      renderDocuments();
+      try {
+        const saved = localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS);
+        documents = saved ? JSON.parse(saved) : [];
+        renderDocuments();
+      } catch (e) {
+        console.error('Error loading documents:', e);
+      }
     }
+
+    let documents = [];
 
     function renderDocuments() {
       const list = document.getElementById('docList');
@@ -1029,7 +1043,7 @@
             <i class="fas ${doc.icon || 'fa-file-pdf'}"></i>
             <div class="doc-details">
               <h4>${doc.name}</h4>
-              <p>${doc.type} · ${doc.size} · Added: ${new Date(parseInt(doc.id) || Date.now()).toLocaleDateString()}</p>
+              <p>${doc.type} · ${doc.size} · Added: ${new Date(parseInt(doc.id)).toLocaleDateString()}</p>
             </div>
           </div>
           <div class="doc-actions">
@@ -1049,7 +1063,7 @@
         const reader = new FileReader();
         reader.onload = function(e) {
           const newDoc = {
-            id: 'doc-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6),
+            id: Date.now().toString(),
             name: file.name.replace(/\.[^/.]+$/, ""),
             description: `Uploaded on ${new Date().toLocaleDateString()}`,
             type: file.type.split('/')[1]?.toUpperCase() || file.name.split('.').pop()?.toUpperCase() || 'FILE',
@@ -1065,7 +1079,6 @@
           renderDocuments();
           
           showNotification('Success', `Document uploaded: ${newDoc.name}`, 'success');
-          addNotification('document_upload', `New document uploaded: ${newDoc.name}`);
         };
         reader.readAsText(file);
       });
@@ -1093,7 +1106,6 @@
         saveDocuments();
         renderDocuments();
         showNotification('Success', `Document deleted: ${doc.name}`, 'success');
-        addNotification('document_delete', `Document deleted: ${doc.name}`);
       }
     }
 
@@ -1105,9 +1117,11 @@
       if (!sub) return;
 
       let docsHtml = '';
-      for (let [type, file] of Object.entries(sub.documents || {})) {
-        if (file && file.name) {
-          docsHtml += `<div style="margin-bottom: 0.3rem;">✓ ${type.toUpperCase()}: ${file.name} (${file.size ? (file.size/1024).toFixed(0) + ' KB' : 'N/A'})</div>`;
+      if (sub.documents) {
+        for (let [type, file] of Object.entries(sub.documents)) {
+          if (file && file.name) {
+            docsHtml += `<div>✓ ${type.toUpperCase()}: ${file.name}</div>`;
+          }
         }
       }
 
@@ -1126,15 +1140,11 @@
         </div>
         <div class="detail-row">
           <div class="detail-label">Status</div>
-          <div class="detail-value">${sub.status || 'pending_review'}</div>
+          <div class="detail-value">${sub.status || 'pending'}</div>
         </div>
         <div class="detail-row">
-          <div class="detail-label">IP Address</div>
-          <div class="detail-value">${sub.ip || 'N/A'}</div>
-        </div>
-        <div class="detail-row">
-          <div class="detail-label">Uploaded Documents</div>
-          <div class="detail-value">${docsHtml || 'No documents uploaded'}</div>
+          <div class="detail-label">Documents</div>
+          <div class="detail-value">${docsHtml || 'No documents'}</div>
         </div>
       `;
 
@@ -1151,6 +1161,7 @@
 
       const personalInfo = app.personalInfo || {};
       const workPref = app.workPreference || {};
+      const health = app.health || {};
       const bonus = app.bonus || {};
 
       const modalBody = `
@@ -1161,49 +1172,35 @@
         <div class="detail-row">
           <div class="detail-label">Personal Information</div>
           <div class="detail-value">
-            <div><strong>Name:</strong> ${personalInfo.fullName || app.name || 'N/A'}</div>
-            <div><strong>Email:</strong> ${personalInfo.email || app.email || 'N/A'}</div>
-            <div><strong>Phone:</strong> ${personalInfo.phone || app.phone || 'N/A'}</div>
-            <div><strong>Date of Birth:</strong> ${personalInfo.dob || 'N/A'}</div>
-            <div><strong>Nationality:</strong> ${personalInfo.nationality || 'N/A'}</div>
-            <div><strong>Address:</strong> ${personalInfo.address || 'N/A'}</div>
-            <div><strong>Emergency Contact:</strong> ${personalInfo.emergency || 'N/A'}</div>
+            <div>Name: ${personalInfo.fullName || 'N/A'}</div>
+            <div>Email: ${personalInfo.email || 'N/A'}</div>
+            <div>Phone: ${personalInfo.phone || 'N/A'}</div>
+            <div>DOB: ${personalInfo.dob || 'N/A'}</div>
+            <div>Nationality: ${personalInfo.nationality || 'N/A'}</div>
           </div>
         </div>
         <div class="detail-row">
           <div class="detail-label">Work Preference</div>
           <div class="detail-value">
-            <div><strong>Position:</strong> ${workPref.position || app.position || 'N/A'}</div>
-            <div><strong>Type:</strong> ${workPref.workType || app.type || 'N/A'}</div>
-            <div><strong>Start Date:</strong> ${workPref.startDate || 'N/A'}</div>
-            <div><strong>Accommodation Needed:</strong> ${workPref.needsAccommodation || 'No'}</div>
+            <div>Position: ${workPref.position || 'N/A'}</div>
+            <div>Type: ${workPref.workType || 'N/A'}</div>
+            <div>Start Date: ${workPref.startDate || 'N/A'}</div>
+            <div>Accommodation: ${workPref.needsAccommodation || 'No'}</div>
           </div>
         </div>
         <div class="detail-row">
-          <div class="detail-label">Tax & Insurance</div>
+          <div class="detail-label">Health Insurance</div>
           <div class="detail-value">
-            <div><strong>TFN:</strong> ${app.tax?.tfn || 'N/A'}</div>
-            <div><strong>Insurance Provider:</strong> ${app.health?.provider || 'N/A'}</div>
-            <div><strong>Insurance Number:</strong> ${app.health?.number || 'N/A'}</div>
+            <div>Provider: ${health.provider || 'N/A'}</div>
+            <div>Number: ${health.number || 'N/A'}</div>
           </div>
         </div>
         <div class="detail-row">
           <div class="detail-label">Bonus Program</div>
           <div class="detail-value">
-            <div><strong>Join Bonus:</strong> ${bonus.join || 'No'}</div>
-            <div><strong>Percentage:</strong> ${bonus.percentage || 'N/A'}</div>
-            <div><strong>Bank:</strong> ${bonus.bankName || 'N/A'}</div>
-            <div><strong>Account:</strong> ${bonus.bankAccount || 'N/A'}</div>
-          </div>
-        </div>
-        <div class="detail-row">
-          <div class="detail-label">Application Date</div>
-          <div class="detail-value">${app.timestamp ? new Date(app.timestamp).toLocaleString() : app.date ? new Date(app.date).toLocaleString() : 'N/A'}</div>
-        </div>
-        <div class="detail-row">
-          <div class="detail-label">Status</div>
-          <div class="detail-value">
-            <span class="badge badge-${app.status === 'pending' ? 'warning' : app.status === 'approved' ? 'success' : 'info'}">${app.status || 'pending'}</span>
+            <div>Join: ${bonus.join || 'No'}</div>
+            <div>Percentage: ${bonus.percentage || 'N/A'}</div>
+            <div>Bank: ${bonus.bankName || 'N/A'}</div>
           </div>
         </div>
       `;
@@ -1242,18 +1239,8 @@
           <div class="detail-value">${msg.subject || 'N/A'}</div>
         </div>
         <div class="detail-row">
-          <div class="detail-label">Date</div>
-          <div class="detail-value">${msg.timestamp ? new Date(msg.timestamp).toLocaleString() : msg.date ? new Date(msg.date).toLocaleString() : 'N/A'}</div>
-        </div>
-        <div class="detail-row">
           <div class="detail-label">Message</div>
           <div class="detail-value" style="white-space: pre-wrap;">${msg.message || 'N/A'}</div>
-        </div>
-        <div class="detail-row">
-          <div class="detail-label">Status</div>
-          <div class="detail-value">
-            <span class="badge badge-${msg.status === 'unread' ? 'warning' : 'info'}">${msg.status || 'unread'}</span>
-          </div>
         </div>
       `;
 
@@ -1263,44 +1250,19 @@
     }
 
     // ==================== HELPER FUNCTIONS ====================
-    function addNotification(type, message) {
-      const notifications = JSON.parse(localStorage.getItem(STORAGE_KEYS.NOTIFICATIONS) || '[]');
-      notifications.push({
-        type,
-        message,
-        timestamp: new Date().toISOString()
-      });
-      localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(notifications));
-    }
-
     function switchTab(tab, event) {
-      // Update tab buttons
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       event.target.classList.add('active');
 
-      // Hide all tabs
       document.querySelectorAll('.admin-card').forEach(card => card.classList.remove('active'));
-
-      // Show selected tab
       document.getElementById(tab + 'Tab').classList.add('active');
 
-      // Load data for tab
       switch(tab) {
-        case 'tax':
-          loadTaxSubmissions();
-          break;
-        case 'applications':
-          loadApplications();
-          break;
-        case 'contact':
-          loadContacts();
-          break;
-        case 'documents':
-          loadDocuments();
-          break;
-        case 'logins':
-          loadLogins();
-          break;
+        case 'tax': loadTaxSubmissions(); break;
+        case 'applications': loadApplications(); break;
+        case 'contact': loadContacts(); break;
+        case 'documents': loadDocuments(); break;
+        case 'logins': loadLogins(); break;
       }
     }
 
@@ -1317,18 +1279,15 @@
         document.getElementById('loginPage').style.display = 'none';
         document.getElementById('dashboardPage').style.display = 'block';
         
-        // Initialize all data
         initializeData();
-        
-        // Load all tabs
         loadTaxSubmissions();
         loadApplications();
         loadContacts();
         loadDocuments();
         loadLogins();
 
+        sessionStorage.setItem('adminLoggedIn', 'true');
         showNotification('Welcome', 'Logged in successfully', 'success');
-        addNotification('admin_login', 'Admin logged in');
       } else {
         document.getElementById('loginError').style.display = 'flex';
       }
@@ -1337,13 +1296,12 @@
     function logout() {
       document.getElementById('loginPage').style.display = 'flex';
       document.getElementById('dashboardPage').style.display = 'none';
+      sessionStorage.removeItem('adminLoggedIn');
       showNotification('Goodbye', 'Logged out successfully', 'info');
-      addNotification('admin_logout', 'Admin logged out');
     }
 
     // ==================== INITIALIZATION ====================
     document.addEventListener('DOMContentLoaded', () => {
-      // Set up file upload
       const fileInput = document.getElementById('fileInput');
       if (fileInput) {
         fileInput.addEventListener('change', (e) => {
@@ -1352,63 +1310,24 @@
         });
       }
 
-      // Drag and drop
       const uploadArea = document.querySelector('.upload-area');
       if (uploadArea) {
-        uploadArea.addEventListener('dragover', (e) => {
-          e.preventDefault();
-          uploadArea.style.borderColor = 'var(--primary)';
-        });
-        
-        uploadArea.addEventListener('dragleave', () => {
-          uploadArea.style.borderColor = 'var(--accent)';
-        });
-        
+        uploadArea.addEventListener('dragover', (e) => e.preventDefault());
         uploadArea.addEventListener('drop', (e) => {
           e.preventDefault();
-          uploadArea.style.borderColor = 'var(--accent)';
           handleFileUpload(e.dataTransfer.files);
         });
       }
 
-      // Check if already logged in
-      const saved = sessionStorage.getItem('adminLoggedIn');
-      if (saved === 'true') {
-        document.getElementById('loginPage').style.display = 'none';
-        document.getElementById('dashboardPage').style.display = 'block';
-        initializeData();
-        loadTaxSubmissions();
-        loadApplications();
-        loadContacts();
-        loadDocuments();
-        loadLogins();
-      }
-    });
-
-    // Auto-refresh every 10 seconds
-    setInterval(() => {
-      if (document.getElementById('dashboardPage').style.display === 'block') {
-        loadTaxSubmissions();
-        loadApplications();
-        loadContacts();
-        loadLogins();
-      }
-    }, 10000);
-
-    // Listen for storage changes (when other pages submit data)
-    window.addEventListener('storage', (e) => {
-      if (document.getElementById('dashboardPage').style.display === 'block') {
-        if (e.key === STORAGE_KEYS.TAX_SUBMISSIONS) {
+      // Auto-refresh every 5 seconds
+      setInterval(() => {
+        if (document.getElementById('dashboardPage').style.display === 'block') {
           loadTaxSubmissions();
-          showNotification('New Data', 'Tax submission received', 'info');
-        } else if (e.key === STORAGE_KEYS.JOB_APPLICATIONS) {
           loadApplications();
-          showNotification('New Data', 'Job application received', 'info');
-        } else if (e.key === STORAGE_KEYS.CONTACT_MESSAGES) {
           loadContacts();
-          showNotification('New Data', 'Contact message received', 'info');
+          loadLogins();
         }
-      }
+      }, 5000);
     });
   </script>
 </body>
