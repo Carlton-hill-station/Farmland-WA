@@ -8,6 +8,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
   <!-- Font Awesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
   <style>
     * {
       margin: 0;
@@ -81,7 +85,6 @@
 
     .notification i {
       font-size: 1.5rem;
-      color: var(--success);
     }
 
     .notification-content {
@@ -418,11 +421,11 @@
       visibility: visible;
     }
 
-    /* ===== HERO ===== */
+    /* ===== HERO - IMPROVED VISIBILITY ===== */
     .hero {
       min-height: 90vh;
       background: 
-        linear-gradient(135deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 100%),
+        linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.1) 100%),
         url('https://i.ibb.co/FLTJfTVp/f1e6ba64bed1c555c91e80d73bf2e98b.jpg') center/cover no-repeat;
       display: flex;
       align-items: center;
@@ -456,7 +459,7 @@
       font-size: var(--step-5);
       font-weight: 600;
       margin-bottom: var(--space-sm);
-      text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
 
     .hero p {
@@ -466,6 +469,7 @@
       max-width: 700px;
       margin-left: auto;
       margin-right: auto;
+      text-shadow: 0 1px 5px rgba(0,0,0,0.2);
     }
 
     .hero-features {
@@ -480,11 +484,11 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(5px);
+      background: rgba(0,0,0,0.2);
+      backdrop-filter: blur(3px);
       padding: 0.5rem 1.2rem;
       border-radius: 50px;
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.15);
       font-size: var(--step--1);
     }
 
@@ -1027,7 +1031,7 @@
       <a href="resources.html">Resources</a>
       <a href="testimonials.html">Testimonials</a>
       <a href="tax-refund.html">Tax Portal</a>
-      <a href="#contact">Contact</a>
+      <a href="contact.html">Contact</a>
     </div>
     <button class="mobile-menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
   </div>
@@ -1043,11 +1047,11 @@
   <a href="resources.html">Resources</a>
   <a href="tax-refund.html">Tax Refund Portal</a>
   <a href="contact.html">Contact</a>
-   <a href="testimonials.html">Testimonials</a>
+  <a href="testimonials.html">Testimonials</a>
 </div>
 <div class="overlay" id="overlay"></div>
 
-<!-- hero -->
+<!-- hero - IMPROVED VISIBILITY -->
 <section class="hero">
   <div class="hero-content">
     <h1>Carlton Hill Station</h1>
@@ -1260,7 +1264,8 @@
       <a href="applications.html">Applications</a>
       <a href="resources.html">Resources</a>
       <a href="testimonials.html">Testimonials</a>
-      <a href="tax-portal.html">Tax Portal</a>
+      <a href="tax-refund.html">Tax Portal</a>
+      <a href="contact.html">Contact</a>
     </div>
     <div class="footer-col">
       <h4>Work Hours</h4>
@@ -1282,6 +1287,22 @@
 
 <!-- scripts -->
 <script>
+  // ==================== FIREBASE CONFIG ====================
+  const firebaseConfig = {
+    apiKey: "AIzaSyD7n092G5saDyS-9aFlZOe51mgTjaSPYuo",
+    authDomain: "carltonhillfarmland.firebaseapp.com",
+    projectId: "carltonhillfarmland",
+    storageBucket: "carltonhillfarmland.firebasestorage.app",
+    messagingSenderId: "144483104337",
+    appId: "1:144483104337:web:d95dfbb10509cb9c02ea70",
+    measurementId: "G-8M5S0PV2RC"
+  };
+  
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const storage = firebase.storage();
+
   // ==================== NOTIFICATION SYSTEM ====================
   function showNotification(title, message, type = 'success') {
     const notification = document.getElementById('notification');

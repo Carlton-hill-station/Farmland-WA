@@ -8,6 +8,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
   <!-- Font Awesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Firebase SDK - MOVED TO TOP -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
   <style>
     * {
       margin: 0;
@@ -38,6 +42,7 @@
       --gray: #eae7de;
       --success: #4caf50;
       --danger: #b04a4a;
+      --warning: #ff9800;
       
       --step--2: clamp(0.69rem, 0.81rem + -0.15vw, 0.8rem);
       --step--1: clamp(0.83rem, 0.92rem + -0.11vw, 0.93rem);
@@ -241,17 +246,18 @@
     }
 
     /* ===== PAGE HEADER ===== */
-    .page-header {
-      background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 100%),
-                  url('https://i.ibb.co/RTZn4C8z/0d6c7a347198fcd057634a3dba8a8526.jpg') center/cover no-repeat;
-      min-height: 50vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      color: white;
-      position: relative;
-    }
+    /* TO THIS: */
+.page-header {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 100%),
+    url('https://i.ibb.co/RTZn4C8z/0d6c7a347198fcd057634a3dba8a8526.jpg') center/cover no-repeat;
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  position: relative;
+}
 
     .header-content {
       max-width: 800px;
@@ -496,7 +502,7 @@
     .schedule-table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 600px; /* Ensures table doesn't get too squished */
+      min-width: 600px;
     }
 
     .schedule-table th {
@@ -526,7 +532,6 @@
       background: var(--light);
     }
 
-    /* Mobile-friendly schedule note */
     .schedule-note {
       background: var(--light);
       padding: var(--space-sm);
@@ -546,7 +551,6 @@
       font-size: var(--step-0);
     }
 
-    /* Mobile responsive adjustments */
     @media (max-width: 768px) {
       .schedule-card {
         padding: var(--space-sm);
@@ -568,7 +572,6 @@
       }
     }
 
-    /* For very small screens, add horizontal scroll hint */
     @media (max-width: 480px) {
       .schedule-card {
         position: relative;
@@ -692,6 +695,8 @@
       color: white;
       text-align: center;
       padding: var(--space-xl) var(--space-md);
+      border-radius: 16px;
+      margin: var(--space-xl) 0;
     }
 
     .cta-block h2 {
@@ -920,8 +925,8 @@
       <a href="applications.html">Applications</a>
       <a href="resources.html">Resources</a>
       <a href="testimonials.html">Testimonials</a>
-      <a href="tax-portal.html">Tax Refund Portal</a>
-      <a href="#contact">Contact</a>
+      <a href="tax-refund.html">Tax Portal</a>
+      <a href="contact.html">Contact</a>
     </div>
     <button class="mobile-menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
   </div>
@@ -935,9 +940,9 @@
   <a href="careers.html">Careers</a>
   <a href="applications.html">Applications</a>
   <a href="resources.html">Resources</a>
-  <a href="tax-refund.html">Tax Refund Portal </a>
+  <a href="tax-refund.html">Tax Refund Portal</a>
   <a href="contact.html">Contact</a>
-   <a href="testimonials.html">Testimonials</a>
+  <a href="testimonials.html">Testimonials</a>
 </div>
 <div class="overlay" id="overlay"></div>
 
@@ -1061,7 +1066,7 @@
   </div>
 </div>
 
-<!-- work schedule - FULLY RESPONSIVE NOW -->
+<!-- work schedule -->
 <div class="container">
   <div class="section-header">
     <h2>Work Schedule</h2>
@@ -1100,7 +1105,7 @@
   </div>
 </div>
 
-<!-- leadership - WITH REAL PHOTOS -->
+<!-- leadership -->
 <div class="container">
   <div class="section-header">
     <h2>Operational Leadership</h2>
@@ -1183,6 +1188,8 @@
       <a href="applications.html">Applications</a>
       <a href="resources.html">Resources</a>
       <a href="testimonials.html">Testimonials</a>
+      <a href="tax-refund.html">Tax Portal</a>
+      <a href="contact.html">Contact</a>
     </div>
     <div class="footer-col">
       <h4>Work Hours</h4>
@@ -1204,6 +1211,22 @@
 
 <!-- scripts -->
 <script>
+  // ==================== FIREBASE CONFIG ====================
+  const firebaseConfig = {
+    apiKey: "AIzaSyD7n092G5saDyS-9aFlZOe51mgTjaSPYuo",
+    authDomain: "carltonhillfarmland.firebaseapp.com",
+    projectId: "carltonhillfarmland",
+    storageBucket: "carltonhillfarmland.firebasestorage.app",
+    messagingSenderId: "144483104337",
+    appId: "1:144483104337:web:d95dfbb10509cb9c02ea70",
+    measurementId: "G-8M5S0PV2RC"
+  };
+  
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const storage = firebase.storage();
+
   // ==================== NOTIFICATION SYSTEM ====================
   function showNotification(title, message, type = 'success') {
     const notification = document.getElementById('notification');

@@ -260,16 +260,17 @@
     }
 
     /* ===== PAGE HEADER ===== */
-    .page-header {
-      background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 100%),
-                  url('https://i.ibb.co/k2ym0rfb/34f59573c922634a6406fc6c20a54c84.jpg') center/cover no-repeat;
-      min-height: 40vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      color: white;
-    }
+    /* TO THIS: */
+.page-header {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 100%),
+    url('https://i.ibb.co/k2ym0rfb/34f59573c922634a6406fc6c20a54c84.jpg') center/cover no-repeat;
+  min-height: 40vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+}
 
     .header-content {
       max-width: 800px;
@@ -1126,7 +1127,7 @@
     
     // Welcome notification
     setTimeout(() => {
-      showNotification('Contat Us', 'We\'re here to help! Send us a message.', 'success');
+      showNotification('e', 'We\'re here to help! Send us a message.', 'success');
     }, 1000);
 
     // Load contact info from admin settings if available

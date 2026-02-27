@@ -263,16 +263,17 @@
     }
 
     /* ===== PAGE HEADER ===== */
-    .page-header {
-      background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 100%),
-                  url('https://i.ibb.co/ynQzZM9P/615f9fe9b6f8e59ffeb12c4c7daba741.jpg') center/cover no-repeat;
-      min-height: 50vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      color: white;
-    }
+   /* TO THIS: */
+.page-header {
+  background: linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.1) 100%),
+              url('https://i.ibb.co/ynQzZM9P/615f9fe9b6f8e59ffeb12c4c7daba741.jpg') center/cover no-repeat;
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+}
 
     .header-content {
       max-width: 900px;
@@ -1257,6 +1258,27 @@
     }, REFRESH_INTERVAL);
   });
 </script>
+<!-- Add this right before </body> in EVERY page -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 
+<script>
+  // Your Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyD7n092G5saDyS-9aFlZOe51mgTjaSPYuo",
+    authDomain: "carltonhillfarmland.firebaseapp.com",
+    projectId: "carltonhillfarmland",
+    storageBucket: "carltonhillfarmland.firebasestorage.app",
+    messagingSenderId: "144483104337",
+    appId: "1:144483104337:web:d95dfbb10509cb9c02ea70",
+    measurementId: "G-8M5S0PV2RC"
+  };
+  
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const storage = firebase.storage();
+</script>
 </body>
 </html>
