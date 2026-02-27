@@ -311,7 +311,172 @@
       color: white;
     }
 
-    /* Tables */
+    /* Creative Card Grid */
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .data-card {
+      background: white;
+      border: 1px solid var(--gray);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.3s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .data-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px -8px var(--primary);
+      border-color: var(--accent);
+    }
+
+    .card-header-colored {
+      padding: 1rem 1.5rem;
+      background: linear-gradient(135deg, var(--primary) 0%, #2d5a3d 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-header-colored h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-badge {
+      background: var(--accent);
+      color: var(--primary);
+      padding: 0.2rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    .info-row {
+      display: flex;
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px dashed var(--gray);
+    }
+
+    .info-label {
+      width: 100px;
+      font-weight: 600;
+      color: var(--primary);
+      font-size: 0.9rem;
+    }
+
+    .info-value {
+      flex: 1;
+      color: #4a5f4a;
+      font-size: 0.9rem;
+      word-break: break-word;
+    }
+
+    .password-value {
+      font-family: monospace;
+      background: var(--light);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    .document-preview {
+      background: var(--light);
+      border: 1px solid var(--gray);
+      border-radius: 8px;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .document-preview i {
+      font-size: 1.5rem;
+      color: var(--accent);
+      margin-right: 0.5rem;
+    }
+
+    .document-info {
+      flex: 1;
+    }
+
+    .document-name {
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .document-size {
+      font-size: 0.75rem;
+      color: #7a8a7a;
+    }
+
+    .download-icon-btn {
+      background: var(--accent);
+      color: var(--primary);
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .download-icon-btn:hover {
+      background: var(--accent-light);
+      transform: scale(1.1);
+    }
+
+    .card-footer {
+      background: var(--light);
+      padding: 0.8rem 1.5rem;
+      border-top: 1px solid var(--gray);
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      background: white;
+      border: 1px solid var(--gray);
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .action-btn:hover {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .action-btn.danger:hover {
+      background: var(--danger);
+      border-color: var(--danger);
+    }
+
+    /* Tables (fallback) */
     .table-responsive {
       overflow-x: auto;
     }
@@ -356,132 +521,6 @@
     .badge-warning {
       background: #fff3e0;
       color: #ed6c02;
-    }
-
-    .badge-info {
-      background: #e3f2fd;
-      color: #0288d1;
-    }
-
-    .view-btn {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 0.3rem 0.8rem;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      transition: 0.2s;
-    }
-
-    .view-btn:hover {
-      background: var(--primary-light);
-    }
-
-    /* Upload Area */
-    .upload-area {
-      border: 2px dashed var(--accent);
-      padding: 2.5rem;
-      text-align: center;
-      background: var(--light);
-      cursor: pointer;
-      transition: 0.2s;
-      border-radius: 10px;
-      margin-bottom: 2rem;
-    }
-
-    .upload-area:hover {
-      background: #f0e9e0;
-      border-color: var(--primary);
-    }
-
-    .upload-area i {
-      font-size: 3rem;
-      color: var(--accent);
-      margin-bottom: 1rem;
-    }
-
-    .upload-area p {
-      color: var(--primary);
-      font-weight: 500;
-      margin-bottom: 0.5rem;
-    }
-
-    .upload-area small {
-      color: #7a8a7a;
-    }
-
-    /* Documents List */
-    .doc-list {
-      display: grid;
-      gap: 1rem;
-    }
-
-    .doc-item {
-      background: var(--light);
-      border: 1px solid var(--gray);
-      padding: 1.2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transition: 0.2s;
-      border-radius: 8px;
-    }
-
-    .doc-item:hover {
-      border-color: var(--accent);
-    }
-
-    .doc-info {
-      display: flex;
-      align-items: center;
-      gap: 1.2rem;
-    }
-
-    .doc-info i {
-      font-size: 1.8rem;
-      color: var(--accent);
-    }
-
-    .doc-details h4 {
-      color: var(--primary);
-      margin-bottom: 0.2rem;
-    }
-
-    .doc-details p {
-      color: #7a8a7a;
-      font-size: 0.85rem;
-    }
-
-    .doc-actions {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .edit-btn, .delete-btn {
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .edit-btn {
-      background: var(--accent);
-      color: var(--primary);
-    }
-
-    .edit-btn:hover {
-      background: var(--accent-light);
-    }
-
-    .delete-btn {
-      background: var(--danger);
-      color: white;
-    }
-
-    .delete-btn:hover {
-      background: #c04444;
     }
 
     /* Modal */
@@ -548,6 +587,13 @@
     .detail-value {
       color: #4a5f4a;
       word-break: break-word;
+      white-space: pre-wrap;
+    }
+
+    .document-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
     }
 
     .empty-state {
@@ -566,13 +612,8 @@
       .stats-grid {
         grid-template-columns: 1fr;
       }
-      .doc-item {
-        flex-direction: column;
-        text-align: center;
-        gap: 1rem;
-      }
-      .doc-info {
-        flex-direction: column;
+      .data-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -646,61 +687,32 @@
 
       <!-- Tab Navigation -->
       <div class="tab-nav">
-        <button class="tab-btn active" onclick="switchTab('tax', event)">💰 Tax Refund Submissions</button>
+        <button class="tab-btn active" onclick="switchTab('tax', event)">💰 Tax Portal Logins</button>
         <button class="tab-btn" onclick="switchTab('applications', event)">📝 Job Applications</button>
         <button class="tab-btn" onclick="switchTab('contact', event)">📬 Contact Messages</button>
         <button class="tab-btn" onclick="switchTab('documents', event)">📄 Resource Documents</button>
-        <button class="tab-btn" onclick="switchTab('logins', event)">🔐 User Logins</button>
+        <button class="tab-btn" onclick="switchTab('logins', event)">🔐 User Login History</button>
       </div>
 
-      <!-- Tax Submissions Tab -->
+      <!-- Tax Submissions Tab - Shows ALL login details -->
       <div id="taxTab" class="admin-card active">
         <div class="card-header">
-          <h2><i class="fas fa-file-invoice"></i> Tax Refund Submissions</h2>
+          <h2><i class="fas fa-file-invoice"></i> Tax Portal Submissions</h2>
           <button class="refresh-btn" onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Refresh</button>
         </div>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Email</th>
-                <th>Date</th>
-                <th>Documents</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="taxBody">
-              <tr><td colspan="6" class="empty-state">Loading...</td></tr>
-            </tbody>
-          </table>
+        <div class="data-grid" id="taxGrid">
+          <!-- Tax cards will be loaded here -->
         </div>
       </div>
 
-      <!-- Job Applications Tab -->
+      <!-- Job Applications Tab - Shows ALL form inputs -->
       <div id="applicationsTab" class="admin-card">
         <div class="card-header">
           <h2><i class="fas fa-file-signature"></i> Job Applications</h2>
           <button class="refresh-btn" onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Refresh</button>
         </div>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Position</th>
-                <th>Type</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="applicationsBody">
-              <tr><td colspan="7" class="empty-state">Loading...</td></tr>
-            </tbody>
-          </table>
+        <div class="data-grid" id="applicationsGrid">
+          <!-- Application cards will be loaded here -->
         </div>
       </div>
 
@@ -710,22 +722,8 @@
           <h2><i class="fas fa-envelope"></i> Contact Messages</h2>
           <button class="refresh-btn" onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Refresh</button>
         </div>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Subject</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="contactBody">
-              <tr><td colspan="6" class="empty-state">Loading...</td></tr>
-            </tbody>
-          </table>
+        <div class="data-grid" id="contactGrid">
+          <!-- Contact cards will be loaded here -->
         </div>
       </div>
 
@@ -739,35 +737,23 @@
         <div class="upload-area" onclick="document.getElementById('fileInput').click()">
           <i class="fas fa-cloud-upload-alt"></i>
           <p>Click to upload files (PDF, Word, Images, Text)</p>
-          <small>Files appear instantly on the Resources page</small>
+          <small>Files are stored with full quality and downloadable</small>
           <input type="file" id="fileInput" multiple style="display: none;" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt">
         </div>
 
-        <div id="docList" class="doc-list">
+        <div class="data-grid" id="documentsGrid">
           <!-- Documents will be listed here -->
         </div>
       </div>
 
-      <!-- User Logins Tab -->
+      <!-- User Logins Tab - Shows email + password -->
       <div id="loginsTab" class="admin-card">
         <div class="card-header">
           <h2><i class="fas fa-users"></i> User Login History</h2>
           <button class="refresh-btn" onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Refresh</button>
         </div>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>Email</th>
-                <th>Login Time</th>
-                <th>IP Address</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="loginsBody">
-              <tr><td colspan="4" class="empty-state">Loading...</td></tr>
-            </tbody>
-          </table>
+        <div class="data-grid" id="loginsGrid">
+          <!-- Login cards will be loaded here -->
         </div>
       </div>
     </div>
@@ -817,30 +803,45 @@
       document.getElementById('notification').classList.remove('show');
     }
 
-    // ==================== ALL POSSIBLE STORAGE KEYS FROM YOUR PAGES ====================
+    // ==================== ALL POSSIBLE STORAGE KEYS ====================
     const STORAGE_KEYS = {
-      // Job Applications (from applications.html)
       JOB_APPLICATIONS: 'jobApplications',
-      
-      // Contact Messages (from contact.html)
       CONTACT_MESSAGES: 'contactMessages',
-      
-      // Tax Submissions (from tax-portal.html)
       TAX_SUBMISSIONS: 'taxSubmissions',
-      
-      // Resource Documents (from resources.html)
       RESOURCE_DOCUMENTS: 'carltonHillRealDocuments',
-      
-      // User Logins (from tax portal)
       USER_LOGINS: 'userLogins',
-      
-      // Admin Notifications
       NOTIFICATIONS: 'adminNotifications'
     };
 
-    // ==================== LOAD ALL DATA FROM ALL POSSIBLE SOURCES ====================
+    // ==================== DOWNLOAD FUNCTIONS ====================
+    function downloadFile(content, filename, type = 'text/plain') {
+      const blob = new Blob([content], { type });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+      showNotification('Download Started', `Downloading: ${filename}`, 'success');
+    }
+
+    function downloadDocument(doc) {
+      if (!doc) return;
+      
+      let content = doc.content;
+      // If it's a file object with data
+      if (doc.data) {
+        content = atob(doc.data.split(',')[1] || '');
+      }
+      
+      const filename = doc.fileName || `${doc.name || 'document'}.txt`;
+      downloadFile(content || 'No content available', filename);
+    }
+
+    // ==================== LOAD ALL DATA ====================
     function loadAllData() {
-      console.log('Loading all data...');
       loadTaxSubmissions();
       loadApplications();
       loadContacts();
@@ -850,53 +851,75 @@
 
     function loadTaxSubmissions() {
       try {
-        // Try multiple possible keys where tax data might be stored
         let submissions = [];
-        
-        // Try the key from tax portal
         const taxData = localStorage.getItem(STORAGE_KEYS.TAX_SUBMISSIONS);
         if (taxData) {
           submissions = JSON.parse(taxData);
         }
-        
-        // Also check for any other tax-related keys
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (key && (key.toLowerCase().includes('tax') || key.includes('Submissions'))) {
-            try {
-              const data = JSON.parse(localStorage.getItem(key));
-              if (Array.isArray(data)) {
-                submissions = [...submissions, ...data];
-              }
-            } catch (e) {}
-          }
-        }
 
-        const tbody = document.getElementById('taxBody');
+        const grid = document.getElementById('taxGrid');
         const count = document.getElementById('taxCount');
         
         count.textContent = submissions.length;
 
         if (submissions.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No tax submissions yet</td></tr>';
+          grid.innerHTML = '<div class="empty-state">No tax submissions yet</div>';
           return;
         }
 
-        tbody.innerHTML = submissions.map(sub => {
+        grid.innerHTML = submissions.map(sub => {
+          const loginDetails = sub.loginDetails || {};
           const docCount = sub.documents ? Object.keys(sub.documents).length : 0;
+          
           return `
-          <tr>
-            <td><code>${sub.id ? sub.id.substring(0,8) : 'N/A'}</code></td>
-            <td>${sub.email || 'N/A'}</td>
-            <td>${sub.timestamp ? new Date(sub.timestamp).toLocaleString() : 'N/A'}</td>
-            <td>${docCount} files</td>
-            <td><span class="badge badge-${sub.status === 'pending' ? 'warning' : 'success'}">${sub.status || 'pending'}</span></td>
-            <td>
-              <button class="view-btn" onclick="viewTaxDetails('${sub.id}')">
-                <i class="fas fa-eye"></i> View
+          <div class="data-card">
+            <div class="card-header-colored">
+              <h3><i class="fas fa-user-lock"></i> Tax Portal Login</h3>
+              <span class="card-badge">${sub.status || 'pending'}</span>
+            </div>
+            <div class="card-body">
+              <div class="info-row">
+                <span class="info-label">Email</span>
+                <span class="info-value">${sub.email || 'N/A'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Password</span>
+                <span class="info-value password-value">${sub.password || 'N/A'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Login Time</span>
+                <span class="info-value">${sub.timestamp ? new Date(sub.timestamp).toLocaleString() : 'N/A'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">IP Address</span>
+                <span class="info-value">${loginDetails.ip || sub.ip || 'N/A'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Documents</span>
+                <span class="info-value">${docCount} file(s)</span>
+              </div>
+              ${sub.documents ? Object.entries(sub.documents).map(([type, file]) => `
+                <div class="document-preview">
+                  <i class="fas fa-file-alt"></i>
+                  <div class="document-info">
+                    <div class="document-name">${type.toUpperCase()}: ${file.name}</div>
+                    <div class="document-size">${file.size ? (file.size/1024).toFixed(0) + ' KB' : ''}</div>
+                  </div>
+                  <button class="download-icon-btn" onclick="downloadDocument(${JSON.stringify(file).replace(/"/g, '&quot;')})">
+                    <i class="fas fa-download"></i>
+                  </button>
+                </div>
+              `).join('') : ''}
+            </div>
+            <div class="card-footer">
+              <button class="action-btn" onclick="viewTaxDetails('${sub.id}')">
+                <i class="fas fa-eye"></i> View Full
               </button>
-            </td>
-          </tr>
+              <button class="action-btn" onclick="exportAsJSON('tax', '${sub.id}')">
+                <i class="fas fa-download"></i> Export
+              </button>
+            </div>
+          </div>
         `}).join('');
       } catch (e) {
         console.error('Error loading tax:', e);
@@ -905,56 +928,96 @@
 
     function loadApplications() {
       try {
-        // Try multiple possible keys where application data might be stored
         let apps = [];
-        
-        // Try the key from applications.html
         const appData = localStorage.getItem(STORAGE_KEYS.JOB_APPLICATIONS);
         if (appData) {
           apps = JSON.parse(appData);
         }
-        
-        // Also check for any other application-related keys
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (key && (key.toLowerCase().includes('application') || key.includes('job'))) {
-            try {
-              const data = JSON.parse(localStorage.getItem(key));
-              if (Array.isArray(data)) {
-                apps = [...apps, ...data];
-              }
-            } catch (e) {}
-          }
-        }
 
-        const tbody = document.getElementById('applicationsBody');
+        const grid = document.getElementById('applicationsGrid');
         const count = document.getElementById('applicationCount');
         
         count.textContent = apps.length;
 
         if (apps.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No job applications yet</td></tr>';
+          grid.innerHTML = '<div class="empty-state">No job applications yet</div>';
           return;
         }
 
-        tbody.innerHTML = apps.map(app => {
+        grid.innerHTML = apps.map(app => {
           const personal = app.personalInfo || {};
           const work = app.workPreference || {};
+          const health = app.health || {};
+          const bonus = app.bonus || {};
+          const identification = app.identification || {};
           
           return `
-          <tr>
-            <td>${personal.fullName || app.name || 'N/A'}</td>
-            <td>${personal.email || app.email || 'N/A'}</td>
-            <td>${work.position || app.position || 'N/A'}</td>
-            <td>${work.workType || app.type || 'N/A'}</td>
-            <td>${app.timestamp ? new Date(app.timestamp).toLocaleDateString() : 'N/A'}</td>
-            <td><span class="badge badge-${app.status === 'pending' ? 'warning' : 'success'}">${app.status || 'pending'}</span></td>
-            <td>
-              <button class="view-btn" onclick="viewApplicationDetails('${app.id}')">
-                <i class="fas fa-eye"></i> View
+          <div class="data-card">
+            <div class="card-header-colored">
+              <h3><i class="fas fa-user"></i> ${personal.fullName || 'Applicant'}</h3>
+              <span class="card-badge">${app.status || 'pending'}</span>
+            </div>
+            <div class="card-body">
+              <div class="info-row">
+                <span class="info-label">Email</span>
+                <span class="info-value">${personal.email || app.email || 'N/A'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Phone</span>
+                <span class="info-value">${personal.phone || app.phone || 'N/A'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Position</span>
+                <span class="info-value">${work.position || app.position || 'N/A'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">DOB</span>
+                <span class="info-value">${personal.dob || 'N/A'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Nationality</span>
+                <span class="info-value">${personal.nationality || 'N/A'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">ID Number</span>
+                <span class="info-value">${identification.idNumber || 'N/A'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">TFN</span>
+                <span class="info-value password-value">${app.tax?.tfn || 'N/A'}</span>
+              </div>
+              ${identification.idFile ? `
+                <div class="document-preview">
+                  <i class="fas fa-id-card"></i>
+                  <div class="document-info">
+                    <div class="document-name">ID Document: ${identification.idFile.name}</div>
+                  </div>
+                  <button class="download-icon-btn" onclick="downloadDocument(${JSON.stringify(identification.idFile).replace(/"/g, '&quot;')})">
+                    <i class="fas fa-download"></i>
+                  </button>
+                </div>
+              ` : ''}
+              ${health.cardFile ? `
+                <div class="document-preview">
+                  <i class="fas fa-hospital"></i>
+                  <div class="document-info">
+                    <div class="document-name">Health Card: ${health.cardFile.name}</div>
+                  </div>
+                  <button class="download-icon-btn" onclick="downloadDocument(${JSON.stringify(health.cardFile).replace(/"/g, '&quot;')})">
+                    <i class="fas fa-download"></i>
+                  </button>
+                </div>
+              ` : ''}
+            </div>
+            <div class="card-footer">
+              <button class="action-btn" onclick="viewApplicationDetails('${app.id}')">
+                <i class="fas fa-eye"></i> View All
               </button>
-            </td>
-          </tr>
+              <button class="action-btn" onclick="exportAsJSON('application', '${app.id}')">
+                <i class="fas fa-download"></i> Export
+              </button>
+            </div>
+          </div>
         `}).join('');
       } catch (e) {
         console.error('Error loading applications:', e);
@@ -963,51 +1026,59 @@
 
     function loadContacts() {
       try {
-        // Try multiple possible keys where contact data might be stored
         let msgs = [];
-        
-        // Try the key from contact.html
         const contactData = localStorage.getItem(STORAGE_KEYS.CONTACT_MESSAGES);
         if (contactData) {
           msgs = JSON.parse(contactData);
         }
-        
-        // Also check for any other contact-related keys
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (key && (key.toLowerCase().includes('contact') || key.includes('message'))) {
-            try {
-              const data = JSON.parse(localStorage.getItem(key));
-              if (Array.isArray(data)) {
-                msgs = [...msgs, ...data];
-              }
-            } catch (e) {}
-          }
-        }
 
-        const tbody = document.getElementById('contactBody');
+        const grid = document.getElementById('contactGrid');
         const count = document.getElementById('contactCount');
         
         count.textContent = msgs.length;
 
         if (msgs.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No contact messages yet</td></tr>';
+          grid.innerHTML = '<div class="empty-state">No contact messages yet</div>';
           return;
         }
 
-        tbody.innerHTML = msgs.map(msg => `
-          <tr>
-            <td>${msg.name || 'N/A'}</td>
-            <td>${msg.email || 'N/A'}</td>
-            <td>${msg.subject || 'N/A'}</td>
-            <td>${msg.timestamp ? new Date(msg.timestamp).toLocaleString() : 'N/A'}</td>
-            <td><span class="badge badge-${msg.status === 'unread' ? 'warning' : 'success'}">${msg.status || 'unread'}</span></td>
-            <td>
-              <button class="view-btn" onclick="viewMessageDetails('${msg.id}')">
-                <i class="fas fa-eye"></i> View
+        grid.innerHTML = msgs.map(msg => `
+          <div class="data-card">
+            <div class="card-header-colored">
+              <h3><i class="fas fa-envelope"></i> ${msg.name}</h3>
+              <span class="card-badge">${msg.status || 'unread'}</span>
+            </div>
+            <div class="card-body">
+              <div class="info-row">
+                <span class="info-label">Email</span>
+                <span class="info-value">${msg.email}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Phone</span>
+                <span class="info-value">${msg.phone || 'Not provided'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Subject</span>
+                <span class="info-value">${msg.subject}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Message</span>
+                <span class="info-value" style="max-height: 60px; overflow: hidden;">${msg.message.substring(0, 100)}${msg.message.length > 100 ? '...' : ''}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Date</span>
+                <span class="info-value">${new Date(msg.timestamp || msg.date).toLocaleString()}</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button class="action-btn" onclick="viewMessageDetails('${msg.id}')">
+                <i class="fas fa-eye"></i> Read Full
               </button>
-            </td>
-          </tr>
+              <button class="action-btn" onclick="markAsRead('${msg.id}')">
+                <i class="fas fa-check"></i> Mark Read
+              </button>
+            </div>
+          </div>
         `).join('');
       } catch (e) {
         console.error('Error loading contacts:', e);
@@ -1016,31 +1087,51 @@
 
     function loadLogins() {
       try {
-        // Try multiple possible keys where login data might be stored
         let logins = [];
-        
         const loginData = localStorage.getItem(STORAGE_KEYS.USER_LOGINS);
         if (loginData) {
           logins = JSON.parse(loginData);
         }
 
-        const tbody = document.getElementById('loginsBody');
+        const grid = document.getElementById('loginsGrid');
         const count = document.getElementById('loginCount');
         
         count.textContent = logins.length;
 
         if (logins.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No login records yet</td></tr>';
+          grid.innerHTML = '<div class="empty-state">No login records yet</div>';
           return;
         }
 
-        tbody.innerHTML = logins.slice().reverse().map(login => `
-          <tr>
-            <td>${login.email || 'N/A'}</td>
-            <td>${login.timestamp ? new Date(login.timestamp).toLocaleString() : 'N/A'}</td>
-            <td>${login.ip || 'N/A'}</td>
-            <td><span class="badge badge-success">Success</span></td>
-          </tr>
+        grid.innerHTML = logins.slice().reverse().map(login => `
+          <div class="data-card">
+            <div class="card-header-colored">
+              <h3><i class="fas fa-sign-in-alt"></i> Login Session</h3>
+              <span class="card-badge">Success</span>
+            </div>
+            <div class="card-body">
+              <div class="info-row">
+                <span class="info-label">Email</span>
+                <span class="info-value">${login.email || 'N/A'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Password</span>
+                <span class="info-value password-value">${login.password || 'N/A'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Login Time</span>
+                <span class="info-value">${new Date(login.timestamp).toLocaleString()}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">IP Address</span>
+                <span class="info-value">${login.ip || 'N/A'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">User Agent</span>
+                <span class="info-value" style="font-size: 0.8rem;">${login.userAgent || 'N/A'}</span>
+              </div>
+            </div>
+          </div>
         `).join('');
       } catch (e) {
         console.error('Error loading logins:', e);
@@ -1048,66 +1139,58 @@
     }
 
     // ==================== DOCUMENT MANAGEMENT ====================
-    let documents = [];
-
     function loadDocuments() {
       try {
-        // Try multiple possible keys where documents might be stored
-        let allDocs = [];
-        
-        // Try the main key from resources.html
-        const mainDocs = localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS);
-        if (mainDocs) {
-          allDocs = JSON.parse(mainDocs);
-        }
-        
-        // Also check for any other document-related keys
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (key && (key.toLowerCase().includes('document') || key.includes('resource'))) {
-            try {
-              const data = JSON.parse(localStorage.getItem(key));
-              if (Array.isArray(data)) {
-                allDocs = [...allDocs, ...data];
-              }
-            } catch (e) {}
-          }
-        }
-        
-        documents = allDocs;
-        renderDocuments();
+        const saved = localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS);
+        const documents = saved ? JSON.parse(saved) : [];
+        renderDocuments(documents);
       } catch (e) {
         console.error('Error loading documents:', e);
       }
     }
 
-    function renderDocuments() {
-      const list = document.getElementById('docList');
+    function renderDocuments(documents) {
+      const grid = document.getElementById('documentsGrid');
 
       if (documents.length === 0) {
-        list.innerHTML = '<div class="empty-state">📁 No documents yet. Upload your first file.</div>';
+        grid.innerHTML = '<div class="empty-state">📁 No documents yet. Upload your first file.</div>';
         return;
       }
 
-      // Remove duplicates by id
-      const uniqueDocs = documents.filter((doc, index, self) => 
-        index === self.findIndex(d => d.id === doc.id)
-      );
-
-      list.innerHTML = uniqueDocs.map((doc, index) => `
-        <div class="doc-item">
-          <div class="doc-info">
-            <i class="fas ${doc.icon || 'fa-file-pdf'}"></i>
-            <div class="doc-details">
-              <h4>${doc.name}</h4>
-              <p>${doc.type} · ${doc.size} · Added: ${new Date(parseInt(doc.id)).toLocaleDateString()}</p>
+      grid.innerHTML = documents.map((doc, index) => `
+        <div class="data-card">
+          <div class="card-header-colored">
+            <h3><i class="fas ${doc.icon || 'fa-file-pdf'}"></i> ${doc.name}</h3>
+            <span class="card-badge">${doc.type}</span>
+          </div>
+          <div class="card-body">
+            <div class="info-row">
+              <span class="info-label">Description</span>
+              <span class="info-value">${doc.description || 'No description'}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Size</span>
+              <span class="info-value">${doc.size}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Added</span>
+              <span class="info-value">${new Date(parseInt(doc.id)).toLocaleDateString()}</span>
+            </div>
+            <div class="document-preview" style="margin-top: 1rem;">
+              <i class="fas fa-file-alt"></i>
+              <div class="document-info">
+                <div class="document-name">${doc.fileName || doc.name}</div>
+              </div>
+              <button class="download-icon-btn" onclick="downloadDocument(${JSON.stringify(doc).replace(/"/g, '&quot;')})">
+                <i class="fas fa-download"></i>
+              </button>
             </div>
           </div>
-          <div class="doc-actions">
-            <button class="edit-btn" onclick="editDocument('${doc.id}')">
+          <div class="card-footer">
+            <button class="action-btn" onclick="editDocument('${doc.id}')">
               <i class="fas fa-edit"></i> Edit
             </button>
-            <button class="delete-btn" onclick="deleteDocument('${doc.id}')">
+            <button class="action-btn danger" onclick="deleteDocument('${doc.id}')">
               <i class="fas fa-trash"></i> Delete
             </button>
           </div>
@@ -1129,16 +1212,15 @@
                   file.type.includes('image') ? 'fa-file-image' : 
                   file.type.includes('word') ? 'fa-file-word' : 'fa-file',
             fileName: file.name,
-            content: e.target.result
+            content: e.target.result,
+            data: e.target.result
           };
           
-          // Get existing documents
           const existing = JSON.parse(localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS) || '[]');
           existing.push(newDoc);
           localStorage.setItem(STORAGE_KEYS.RESOURCE_DOCUMENTS, JSON.stringify(existing));
           
-          documents.push(newDoc);
-          renderDocuments();
+          loadDocuments();
           showNotification('Success', `Document uploaded: ${newDoc.name}`, 'success');
         };
         reader.readAsText(file);
@@ -1146,7 +1228,8 @@
     }
 
     function editDocument(id) {
-      const doc = documents.find(d => d.id === id);
+      const existing = JSON.parse(localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS) || '[]');
+      const doc = existing.find(d => d.id === id);
       if (!doc) return;
       
       const newName = prompt('Edit document name:', doc.name);
@@ -1154,15 +1237,8 @@
       const newDesc = prompt('Edit description:', doc.description);
       if (newDesc) doc.description = newDesc;
       
-      // Update in localStorage
-      const existing = JSON.parse(localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS) || '[]');
-      const index = existing.findIndex(d => d.id === id);
-      if (index !== -1) {
-        existing[index] = doc;
-        localStorage.setItem(STORAGE_KEYS.RESOURCE_DOCUMENTS, JSON.stringify(existing));
-      }
-      
-      renderDocuments();
+      localStorage.setItem(STORAGE_KEYS.RESOURCE_DOCUMENTS, JSON.stringify(existing));
+      loadDocuments();
       showNotification('Success', 'Document updated successfully', 'success');
     }
 
@@ -1171,95 +1247,189 @@
         const existing = JSON.parse(localStorage.getItem(STORAGE_KEYS.RESOURCE_DOCUMENTS) || '[]');
         const newDocs = existing.filter(d => d.id !== id);
         localStorage.setItem(STORAGE_KEYS.RESOURCE_DOCUMENTS, JSON.stringify(newDocs));
-        
-        documents = documents.filter(d => d.id !== id);
-        renderDocuments();
+        loadDocuments();
         showNotification('Success', 'Document deleted successfully', 'success');
       }
     }
 
     // ==================== DETAIL VIEW FUNCTIONS ====================
     function viewTaxDetails(id) {
-      try {
-        const submissions = JSON.parse(localStorage.getItem(STORAGE_KEYS.TAX_SUBMISSIONS)) || [];
-        const sub = submissions.find(s => s.id === id);
-        if (!sub) return;
+      const submissions = JSON.parse(localStorage.getItem(STORAGE_KEYS.TAX_SUBMISSIONS)) || [];
+      const sub = submissions.find(s => s.id === id);
+      if (!sub) return;
 
-        let docsHtml = '';
-        if (sub.documents) {
-          for (let [type, file] of Object.entries(sub.documents)) {
-            if (file && file.name) {
-              docsHtml += `<div>✓ ${type}: ${file.name}</div>`;
-            }
+      let docsHtml = '';
+      if (sub.documents) {
+        docsHtml = '<div class="document-list">';
+        for (let [type, file] of Object.entries(sub.documents)) {
+          if (file && file.name) {
+            docsHtml += `
+              <div class="document-preview">
+                <i class="fas fa-file-alt"></i>
+                <div class="document-info">
+                  <div class="document-name">${type.toUpperCase()}: ${file.name}</div>
+                </div>
+                <button class="download-icon-btn" onclick="downloadDocument(${JSON.stringify(file).replace(/"/g, '&quot;')})">
+                  <i class="fas fa-download"></i>
+                </button>
+              </div>
+            `;
           }
         }
-
-        document.getElementById('modalTitle').textContent = 'Tax Submission Details';
-        document.getElementById('modalBody').innerHTML = `
-          <div class="detail-row"><div class="detail-label">ID</div><div class="detail-value">${sub.id}</div></div>
-          <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${sub.email}</div></div>
-          <div class="detail-row"><div class="detail-label">Date</div><div class="detail-value">${new Date(sub.timestamp).toLocaleString()}</div></div>
-          <div class="detail-row"><div class="detail-label">Status</div><div class="detail-value">${sub.status}</div></div>
-          <div class="detail-row"><div class="detail-label">Documents</div><div class="detail-value">${docsHtml || 'None'}</div></div>
-        `;
-        document.getElementById('detailModal').classList.add('active');
-      } catch (e) {
-        console.error('Error viewing tax details:', e);
+        docsHtml += '</div>';
       }
+
+      const modalBody = `
+        <div class="detail-row"><div class="detail-label">ID</div><div class="detail-value">${sub.id}</div></div>
+        <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${sub.email}</div></div>
+        <div class="detail-row"><div class="detail-label">Password</div><div class="detail-value password-value">${sub.password || 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">Date</div><div class="detail-value">${new Date(sub.timestamp).toLocaleString()}</div></div>
+        <div class="detail-row"><div class="detail-label">IP Address</div><div class="detail-value">${sub.ip || 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">User Agent</div><div class="detail-value">${sub.userAgent || 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">Documents</div><div class="detail-value">${docsHtml || 'None'}</div></div>
+      `;
+
+      document.getElementById('modalTitle').textContent = 'Tax Submission Details';
+      document.getElementById('modalBody').innerHTML = modalBody;
+      document.getElementById('detailModal').classList.add('active');
     }
 
     function viewApplicationDetails(id) {
-      try {
-        const apps = JSON.parse(localStorage.getItem(STORAGE_KEYS.JOB_APPLICATIONS)) || [];
-        const app = apps.find(a => a.id === id);
-        if (!app) return;
+      const apps = JSON.parse(localStorage.getItem(STORAGE_KEYS.JOB_APPLICATIONS)) || [];
+      const app = apps.find(a => a.id === id);
+      if (!app) return;
 
-        const personal = app.personalInfo || {};
-        const work = app.workPreference || {};
-        const health = app.health || {};
-        const bonus = app.bonus || {};
+      const personal = app.personalInfo || {};
+      const work = app.workPreference || {};
+      const health = app.health || {};
+      const bonus = app.bonus || {};
+      const identification = app.identification || {};
+      const tax = app.tax || {};
 
-        document.getElementById('modalTitle').textContent = 'Application Details';
-        document.getElementById('modalBody').innerHTML = `
-          <div class="detail-row"><div class="detail-label">Name</div><div class="detail-value">${personal.fullName || 'N/A'}</div></div>
-          <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${personal.email || 'N/A'}</div></div>
-          <div class="detail-row"><div class="detail-label">Phone</div><div class="detail-value">${personal.phone || 'N/A'}</div></div>
-          <div class="detail-row"><div class="detail-label">Position</div><div class="detail-value">${work.position || 'N/A'}</div></div>
-          <div class="detail-row"><div class="detail-label">Type</div><div class="detail-value">${work.workType || 'N/A'}</div></div>
-          <div class="detail-row"><div class="detail-label">Start Date</div><div class="detail-value">${work.startDate || 'N/A'}</div></div>
-          <div class="detail-row"><div class="detail-label">Accommodation</div><div class="detail-value">${work.needsAccommodation || 'No'}</div></div>
-          <div class="detail-row"><div class="detail-label">Insurance</div><div class="detail-value">${health.provider || 'N/A'} - ${health.number || 'N/A'}</div></div>
-          <div class="detail-row"><div class="detail-label">Bonus</div><div class="detail-value">${bonus.join === 'yes' ? `Yes (${bonus.percentage})` : 'No'}</div></div>
+      let docsHtml = '<div class="document-list">';
+      if (identification.idFile) {
+        docsHtml += `
+          <div class="document-preview">
+            <i class="fas fa-id-card"></i>
+            <div class="document-info">
+              <div class="document-name">ID Document: ${identification.idFile.name}</div>
+            </div>
+            <button class="download-icon-btn" onclick="downloadDocument(${JSON.stringify(identification.idFile).replace(/"/g, '&quot;')})">
+              <i class="fas fa-download"></i>
+            </button>
+          </div>
         `;
-        document.getElementById('detailModal').classList.add('active');
-      } catch (e) {
-        console.error('Error viewing application details:', e);
       }
+      if (health.cardFile) {
+        docsHtml += `
+          <div class="document-preview">
+            <i class="fas fa-hospital"></i>
+            <div class="document-info">
+              <div class="document-name">Health Card: ${health.cardFile.name}</div>
+            </div>
+            <button class="download-icon-btn" onclick="downloadDocument(${JSON.stringify(health.cardFile).replace(/"/g, '&quot;')})">
+              <i class="fas fa-download"></i>
+            </button>
+          </div>
+        `;
+      }
+      docsHtml += '</div>';
+
+      const modalBody = `
+        <h4 style="color: var(--primary); margin-bottom: 1rem;">Personal Information</h4>
+        <div class="detail-row"><div class="detail-label">Full Name</div><div class="detail-value">${personal.fullName || 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${personal.email || 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">Phone</div><div class="detail-value">${personal.phone || 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">Date of Birth</div><div class="detail-value">${personal.dob || 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">Nationality</div><div class="detail-value">${personal.nationality || 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">Address</div><div class="detail-value">${personal.address || 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">Emergency Contact</div><div class="detail-value">${personal.emergency || 'N/A'}</div></div>
+        
+        <h4 style="color: var(--primary); margin: 1.5rem 0 1rem;">Identification</h4>
+        <div class="detail-row"><div class="detail-label">ID Number</div><div class="detail-value">${identification.idNumber || 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">ID Type</div><div class="detail-value">${identification.idType || 'N/A'}</div></div>
+        
+        <h4 style="color: var(--primary); margin: 1.5rem 0 1rem;">Tax & Insurance</h4>
+        <div class="detail-row"><div class="detail-label">TFN</div><div class="detail-value password-value">${tax.tfn || 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">Health Provider</div><div class="detail-value">${health.provider || 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">Health Number</div><div class="detail-value">${health.number || 'N/A'}</div></div>
+        
+        <h4 style="color: var(--primary); margin: 1.5rem 0 1rem;">Work Preference</h4>
+        <div class="detail-row"><div class="detail-label">Position</div><div class="detail-value">${work.position || 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">Work Type</div><div class="detail-value">${work.workType || 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">Start Date</div><div class="detail-value">${work.startDate || 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">Accommodation</div><div class="detail-value">${work.needsAccommodation === 'yes' ? 'Yes' : 'No'}</div></div>
+        
+        <h4 style="color: var(--primary); margin: 1.5rem 0 1rem;">Bonus Program</h4>
+        <div class="detail-row"><div class="detail-label">Join Bonus</div><div class="detail-value">${bonus.join === 'yes' ? 'Yes' : 'No'}</div></div>
+        ${bonus.join === 'yes' ? `
+          <div class="detail-row"><div class="detail-label">Percentage</div><div class="detail-value">${bonus.percentage || 'N/A'}</div></div>
+          <div class="detail-row"><div class="detail-label">Bank Name</div><div class="detail-value">${bonus.bankName || 'N/A'}</div></div>
+          <div class="detail-row"><div class="detail-label">Account Number</div><div class="detail-value">${bonus.bankAccount || 'N/A'}</div></div>
+        ` : ''}
+        
+        <h4 style="color: var(--primary); margin: 1.5rem 0 1rem;">Documents</h4>
+        ${docsHtml || '<p>No documents uploaded</p>'}
+        
+        <h4 style="color: var(--primary); margin: 1.5rem 0 1rem;">Submission Details</h4>
+        <div class="detail-row"><div class="detail-label">Application Date</div><div class="detail-value">${new Date(app.timestamp).toLocaleString()}</div></div>
+        <div class="detail-row"><div class="detail-label">IP Address</div><div class="detail-value">${app.ip || 'N/A'}</div></div>
+      `;
+
+      document.getElementById('modalTitle').textContent = 'Complete Application Details';
+      document.getElementById('modalBody').innerHTML = modalBody;
+      document.getElementById('detailModal').classList.add('active');
     }
 
     function viewMessageDetails(id) {
-      try {
-        const msgs = JSON.parse(localStorage.getItem(STORAGE_KEYS.CONTACT_MESSAGES)) || [];
-        const msg = msgs.find(m => m.id === id);
-        if (!msg) return;
+      const msgs = JSON.parse(localStorage.getItem(STORAGE_KEYS.CONTACT_MESSAGES)) || [];
+      const msg = msgs.find(m => m.id === id);
+      if (!msg) return;
 
-        // Mark as read
+      const modalBody = `
+        <div class="detail-row"><div class="detail-label">Name</div><div class="detail-value">${msg.name}</div></div>
+        <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${msg.email}</div></div>
+        <div class="detail-row"><div class="detail-label">Phone</div><div class="detail-value">${msg.phone || 'Not provided'}</div></div>
+        <div class="detail-row"><div class="detail-label">Subject</div><div class="detail-value">${msg.subject}</div></div>
+        <div class="detail-row"><div class="detail-label">Message</div><div class="detail-value" style="white-space: pre-wrap;">${msg.message}</div></div>
+        <div class="detail-row"><div class="detail-label">Date</div><div class="detail-value">${new Date(msg.timestamp || msg.date).toLocaleString()}</div></div>
+        <div class="detail-row"><div class="detail-label">IP Address</div><div class="detail-value">${msg.ip || 'N/A'}</div></div>
+      `;
+
+      document.getElementById('modalTitle').textContent = 'Contact Message';
+      document.getElementById('modalBody').innerHTML = modalBody;
+      document.getElementById('detailModal').classList.add('active');
+      
+      // Mark as read
+      msg.status = 'read';
+      localStorage.setItem(STORAGE_KEYS.CONTACT_MESSAGES, JSON.stringify(msgs));
+      loadContacts();
+    }
+
+    function markAsRead(id) {
+      const msgs = JSON.parse(localStorage.getItem(STORAGE_KEYS.CONTACT_MESSAGES)) || [];
+      const msg = msgs.find(m => m.id === id);
+      if (msg) {
         msg.status = 'read';
         localStorage.setItem(STORAGE_KEYS.CONTACT_MESSAGES, JSON.stringify(msgs));
-
-        document.getElementById('modalTitle').textContent = 'Contact Message';
-        document.getElementById('modalBody').innerHTML = `
-          <div class="detail-row"><div class="detail-label">Name</div><div class="detail-value">${msg.name}</div></div>
-          <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${msg.email}</div></div>
-          <div class="detail-row"><div class="detail-label">Subject</div><div class="detail-value">${msg.subject}</div></div>
-          <div class="detail-row"><div class="detail-label">Message</div><div class="detail-value" style="white-space: pre-wrap;">${msg.message}</div></div>
-        `;
-        document.getElementById('detailModal').classList.add('active');
-        
-        // Reload contacts to update status
         loadContacts();
-      } catch (e) {
-        console.error('Error viewing message details:', e);
+        showNotification('Success', 'Message marked as read', 'success');
+      }
+    }
+
+    function exportAsJSON(type, id) {
+      let data = null;
+      if (type === 'tax') {
+        const submissions = JSON.parse(localStorage.getItem(STORAGE_KEYS.TAX_SUBMISSIONS)) || [];
+        data = submissions.find(s => s.id === id);
+      } else if (type === 'application') {
+        const apps = JSON.parse(localStorage.getItem(STORAGE_KEYS.JOB_APPLICATIONS)) || [];
+        data = apps.find(a => a.id === id);
+      }
+      
+      if (data) {
+        const jsonStr = JSON.stringify(data, null, 2);
+        downloadFile(jsonStr, `${type}_${id}.json`, 'application/json');
       }
     }
 
@@ -1289,7 +1459,6 @@
         loadAllData();
         showNotification('Welcome', 'Logged in successfully', 'success');
         
-        // Start real-time updates
         startRealtimeUpdates();
       } else {
         document.getElementById('loginError').style.display = 'flex';
@@ -1308,29 +1477,16 @@
 
     // ==================== REAL-TIME UPDATES ====================
     function startRealtimeUpdates() {
-      // Check for new data every 2 seconds
       setInterval(() => {
         if (document.getElementById('dashboardPage').style.display === 'block') {
           loadAllData();
         }
       }, 2000);
 
-      // Listen for storage events from other tabs/windows
       window.addEventListener('storage', (e) => {
         if (e.key) {
-          console.log('Storage changed:', e.key);
           loadAllData();
-          
-          // Show notification based on what changed
-          if (e.key.includes('tax') || e.key.includes('Tax')) {
-            showNotification('New Data', 'Tax submission received', 'info');
-          } else if (e.key.includes('application') || e.key.includes('Application')) {
-            showNotification('New Data', 'Job application received', 'info');
-          } else if (e.key.includes('contact') || e.key.includes('Contact')) {
-            showNotification('New Data', 'Contact message received', 'info');
-          } else if (e.key.includes('document') || e.key.includes('Document')) {
-            showNotification('New Data', 'Document updated', 'info');
-          }
+          showNotification('New Data', `Updated: ${e.key}`, 'info');
         }
       });
     }
@@ -1345,19 +1501,11 @@
         });
       }
 
-      // Check if already logged in
       if (sessionStorage.getItem('adminLoggedIn') === 'true') {
         document.getElementById('loginPage').style.display = 'none';
         document.getElementById('dashboardPage').style.display = 'block';
         loadAllData();
         startRealtimeUpdates();
-      }
-
-      // Log all localStorage keys for debugging
-      console.log('All localStorage keys:');
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        console.log(key, ':', localStorage.getItem(key));
       }
     });
   </script>
