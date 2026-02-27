@@ -246,17 +246,16 @@
     }
 
     /* ===== PAGE HEADER ===== */
-  /* TO THIS: */
-.page-header {
-  background: linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.1) 100%),
-              url('https://i.ibb.co/6JYV5VsL/7e2070a0b04af3aa237b3c40a2d7e056.jpg') center/cover no-repeat;
-  min-height: 40vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  color: white;
-}
+    .page-header {
+      background: linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.1) 100%),
+                  url('https://i.ibb.co/6JYV5VsL/7e2070a0b04af3aa237b3c40a2d7e056.jpg') center/cover no-repeat;
+      min-height: 40vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+    }
 
     .header-content {
       max-width: 800px;
@@ -739,8 +738,8 @@
       <a href="applications.html">Applications</a>
       <a href="#" class="active">Resources</a>
       <a href="tax-refund.html">Tax Portal</a>
+      <a href="testimonials.html">Testimonials</a>
       <a href="contact.html">Contact</a>
-     <a href="testimonials.html">Testimonials</a>
     </div>
     <button class="mobile-menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
   </div>
@@ -754,9 +753,9 @@
   <a href="careers.html">Careers</a>
   <a href="applications.html">Applications</a>
   <a href="#" class="active">Resources</a>
-  <a href="tax-refund.html">Tax Refund Portal</a>
+  <a href="tax-refund.html">Tax Portal</a>
+  <a href="testimonials.html">Testimonials</a>
   <a href="contact.html">Contact</a>
-<a href="testimonials.html">Testimonials</a>
 </div>
 <div class="overlay" id="overlay"></div>
 
@@ -868,7 +867,6 @@
   </div>
 </footer>
 
-<!-- Firebase Config -->
 <script>
   // ==================== FIREBASE CONFIG ====================
   const firebaseConfig = {
@@ -877,8 +875,7 @@
     projectId: "carltonhillfarmland",
     storageBucket: "carltonhillfarmland.firebasestorage.app",
     messagingSenderId: "144483104337",
-    appId: "1:144483104337:web:d95dfbb10509cb9c02ea70",
-    measurementId: "G-8M5S0PV2RC"
+    appId: "1:144483104337:web:d95dfbb10509cb9c02ea70"
   };
   
   // Initialize Firebase
@@ -886,10 +883,10 @@
   const db = firebase.firestore();
   const storage = firebase.storage();
 
+  console.log('Firebase initialized');
+
   // ==================== CONFIGURATION ====================
   const STORAGE_KEY = 'carltonHillRealDocuments';
-  const REFRESH_INTERVAL = 5000; // 5 seconds
-  const DOWNLOAD_HISTORY_KEY = 'downloadHistory';
 
   // ==================== NOTIFICATION SYSTEM ====================
   function showNotification(title, message, type = 'success') {
@@ -898,23 +895,18 @@
     const titleEl = document.getElementById('notificationTitle');
     const messageEl = document.getElementById('notificationMessage');
     
-    if (type === 'success') {
-      icon.className = 'fas fa-check-circle';
-      icon.style.color = 'var(--success)';
-      notification.style.borderLeftColor = 'var(--success)';
-    } else if (type === 'error') {
-      icon.className = 'fas fa-exclamation-circle';
-      icon.style.color = 'var(--danger)';
-      notification.style.borderLeftColor = 'var(--danger)';
-    } else {
-      icon.className = 'fas fa-exclamation-triangle';
-      icon.style.color = 'var(--warning)';
-      notification.style.borderLeftColor = 'var(--warning)';
-    }
+    icon.className = type === 'success' ? 'fas fa-check-circle' : 
+                     type === 'error' ? 'fas fa-exclamation-circle' : 
+                     'fas fa-exclamation-triangle';
+    icon.style.color = type === 'success' ? 'var(--success)' : 
+                       type === 'error' ? 'var(--danger)' : 
+                       'var(--warning)';
+    notification.style.borderLeftColor = type === 'success' ? 'var(--success)' : 
+                                         type === 'error' ? 'var(--danger)' : 
+                                         'var(--warning)';
     
     titleEl.textContent = title;
     messageEl.textContent = message;
-    
     notification.classList.add('show');
     
     setTimeout(() => {
@@ -926,8 +918,19 @@
     document.getElementById('notification').classList.remove('show');
   }
 
+  // ==================== ESCAPE HTML ====================
+  function escapeHtml(unsafe) {
+    if (!unsafe) return '';
+    return String(unsafe)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
   // ==================== LOAD DOCUMENTS FROM FIREBASE ====================
-  async function loadFirebaseDocuments() {
+  async function loadDocuments() {
     const grid = document.getElementById('documentsGrid');
     
     try {
@@ -941,20 +944,28 @@
       }));
       
       if (documents.length === 0) {
-        // Try localStorage as fallback
-        loadLocalDocuments();
+        grid.innerHTML = '<div class="empty-state">📁 No documents available yet. Check back soon.</div>';
         return;
       }
       
-      // Display Firebase documents
       grid.innerHTML = documents.map(doc => {
-        const isNew = Date.now() - (doc.timestamp?.toDate?.()?.getTime() || 0) < 7 * 24 * 60 * 60 * 1000;
+        // Handle timestamp safely
+        let timestamp = 0;
+        if (doc.timestamp) {
+          if (doc.timestamp.toDate) {
+            timestamp = doc.timestamp.toDate().getTime();
+          } else if (typeof doc.timestamp === 'string') {
+            timestamp = new Date(doc.timestamp).getTime();
+          }
+        }
+        
+        const isNew = timestamp > (Date.now() - 7 * 24 * 60 * 60 * 1000);
         
         return `
         <div class="document-card">
           ${isNew ? '<span class="document-badge">NEW</span>' : ''}
           <div class="document-icon"><i class="fas fa-file-pdf"></i></div>
-          <h3>${escapeHtml(doc.name)}</h3>
+          <h3>${escapeHtml(doc.name || 'Untitled')}</h3>
           <p class="document-desc">${escapeHtml(doc.description || '')}</p>
           <div class="document-meta">
             <i class="fas fa-file"></i> <span>${doc.type || 'PDF'}</span>
@@ -967,81 +978,9 @@
       `}).join('');
       
     } catch (error) {
-      console.error('Error loading Firebase documents:', error);
-      // Fallback to localStorage
-      loadLocalDocuments();
+      console.error('Error loading documents:', error);
+      grid.innerHTML = '<div class="empty-state">❌ Error loading documents. Please refresh.</div>';
     }
-  }
-
-  // ==================== LOAD DOCUMENTS FROM LOCALSTORAGE ====================
-  function loadLocalDocuments() {
-    const grid = document.getElementById('documentsGrid');
-    
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      const documents = saved ? JSON.parse(saved) : [];
-      
-      if (documents.length === 0) {
-        grid.innerHTML = '<div class="empty-state">📁 No documents available yet. Please check back soon.</div>';
-        return;
-      }
-      
-      documents.sort((a, b) => parseInt(b.id) - parseInt(a.id));
-      
-      grid.innerHTML = documents.map(doc => {
-        const isNew = Date.now() - parseInt(doc.id) < 7 * 24 * 60 * 60 * 1000;
-        
-        return `
-        <div class="document-card">
-          ${isNew ? '<span class="document-badge">NEW</span>' : ''}
-          <div class="document-icon"><i class="fas ${doc.icon || 'fa-file-pdf'}"></i></div>
-          <h3>${escapeHtml(doc.name)}</h3>
-          <p class="document-desc">${escapeHtml(doc.description || '')}</p>
-          <div class="document-meta">
-            <i class="fas fa-file"></i> <span>${escapeHtml(doc.type || 'FILE')}</span>
-            <i class="fas fa-download"></i> <span>${escapeHtml(doc.size || '0 KB')}</span>
-          </div>
-          <button class="download-btn" onclick="downloadLocalDocument('${doc.id}')">
-            <i class="fas fa-download"></i> Download
-          </button>
-        </div>
-      `}).join('');
-      
-    } catch (error) {
-      console.error('Error loading local documents:', error);
-      grid.innerHTML = '<div class="empty-state">❌ Error loading documents. Please try again.</div>';
-    }
-  }
-
-  // ==================== DOWNLOAD LOCAL DOCUMENT ====================
-  function downloadLocalDocument(id) {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    const documents = saved ? JSON.parse(saved) : [];
-    const doc = documents.find(d => d.id === id);
-    
-    if (!doc) return;
-    
-    const content = doc.content || `Document: ${doc.name}\nDescription: ${doc.description || ''}`;
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = doc.fileName || `${doc.name}.txt`;
-    a.click();
-    window.URL.revokeObjectURL(url);
-    
-    showNotification('Download Complete', `Downloaded ${doc.name}`, 'success');
-  }
-
-  // ==================== ESCAPE HTML ====================
-  function escapeHtml(unsafe) {
-    if (!unsafe) return '';
-    return String(unsafe)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
   }
 
   // ==================== MOBILE MENU ====================
@@ -1068,26 +1007,16 @@
 
   // ==================== INITIALIZATION ====================
   document.addEventListener('DOMContentLoaded', () => {
-    // Show loading state
-    const grid = document.getElementById('documentsGrid');
-    grid.innerHTML = `
-      <div class="loading-state">
-        <div class="loading-spinner"></div>
-        <p>Loading documents...</p>
-      </div>
-    `;
-    
-    // Load from Firebase first
-    loadFirebaseDocuments();
+    // Load documents
+    loadDocuments();
   });
 
   // ==================== REAL-TIME UPDATES ====================
-  // Listen for changes in Firestore
   db.collection('resourceDocuments')
     .orderBy('timestamp', 'desc')
     .onSnapshot((snapshot) => {
       if (snapshot.docChanges().length > 0) {
-        loadFirebaseDocuments();
+        loadDocuments();
         showNotification('Updated', 'New documents available', 'success');
       }
     });

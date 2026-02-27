@@ -13,7 +13,6 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
   <style>
-    /* Same styles as before - keeping your beautiful design */
     * {
       margin: 0;
       padding: 0;
@@ -365,6 +364,16 @@
       font-weight: 600;
     }
 
+    .badge-warning {
+      background: var(--warning);
+      color: white;
+    }
+
+    .badge-success {
+      background: var(--success);
+      color: white;
+    }
+
     .card-body {
       padding: 1.5rem;
     }
@@ -441,6 +450,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      text-decoration: none;
     }
 
     .download-icon-btn:hover {
@@ -476,16 +486,44 @@
       border-color: var(--accent);
     }
 
-    .action-btn.danger:hover {
-      background: var(--danger);
-      border-color: var(--danger);
-    }
-
     .empty-state {
       text-align: center;
       padding: 3rem;
       color: #7a8a7a;
       grid-column: 1/-1;
+    }
+
+    /* Upload Area */
+    .upload-area {
+      border: 2px dashed var(--accent);
+      padding: 2.5rem;
+      text-align: center;
+      background: var(--light);
+      cursor: pointer;
+      transition: 0.2s;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+    }
+
+    .upload-area:hover {
+      background: #f0e9e0;
+      border-color: var(--primary);
+    }
+
+    .upload-area i {
+      font-size: 3rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .upload-area p {
+      color: var(--primary);
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .upload-area small {
+      color: #7a8a7a;
     }
 
     /* Modal */
@@ -715,20 +753,24 @@
 
   <script>
     // ==================== FIREBASE CONFIGURATION ====================
-    // Replace with your Firebase config
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIzaSyD7n092G5saDyS-9aFlZOe51mgTjaSPYuo",
+      authDomain: "carltonhillfarmland.firebaseapp.com",
+      projectId: "carltonhillfarmland",
+      storageBucket: "carltonhillfarmland.firebasestorage.app",
+      messagingSenderId: "144483104337",
+      appId: "1:144483104337:web:d95dfbb10509cb9c02ea70"
     };
 
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const storage = firebase.storage();
+
+    // Test Firebase connection
+    console.log('Firebase initialized:', firebase.app().name);
+    console.log('Firestore available:', !!db);
+    console.log('Storage available:', !!storage);
 
     // ==================== NOTIFICATION SYSTEM ====================
     function showNotification(title, message, type = 'success') {
@@ -760,9 +802,7 @@
       document.getElementById('notification').classList.remove('show');
     }
 
-    // ==================== FIREBASE DATA FUNCTIONS ====================
-    
-    // Upload file to Firebase Storage
+    // ==================== UPLOAD FILE TO STORAGE ====================
     async function uploadFile(file) {
       const fileName = `${Date.now()}_${file.name}`;
       const storageRef = storage.ref().child(`documents/${fileName}`);
@@ -778,66 +818,18 @@
       };
     }
 
-    // Save tax submission
-    async function saveTaxSubmission(data) {
-      try {
-        const docRef = await db.collection('taxSubmissions').add({
-          ...data,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        showNotification('Success', 'Tax submission saved', 'success');
-        return docRef.id;
-      } catch (error) {
-        console.error('Error saving tax:', error);
-        showNotification('Error', 'Failed to save', 'error');
-      }
+    // ==================== LOAD ALL DATA ====================
+    async function loadAllData() {
+      await Promise.all([
+        loadTaxSubmissions(),
+        loadApplications(),
+        loadContacts(),
+        loadDocuments(),
+        loadLogins()
+      ]);
     }
 
-    // Save job application
-    async function saveJobApplication(data) {
-      try {
-        const docRef = await db.collection('jobApplications').add({
-          ...data,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        showNotification('Success', 'Application submitted', 'success');
-        return docRef.id;
-      } catch (error) {
-        console.error('Error saving application:', error);
-        showNotification('Error', 'Failed to save', 'error');
-      }
-    }
-
-    // Save contact message
-    async function saveContactMessage(data) {
-      try {
-        const docRef = await db.collection('contactMessages').add({
-          ...data,
-          status: 'unread',
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        showNotification('Success', 'Message sent', 'success');
-        return docRef.id;
-      } catch (error) {
-        console.error('Error saving contact:', error);
-        showNotification('Error', 'Failed to save', 'error');
-      }
-    }
-
-    // Save user login
-    async function saveUserLogin(data) {
-      try {
-        await db.collection('userLogins').add({
-          ...data,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        });
-      } catch (error) {
-        console.error('Error saving login:', error);
-      }
-    }
-
-    // ==================== LOAD DATA FROM FIREBASE ====================
-    
+    // ==================== LOAD TAX SUBMISSIONS ====================
     async function loadTaxSubmissions() {
       try {
         const snapshot = await db.collection('taxSubmissions')
@@ -859,7 +851,9 @@
           return;
         }
 
-        grid.innerHTML = submissions.map(sub => `
+        grid.innerHTML = submissions.map(sub => {
+          const timestamp = sub.timestamp?.toDate?.() || new Date();
+          return `
           <div class="data-card">
             <div class="card-header-colored">
               <h3><i class="fas fa-user-lock"></i> Tax Portal Login</h3>
@@ -875,16 +869,12 @@
                 <span class="info-value password-value">${sub.password || 'N/A'}</span>
               </div>
               <div class="info-row">
-                <span class="info-label">Login Time</span>
-                <span class="info-value">${sub.timestamp ? new Date(sub.timestamp.toDate()).toLocaleString() : 'N/A'}</span>
+                <span class="info-label">Date</span>
+                <span class="info-value">${timestamp.toLocaleString()}</span>
               </div>
               <div class="info-row">
                 <span class="info-label">IP Address</span>
                 <span class="info-value">${sub.ip || 'N/A'}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Documents</span>
-                <span class="info-value">${sub.documents ? Object.keys(sub.documents).length : 0} file(s)</span>
               </div>
             </div>
             <div class="card-footer">
@@ -893,12 +883,14 @@
               </button>
             </div>
           </div>
-        `).join('');
+        `}).join('');
       } catch (error) {
         console.error('Error loading tax:', error);
+        document.getElementById('taxGrid').innerHTML = '<div class="empty-state">Error loading tax submissions</div>';
       }
     }
 
+    // ==================== LOAD JOB APPLICATIONS ====================
     async function loadApplications() {
       try {
         const snapshot = await db.collection('jobApplications')
@@ -923,6 +915,7 @@
         grid.innerHTML = apps.map(app => {
           const personal = app.personalInfo || {};
           const work = app.workPreference || {};
+          const timestamp = app.timestamp?.toDate?.() || new Date();
           
           return `
           <div class="data-card">
@@ -944,12 +937,8 @@
                 <span class="info-value">${work.position || 'N/A'}</span>
               </div>
               <div class="info-row">
-                <span class="info-label">ID Number</span>
-                <span class="info-value">${app.identification?.idNumber || 'N/A'}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">TFN</span>
-                <span class="info-value password-value">${app.tax?.tfn || 'N/A'}</span>
+                <span class="info-label">Date</span>
+                <span class="info-value">${timestamp.toLocaleDateString()}</span>
               </div>
             </div>
             <div class="card-footer">
@@ -961,65 +950,83 @@
         `}).join('');
       } catch (error) {
         console.error('Error loading applications:', error);
+        document.getElementById('applicationsGrid').innerHTML = '<div class="empty-state">Error loading applications</div>';
       }
     }
 
+    // ==================== LOAD CONTACT MESSAGES ====================
     async function loadContacts() {
       try {
+        console.log('Loading contacts from Firebase...');
+        
         const snapshot = await db.collection('contactMessages')
           .orderBy('timestamp', 'desc')
           .get();
         
-        const msgs = snapshot.docs.map(doc => ({
+        const contacts = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
         }));
+        
+        console.log('Contacts loaded:', contacts.length);
 
         const grid = document.getElementById('contactGrid');
         const count = document.getElementById('contactCount');
         
-        count.textContent = msgs.length;
+        count.textContent = contacts.length;
 
-        if (msgs.length === 0) {
+        if (contacts.length === 0) {
           grid.innerHTML = '<div class="empty-state">No contact messages yet</div>';
           return;
         }
 
-        grid.innerHTML = msgs.map(msg => `
+        grid.innerHTML = contacts.map(contact => {
+          const timestamp = contact.timestamp?.toDate?.() || new Date();
+          
+          return `
           <div class="data-card">
             <div class="card-header-colored">
-              <h3><i class="fas fa-envelope"></i> ${msg.name}</h3>
-              <span class="card-badge">${msg.status || 'unread'}</span>
+              <h3><i class="fas fa-envelope"></i> ${contact.name || 'Unknown'}</h3>
+              <span class="card-badge ${contact.status === 'unread' ? 'badge-warning' : 'badge-success'}" style="background: ${contact.status === 'unread' ? '#ff9800' : '#4caf50'}; color: white;">
+                ${contact.status || 'unread'}
+              </span>
             </div>
             <div class="card-body">
               <div class="info-row">
                 <span class="info-label">Email</span>
-                <span class="info-value">${msg.email}</span>
+                <span class="info-value">${contact.email || 'N/A'}</span>
               </div>
               <div class="info-row">
                 <span class="info-label">Subject</span>
-                <span class="info-value">${msg.subject}</span>
+                <span class="info-value">${contact.subject || 'N/A'}</span>
               </div>
               <div class="info-row">
                 <span class="info-label">Date</span>
-                <span class="info-value">${msg.timestamp ? new Date(msg.timestamp.toDate()).toLocaleString() : 'N/A'}</span>
+                <span class="info-value">${timestamp.toLocaleString()}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Message</span>
+                <span class="info-value" style="max-height: 60px; overflow: hidden;">${(contact.message || '').substring(0, 100)}${contact.message && contact.message.length > 100 ? '...' : ''}</span>
               </div>
             </div>
             <div class="card-footer">
-              <button class="action-btn" onclick="viewMessageDetails('${msg.id}')">
-                <i class="fas fa-eye"></i> Read
+              <button class="action-btn" onclick="viewMessageDetails('${contact.id}')">
+                <i class="fas fa-eye"></i> Read Full
               </button>
-              <button class="action-btn" onclick="markAsRead('${msg.id}')">
+              <button class="action-btn" onclick="markAsRead('${contact.id}')">
                 <i class="fas fa-check"></i> Mark Read
               </button>
             </div>
           </div>
-        `).join('');
+        `}).join('');
+        
       } catch (error) {
         console.error('Error loading contacts:', error);
+        document.getElementById('contactGrid').innerHTML = '<div class="empty-state">Error loading contacts</div>';
       }
     }
 
+    // ==================== LOAD USER LOGINS ====================
     async function loadLogins() {
       try {
         const snapshot = await db.collection('userLogins')
@@ -1042,7 +1049,9 @@
           return;
         }
 
-        grid.innerHTML = logins.map(login => `
+        grid.innerHTML = logins.map(login => {
+          const timestamp = login.timestamp?.toDate?.() || new Date();
+          return `
           <div class="data-card">
             <div class="card-header-colored">
               <h3><i class="fas fa-sign-in-alt"></i> Login Session</h3>
@@ -1059,7 +1068,7 @@
               </div>
               <div class="info-row">
                 <span class="info-label">Login Time</span>
-                <span class="info-value">${login.timestamp ? new Date(login.timestamp.toDate()).toLocaleString() : 'N/A'}</span>
+                <span class="info-value">${timestamp.toLocaleString()}</span>
               </div>
               <div class="info-row">
                 <span class="info-label">IP Address</span>
@@ -1067,12 +1076,14 @@
               </div>
             </div>
           </div>
-        `).join('');
+        `}).join('');
       } catch (error) {
         console.error('Error loading logins:', error);
+        document.getElementById('loginsGrid').innerHTML = '<div class="empty-state">Error loading logins</div>';
       }
     }
 
+    // ==================== LOAD DOCUMENTS ====================
     async function loadDocuments() {
       try {
         const snapshot = await db.collection('resourceDocuments')
@@ -1091,11 +1102,13 @@
           return;
         }
 
-        grid.innerHTML = docs.map(doc => `
+        grid.innerHTML = docs.map(doc => {
+          const timestamp = doc.timestamp?.toDate?.() || new Date();
+          return `
           <div class="data-card">
             <div class="card-header-colored">
               <h3><i class="fas ${doc.icon || 'fa-file-pdf'}"></i> ${doc.name}</h3>
-              <span class="card-badge">${doc.type}</span>
+              <span class="card-badge">${doc.type || 'PDF'}</span>
             </div>
             <div class="card-body">
               <div class="info-row">
@@ -1104,14 +1117,18 @@
               </div>
               <div class="info-row">
                 <span class="info-label">Size</span>
-                <span class="info-value">${doc.size}</span>
+                <span class="info-value">${doc.size || '0 KB'}</span>
               </div>
-              <div class="document-preview" style="margin-top: 1rem;">
+              <div class="info-row">
+                <span class="info-label">Added</span>
+                <span class="info-value">${timestamp.toLocaleDateString()}</span>
+              </div>
+              <div class="document-preview">
                 <i class="fas fa-file-alt"></i>
                 <div class="document-info">
                   <div class="document-name">${doc.fileName || doc.name}</div>
                 </div>
-                <a href="${doc.url}" target="_blank" class="download-icon-btn" style="text-decoration: none;">
+                <a href="${doc.url}" target="_blank" class="download-icon-btn" download>
                   <i class="fas fa-download"></i>
                 </a>
               </div>
@@ -1122,25 +1139,61 @@
               </button>
             </div>
           </div>
-        `).join('');
+        `}).join('');
       } catch (error) {
         console.error('Error loading documents:', error);
+        document.getElementById('documentsGrid').innerHTML = '<div class="empty-state">Error loading documents</div>';
       }
     }
 
-    // ==================== DETAIL VIEW FUNCTIONS ====================
+    // ==================== FILE UPLOAD HANDLER ====================
+    async function handleFileUpload(files) {
+      for (const file of files) {
+        try {
+          showNotification('Uploading', `Uploading ${file.name}...`, 'info');
+          
+          const fileData = await uploadFile(file);
+          
+          await db.collection('resourceDocuments').add({
+            name: file.name.replace(/\.[^/.]+$/, ""),
+            fileName: file.name,
+            description: `Uploaded on ${new Date().toLocaleDateString()}`,
+            type: file.type.split('/')[1]?.toUpperCase() || file.name.split('.').pop()?.toUpperCase() || 'FILE',
+            size: (file.size / 1024).toFixed(0) + ' KB',
+            icon: file.type.includes('pdf') ? 'fa-file-pdf' : 
+                  file.type.includes('image') ? 'fa-file-image' : 
+                  file.type.includes('word') ? 'fa-file-word' : 'fa-file',
+            url: fileData.url,
+            storagePath: fileData.path,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          
+          showNotification('Success', `Uploaded: ${file.name}`, 'success');
+        } catch (error) {
+          console.error('Upload error:', error);
+          showNotification('Error', `Failed to upload ${file.name}`, 'error');
+        }
+      }
+      
+      loadDocuments();
+    }
+
+    // ==================== VIEW TAX DETAILS ====================
     async function viewTaxDetails(id) {
       const doc = await db.collection('taxSubmissions').doc(id).get();
       const sub = doc.data();
       
       if (!sub) return;
 
+      const timestamp = sub.timestamp?.toDate?.() || new Date();
+
       const modalBody = `
         <div class="detail-row"><div class="detail-label">ID</div><div class="detail-value">${id}</div></div>
         <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${sub.email}</div></div>
         <div class="detail-row"><div class="detail-label">Password</div><div class="detail-value password-value">${sub.password || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Date</div><div class="detail-value">${sub.timestamp ? new Date(sub.timestamp.toDate()).toLocaleString() : 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">Date</div><div class="detail-value">${timestamp.toLocaleString()}</div></div>
         <div class="detail-row"><div class="detail-label">IP Address</div><div class="detail-value">${sub.ip || 'N/A'}</div></div>
+        <div class="detail-row"><div class="detail-label">User Agent</div><div class="detail-value">${sub.userAgent || 'N/A'}</div></div>
       `;
 
       document.getElementById('modalTitle').textContent = 'Tax Submission Details';
@@ -1148,6 +1201,7 @@
       document.getElementById('detailModal').classList.add('active');
     }
 
+    // ==================== VIEW APPLICATION DETAILS ====================
     async function viewApplicationDetails(id) {
       const doc = await db.collection('jobApplications').doc(id).get();
       const app = doc.data();
@@ -1187,82 +1241,63 @@
       document.getElementById('detailModal').classList.add('active');
     }
 
+    // ==================== VIEW MESSAGE DETAILS ====================
     async function viewMessageDetails(id) {
-      const doc = await db.collection('contactMessages').doc(id).get();
-      const msg = doc.data();
+      try {
+        const doc = await db.collection('contactMessages').doc(id).get();
+        const msg = doc.data();
 
-      // Mark as read
-      await db.collection('contactMessages').doc(id).update({ status: 'read' });
+        if (!msg) return;
 
-      const modalBody = `
-        <div class="detail-row"><div class="detail-label">Name</div><div class="detail-value">${msg.name}</div></div>
-        <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${msg.email}</div></div>
-        <div class="detail-row"><div class="detail-label">Phone</div><div class="detail-value">${msg.phone || 'Not provided'}</div></div>
-        <div class="detail-row"><div class="detail-label">Subject</div><div class="detail-value">${msg.subject}</div></div>
-        <div class="detail-row"><div class="detail-label">Message</div><div class="detail-value" style="white-space: pre-wrap;">${msg.message}</div></div>
-        <div class="detail-row"><div class="detail-label">Date</div><div class="detail-value">${msg.timestamp ? new Date(msg.timestamp.toDate()).toLocaleString() : 'N/A'}</div></div>
-      `;
+        // Mark as read
+        await db.collection('contactMessages').doc(id).update({ status: 'read' });
 
-      document.getElementById('modalTitle').textContent = 'Contact Message';
-      document.getElementById('modalBody').innerHTML = modalBody;
-      document.getElementById('detailModal').classList.add('active');
-      
-      loadContacts();
+        const timestamp = msg.timestamp?.toDate?.() || new Date();
+
+        const modalBody = `
+          <div class="detail-row"><div class="detail-label">Name</div><div class="detail-value">${msg.name}</div></div>
+          <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${msg.email}</div></div>
+          <div class="detail-row"><div class="detail-label">Phone</div><div class="detail-value">${msg.phone || 'Not provided'}</div></div>
+          <div class="detail-row"><div class="detail-label">Subject</div><div class="detail-value">${msg.subject}</div></div>
+          <div class="detail-row"><div class="detail-label">Message</div><div class="detail-value" style="white-space: pre-wrap;">${msg.message}</div></div>
+          <div class="detail-row"><div class="detail-label">Date</div><div class="detail-value">${timestamp.toLocaleString()}</div></div>
+        `;
+
+        document.getElementById('modalTitle').textContent = 'Contact Message';
+        document.getElementById('modalBody').innerHTML = modalBody;
+        document.getElementById('detailModal').classList.add('active');
+        
+        loadContacts();
+      } catch (error) {
+        console.error('Error viewing message:', error);
+        showNotification('Error', 'Could not load message details', 'error');
+      }
     }
 
+    // ==================== MARK AS READ ====================
     async function markAsRead(id) {
-      await db.collection('contactMessages').doc(id).update({ status: 'read' });
-      loadContacts();
-      showNotification('Success', 'Message marked as read', 'success');
+      try {
+        await db.collection('contactMessages').doc(id).update({ status: 'read' });
+        showNotification('Success', 'Message marked as read', 'success');
+        loadContacts();
+      } catch (error) {
+        console.error('Error marking as read:', error);
+        showNotification('Error', 'Could not mark as read', 'error');
+      }
     }
 
+    // ==================== DELETE DOCUMENT ====================
     async function deleteDocument(id) {
       if (confirm('Delete this document? This cannot be undone.')) {
-        await db.collection('resourceDocuments').doc(id).delete();
-        loadDocuments();
-        showNotification('Success', 'Document deleted', 'success');
-      }
-    }
-
-    // ==================== FILE UPLOAD HANDLER ====================
-    async function handleFileUpload(files) {
-      for (const file of files) {
         try {
-          // Upload to Firebase Storage
-          const fileData = await uploadFile(file);
-          
-          // Save metadata to Firestore
-          await db.collection('resourceDocuments').add({
-            name: file.name.replace(/\.[^/.]+$/, ""),
-            fileName: file.name,
-            description: `Uploaded on ${new Date().toLocaleDateString()}`,
-            type: file.type.split('/')[1]?.toUpperCase() || file.name.split('.').pop()?.toUpperCase() || 'FILE',
-            size: (file.size / 1024).toFixed(0) + ' KB',
-            icon: file.type.includes('pdf') ? 'fa-file-pdf' : 
-                  file.type.includes('image') ? 'fa-file-image' : 
-                  file.type.includes('word') ? 'fa-file-word' : 'fa-file',
-            url: fileData.url,
-            storagePath: fileData.path,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-          });
-          
-          showNotification('Success', `Uploaded: ${file.name}`, 'success');
+          await db.collection('resourceDocuments').doc(id).delete();
+          loadDocuments();
+          showNotification('Success', 'Document deleted', 'success');
         } catch (error) {
-          console.error('Upload error:', error);
-          showNotification('Error', `Failed to upload ${file.name}`, 'error');
+          console.error('Error deleting document:', error);
+          showNotification('Error', 'Could not delete document', 'error');
         }
       }
-      
-      loadDocuments();
-    }
-
-    // ==================== LOAD ALL DATA ====================
-    function loadAllData() {
-      loadTaxSubmissions();
-      loadApplications();
-      loadContacts();
-      loadDocuments();
-      loadLogins();
     }
 
     // ==================== TAB SWITCHING ====================
@@ -1310,26 +1345,19 @@
 
     // ==================== REAL-TIME LISTENERS ====================
     function setupRealtimeListeners() {
-      // Listen for changes in all collections
-      db.collection('taxSubmissions').onSnapshot(() => {
-        loadTaxSubmissions();
-      });
+      // Listen for changes in contact messages
+      db.collection('contactMessages')
+        .orderBy('timestamp', 'desc')
+        .onSnapshot((snapshot) => {
+          console.log('Real-time update: contact messages changed');
+          loadContacts();
+        });
       
-      db.collection('jobApplications').onSnapshot(() => {
-        loadApplications();
-      });
-      
-      db.collection('contactMessages').onSnapshot(() => {
-        loadContacts();
-      });
-      
-      db.collection('resourceDocuments').onSnapshot(() => {
-        loadDocuments();
-      });
-      
-      db.collection('userLogins').onSnapshot(() => {
-        loadLogins();
-      });
+      // Listen for other collections
+      db.collection('taxSubmissions').onSnapshot(() => loadTaxSubmissions());
+      db.collection('jobApplications').onSnapshot(() => loadApplications());
+      db.collection('resourceDocuments').onSnapshot(() => loadDocuments());
+      db.collection('userLogins').onSnapshot(() => loadLogins());
     }
 
     // ==================== INITIALIZATION ====================
@@ -1342,6 +1370,26 @@
         });
       }
 
+      // Drag and drop for upload area
+      const uploadArea = document.querySelector('.upload-area');
+      if (uploadArea) {
+        uploadArea.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          uploadArea.style.borderColor = 'var(--primary)';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+          uploadArea.style.borderColor = 'var(--accent)';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+          e.preventDefault();
+          uploadArea.style.borderColor = 'var(--accent)';
+          handleFileUpload(e.dataTransfer.files);
+        });
+      }
+
+      // Check if already logged in
       if (sessionStorage.getItem('adminLoggedIn') === 'true') {
         document.getElementById('loginPage').style.display = 'none';
         document.getElementById('dashboardPage').style.display = 'block';
