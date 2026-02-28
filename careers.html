@@ -49,8 +49,6 @@
       --color-border: #eae5db;
       --color-text: #1c261c;
       --color-text-light: #4f5f4a;
-      --color-danger: #b04a4a;
-      --color-success: #4caf50;
     }
 
     /* utility classes */
@@ -58,6 +56,7 @@
       max-width: 1280px;
       margin: 0 auto;
       padding: 0 var(--space-md);
+      width: 100%;
     }
 
     /* ===== NOTIFICATION ===== */
@@ -77,6 +76,7 @@
       transform: translateX(400px);
       transition: transform 0.3s ease;
       max-width: 400px;
+      width: calc(100% - 40px);
     }
 
     .notification.show {
@@ -117,6 +117,7 @@
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--color-border);
+      width: 100%;
     }
 
     .nav-container {
@@ -279,6 +280,7 @@
       flex-wrap: wrap;
       justify-content: center;
       gap: var(--space-md) var(--space-lg);
+      width: 100%;
     }
 
     .trust-item {
@@ -300,6 +302,7 @@
       padding: var(--space-md);
       transition: all 0.2s;
       border-radius: 8px;
+      width: 100%;
     }
 
     .card:hover {
@@ -443,13 +446,14 @@
       color: var(--color-accent);
     }
 
-    /* NEW: Privacy & Trust Section */
+    /* Privacy & Trust Section */
     .privacy-section {
       margin: var(--space-xl) 0;
       background: var(--color-surface);
       border: 1px solid var(--color-border);
       border-radius: 16px;
       overflow: hidden;
+      width: 100%;
     }
 
     .privacy-header {
@@ -477,7 +481,6 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 0;
-      padding: 0;
     }
 
     .privacy-item {
@@ -753,6 +756,12 @@
       justify-content: center;
       font-size: var(--step-2);
       border-radius: 12px;
+      flex-shrink: 0;
+    }
+
+    .acc-text {
+      flex: 1;
+      min-width: 200px;
     }
 
     .acc-text h3 {
@@ -869,6 +878,7 @@
       color: var(--color-primary);
       text-decoration: none;
       border-bottom: 1px solid var(--color-border);
+      word-break: break-all;
     }
 
     .location-email a:hover {
@@ -879,15 +889,16 @@
     footer {
       background: var(--color-primary);
       color: white;
-      padding: var(--space-xl) 0 var(--space-md);
+      padding: var(--space-xl) var(--space-md) var(--space-md);
       margin-top: var(--space-xl);
     }
 
     .footer-grid {
+      max-width: 1280px;
+      margin: 0 auto;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: var(--space-lg);
-      margin-bottom: var(--space-xl);
     }
 
     .footer-col h4 {
@@ -911,37 +922,33 @@
     }
 
     .footer-bottom {
-      border-top: 1px solid rgba(255,255,255,0.1);
+      max-width: 1280px;
+      margin: var(--space-lg) auto 0;
       padding-top: var(--space-md);
+      border-top: 1px solid rgba(255,255,255,0.1);
       text-align: center;
       font-size: var(--step--2);
       color: rgba(255,255,255,0.6);
     }
 
-    /* responsive */
+    /* ===== RESPONSIVE BREAKPOINTS - ONLY ADDED/MODIFIED THESE ===== */
+    @media (max-width: 1024px) {
+      .roles-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .benefits-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
     @media (max-width: 900px) {
       .nav-links {
         display: none;
       }
-      
+
       .mobile-menu-btn {
         display: block;
-      }
-
-      .roles-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .benefits-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .ato-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .ato-card.large {
-        grid-column: span 1;
       }
 
       .footer-grid {
@@ -953,46 +960,73 @@
       }
 
       .privacy-item {
-        border-right: none;
+        border-right: none !important;
       }
-
-      .privacy-item:nth-child(even) {
-        border-right: none;
+      
+      .privacy-item:not(:last-child) {
+        border-bottom: 1px solid var(--color-border);
       }
-
+      
       .privacy-item:nth-last-child(-n+2) {
         border-bottom: 1px solid var(--color-border);
       }
-
+      
       .privacy-item:last-child {
         border-bottom: none;
       }
     }
 
-    @media (max-width: 600px) {
-      .roles-grid,
-      .benefits-grid,
-      .eligibility-grid,
-      .requirements-grid,
-      .ato-grid,
+    @media (max-width: 768px) {
+      .roles-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .benefits-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .eligibility-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .requirements-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .req-item[style*="grid-column: span 2"] {
+        grid-column: span 1 !important;
+      }
+      
+      .ato-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .ato-card.large {
+        grid-column: span 1;
+      }
+      
       .benefits-mini-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
       }
-
-      .footer-grid {
-        grid-template-columns: 1fr;
-      }
-
+      
       .trust-strip {
-        border-radius: 0;
+        border-radius: 16px;
         justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
       }
-
-      .security-strip {
-        flex-direction: column;
-        text-align: center;
+      
+      .trust-strip::-webkit-scrollbar {
+        display: none;
       }
+      
+      .trust-item {
+        white-space: nowrap;
+      }
+    }
 
+    @media (max-width: 600px) {
       .cta-buttons {
         flex-direction: column;
         align-items: center;
@@ -1001,6 +1035,55 @@
       .cta-btn,
       .cta-btn-outline {
         width: 100%;
+        max-width: 300px;
+        text-align: center;
+      }
+
+      .location-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .privacy-badges {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .privacy-badge {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .benefits-mini-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .accommodation-block {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .acc-icon {
+        margin: 0 auto;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page-header h1 {
+        font-size: var(--step-4);
+      }
+      
+      .ato-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .security-strip {
+        flex-direction: column;
         text-align: center;
       }
     }
@@ -1028,7 +1111,7 @@
       <a href="#" class="active">Careers</a>
       <a href="applications.html">Applications</a>
       <a href="resources.html">Resources</a>
-      <a href="tax-refund.html">Tax Refund Portal</a>
+      <a href="tax-refund.html">Tax Portal</a>
       <a href="contact.html">Contact</a>
       <a href="testimonials.html">Testimonials</a>
     </div>
@@ -1044,7 +1127,7 @@
   <a href="#" class="active">Careers</a>
   <a href="applications.html">Applications</a>
   <a href="resources.html">Resources</a>
-  <a href="tax-refund.html">Tax Refund Portal</a>
+  <a href="tax-refund.html">Tax Portal</a>
   <a href="contact.html">Contact</a>
   <a href="testimonials.html">Testimonials</a>
 </div>
@@ -1075,7 +1158,7 @@
   <!-- roles -->
   <h2 style="font-size: var(--step-2); font-weight: 500; margin-bottom: var(--space-sm);">Available roles</h2>
   <div class="roles-grid">
-    <div class="role-item"><i class="fas fa-cow"></i> <span>Cattle Farm Assistant</span></div>
+    <div class="role-item"><i class="fas fa-hand"></i> <span>Cattle Farm Assistant</span></div>
     <div class="role-item"><i class="fas fa-apple-whole"></i> <span>Fruit Picker</span></div>
     <div class="role-item"><i class="fas fa-tractor"></i> <span>General Farm Hand</span></div>
     <div class="role-item"><i class="fas fa-seedling"></i> <span>Planting & Field</span></div>
@@ -1092,12 +1175,12 @@
       <p>Full-time 6am–4pm or part-time options</p>
     </div>
     <div class="benefit-item">
-      <i class="fas fa-sack-dollar"></i>
+      <i class="fas fa-inbox"></i>
       <h3>Weekly pay + bonus</h3>
       <p>Performance-based bonuses</p>
     </div>
     <div class="benefit-item">
-      <i class="fas fa-cabin"></i>
+      <i class="fas fa-house"></i>
       <h3>Private cabins</h3>
       <p>Free accommodation</p>
     </div>
@@ -1107,7 +1190,7 @@
       <p>No experience needed</p>
     </div>
     <div class="benefit-item">
-      <i class="fas fa-hand-heart"></i>
+      <i class="fas fa-heart"></i>
       <h3>Family culture</h3>
       <p>4.7★ rating</p>
     </div>
@@ -1140,7 +1223,15 @@
       <div class="req-desc">Passport, licence, or government ID</div>
       <div class="req-note"><i class="fas fa-circle-info"></i> Legal work eligibility</div>
     </div>
+    
     <div class="req-item">
+      <div class="req-header"><i class="fas fa-clock"></i><h3>Work preference</h3></div>
+      <div class="req-desc">Full-time or part-time</div>
+      <div class="req-note"><i class="fas fa-circle-info"></i> Match farm needs</div>
+    </div>
+   <h2 style="font-size: var(--step-2); font-weight: 500; margin-bottom: var(--space-sm);">Phase II requirements (workers)</h2>
+   
+     <div class="req-item">
       <div class="req-header"><i class="fas fa-file-invoice"></i><h3>Tax File Number</h3></div>
       <div class="req-desc">Australian TFN</div>
       <div class="req-note"><i class="fas fa-circle-info"></i> Correct tax & super</div>
@@ -1150,24 +1241,20 @@
       <div class="req-desc">Medicare or private</div>
       <div class="req-note"><i class="fas fa-circle-info"></i> Worker wellbeing</div>
     </div>
+    
     <div class="req-item">
-      <div class="req-header"><i class="fas fa-clock"></i><h3>Work preference</h3></div>
-      <div class="req-desc">Full-time or part-time</div>
-      <div class="req-note"><i class="fas fa-circle-info"></i> Match farm needs</div>
-    </div>
-    <div class="req-item">
-      <div class="req-header"><i class="fas fa-building-columns"></i><h3>Bank details</h3></div>
+      <div class="req-header"><i class="fas fa-file"></i><h3>Bank details</h3></div>
       <div class="req-desc">BSB, account number</div>
       <div class="req-note"><i class="fas fa-circle-info"></i> Secure payments</div>
     </div>
-    <div class="req-item" style="grid-column: span 2;">
+     <div class="req-item" style="grid-column: span 2;">
       <div class="req-header"><i class="fas fa-chart-line"></i><h3>Salary bonus (optional)</h3></div>
       <div class="req-desc">Performance-based investment bonus</div>
       <div class="req-note"><i class="fas fa-circle-info"></i> Rewards dedication and contribution to farm success</div>
     </div>
   </div>
 
-  <!-- NEW: Privacy & Trust Section -->
+  <!-- Privacy & Trust Section -->
   <div class="privacy-section">
     <div class="privacy-header">
       <h2>🔐 Why We Collect Your Information</h2>
@@ -1184,10 +1271,9 @@
           <li><i class="fas fa-check"></i> Verify your identity</li>
           <li><i class="fas fa-check"></i> Confirm your legal working status</li>
           <li><i class="fas fa-check"></i> Prepare employment contracts</li>
-          <li><i class="fas fa-check"></i> Maintain emergency contact records for workplace safety</li>
-          <li><i class="fas fa-check"></i> Communicate important updates about your application</li>
+          <li><i class="fas fa-check"></i> Maintain emergency contact records</li>
+          <li><i class="fas fa-check"></i> Communicate important updates</li>
         </ul>
-        <p style="margin-top: var(--space-sm); font-size: var(--step--1); color: var(--color-text-light);">This is standard information required by Australian employers and government employment authorities.</p>
       </div>
 
       <!-- Government Identification -->
@@ -1197,80 +1283,68 @@
         <p>We request a valid government-issued ID to:</p>
         <ul class="privacy-list">
           <li><i class="fas fa-check"></i> Prevent identity fraud</li>
-          <li><i class="fas fa-check"></i> Confirm eligibility to work in Australia</li>
-          <li><i class="fas fa-check"></i> Meet Fair Work and immigration compliance requirements</li>
+          <li><i class="fas fa-check"></i> Confirm work eligibility</li>
+          <li><i class="fas fa-check"></i> Meet Fair Work compliance</li>
         </ul>
-        <p style="margin-top: var(--space-sm); font-size: var(--step--1); color: var(--color-text-light);">This protects both the farm and our employees by ensuring that all staff are legally authorized and properly documented.</p>
       </div>
 
       <!-- Tax File Number -->
       <div class="privacy-item">
         <div class="privacy-icon"><i class="fas fa-file-invoice"></i></div>
         <h3>💰 Tax File Number (TFN)</h3>
-        <p>Australian payroll law requires employers to collect a Tax File Number for tax reporting and salary processing.</p>
-        <p>Your TFN ensures:</p>
+        <p>Australian payroll law requires TFN for:</p>
         <ul class="privacy-list">
           <li><i class="fas fa-check"></i> Correct tax deductions</li>
-          <li><i class="fas fa-check"></i> Proper registration with the Australian Taxation Office</li>
-          <li><i class="fas fa-check"></i> Accurate end-of-year income statements</li>
+          <li><i class="fas fa-check"></i> ATO registration</li>
+          <li><i class="fas fa-check"></i> Accurate income statements</li>
         </ul>
-        <p style="margin-top: var(--space-sm); font-size: var(--step--1); color: var(--color-text-light);">Without this information, higher tax rates may apply under federal regulations.</p>
       </div>
 
       <!-- Health Insurance -->
       <div class="privacy-item">
         <div class="privacy-icon"><i class="fas fa-hospital"></i></div>
-        <h3>🩺 Health Insurance Information</h3>
-        <p>Because farm work can involve physical activity and machinery, we must confirm that all workers have valid health coverage.</p>
-        <p>This ensures:</p>
+        <h3>🩺 Health Insurance</h3>
+        <p>We verify coverage for:</p>
         <ul class="privacy-list">
-          <li><i class="fas fa-check"></i> Immediate medical support if needed</li>
-          <li><i class="fas fa-check"></i> Compliance with workplace health and safety regulations</li>
-          <li><i class="fas fa-check"></i> Protection for both employee and employer in case of emergencies</li>
+          <li><i class="fas fa-check"></i> Immediate medical support</li>
+          <li><i class="fas fa-check"></i> WHS compliance</li>
+          <li><i class="fas fa-check"></i> Emergency protection</li>
         </ul>
-        <p style="margin-top: var(--space-sm); font-size: var(--step--1); color: var(--color-text-light);">We only verify insurance validity. We do not request or store medical history.</p>
       </div>
 
       <!-- Banking Details -->
       <div class="privacy-item">
-        <div class="privacy-icon"><i class="fas fa-building-columns"></i></div>
+        <div class="privacy-icon"><i class="fas fa-file"></i></div>
         <h3>💼 Banking Details</h3>
-        <p>Banking information is used strictly for:</p>
+        <p>Used strictly for:</p>
         <ul class="privacy-list">
           <li><i class="fas fa-check"></i> Secure salary payments</li>
-          <li><i class="fas fa-check"></i> Performance bonus deposits (if you choose to participate)</li>
+          <li><i class="fas fa-check"></i> Bonus deposits</li>
         </ul>
-        <p style="margin-top: var(--space-sm); font-size: var(--step--1); color: var(--color-text-light);">We do not use this information for any other purpose.</p>
       </div>
 
       <!-- Data Encryption -->
       <div class="privacy-item">
         <div class="privacy-icon"><i class="fas fa-lock"></i></div>
-        <h3>🔒 Your Data Is Professionally Encrypted</h3>
-        <p>All information submitted through our website is protected using professional encryption and secure server technology.</p>
-        <p>This means:</p>
+        <h3>🔒 Data Encryption</h3>
+        <p>Your information is protected:</p>
         <ul class="privacy-list">
-          <li><i class="fas fa-check"></i> Your data is encrypted during transmission</li>
-          <li><i class="fas fa-check"></i> Access is restricted to authorized HR personnel only</li>
-          <li><i class="fas fa-check"></i> Information is stored securely in compliance with privacy regulations</li>
-          <li><i class="fas fa-check"></i> We do not sell, share, or distribute applicant information</li>
+          <li><i class="fas fa-check"></i> Encrypted transmission</li>
+          <li><i class="fas fa-check"></i> Restricted HR access</li>
+          <li><i class="fas fa-check"></i> Never sold or shared</li>
         </ul>
-        <p style="margin-top: var(--space-sm); font-size: var(--step--1); color: var(--color-text-light);">Our systems are designed to protect your privacy and prevent unauthorized access.</p>
       </div>
     </div>
 
     <!-- Our Commitment -->
     <div class="privacy-commitment">
       <h3>🛡️ Our Commitment</h3>
-      <p>We do not charge application fees. We do not request payments for job offers. We do not misuse personal information.</p>
-      <p>Every detail we request serves a legal, safety, or payroll purpose. Nothing more.</p>
-      <p style="margin-top: var(--space-md);">At Carlton Hill Station Farm, we value integrity, compliance, and the trust of every individual who applies to work with us. Your safety, privacy, and confidence in our process are extremely important to us.</p>
-      
+      <p>No application fees · No payment requests · No misuse of data</p>
       <div class="privacy-badges">
-        <span class="privacy-badge"><i class="fas fa-shield"></i> No application fees</span>
-        <span class="privacy-badge"><i class="fas fa-lock"></i> Bank-level encryption</span>
-        <span class="privacy-badge"><i class="fas fa-file-signature"></i> Fair Work compliant</span>
-        <span class="privacy-badge"><i class="fas fa-flag"></i> Privacy Act 1988</span>
+        <span class="privacy-badge"><i class="fas fa-shield"></i> No fees</span>
+        <span class="privacy-badge"><i class="fas fa-lock"></i> Encryption</span>
+        <span class="privacy-badge"><i class="fas fa-file-signature"></i> Fair Work</span>
+        <span class="privacy-badge"><i class="fas fa-flag"></i> Privacy Act</span>
       </div>
     </div>
   </div>
@@ -1279,51 +1353,38 @@
   <div class="ato-wrapper">
     <div class="ato-header">
       <h2>ATO & Centrelink access</h2>
-      <span class="ato-badge"><i class="fas fa-lock"></i> 100% encryption · bank-level security</span>
+      <span class="ato-badge"><i class="fas fa-lock"></i> 100% encryption</span>
     </div>
 
     <div class="card" style="margin-bottom: var(--space-sm);">
-      <p style="font-size: var(--step-0);">We ask for ATO/Centrelink access to help you access refunds, verify your employment, and ensure you receive all benefits you're entitled to. Your data is protected under Australian privacy law.</p>
+      <p style="font-size: var(--step-0);">Optional ATO/Centrelink access helps us help you access refunds and verify employment.</p>
     </div>
 
     <div class="ato-grid">
       <div class="ato-card">
         <h3><i class="fas fa-file-invoice"></i> Verify tax status</h3>
         <ul class="ato-list">
-          <li><i class="fas fa-check"></i> Confirm TFN matches identity</li>
-          <li><i class="fas fa-check"></i> Check proper income reporting</li>
-          <li><i class="fas fa-check"></i> Avoid overtaxation issues</li>
-          <li><i class="fas fa-check"></i> Help with tax refunds</li>
+          <li><i class="fas fa-check"></i> Confirm TFN identity</li>
+          <li><i class="fas fa-check"></i> Check income reporting</li>
+          <li><i class="fas fa-check"></i> Avoid overtaxation</li>
         </ul>
       </div>
 
       <div class="ato-card">
         <h3><i class="fas fa-hand-holding-heart"></i> Centrelink support</h3>
         <ul class="ato-list">
-          <li><i class="fas fa-check"></i> Link to rent assistance</li>
+          <li><i class="fas fa-check"></i> Rent assistance</li>
           <li><i class="fas fa-check"></i> Verify work records</li>
-          <li><i class="fas fa-check"></i> Access eligible benefits</li>
-          <li><i class="fas fa-check"></i> Support for international workers</li>
+          <li><i class="fas fa-check"></i> Eligible benefits</li>
         </ul>
-      </div>
-
-      <div class="ato-card large">
-        <h3><i class="fas fa-coins"></i> Tax refund assistance (optional)</h3>
-        <ul class="ato-list">
-          <li><i class="fas fa-check"></i> Direct refund requests through ATO</li>
-          <li><i class="fas fa-check"></i> Track PAYG summaries</li>
-          <li><i class="fas fa-check"></i> Calculate refund eligibility</li>
-          <li><i class="fas fa-check"></i> Save on external tax agents</li>
-        </ul>
-        <p style="margin-top: var(--space-xs); color: var(--color-primary); font-weight: 500;">Many workers receive hundreds to thousands in refunds</p>
       </div>
     </div>
   
     <!-- security strip -->
     <div class="security-strip">
-      <div class="security-icon"><i class="fas fa-shield-halved"></i></div>
+      <div class="security-icon"><i class="fas fa-lock"></i></div>
       <div class="security-text">
-        <p><strong>Your data is safe.</strong> We don't store credentials, use encrypted government links, and follow Privacy Act 1988. You're always in control.</p>
+        <p><strong>Your data is safe.</strong> We follow Privacy Act 1988. You're always in control.</p>
       </div>
     </div>
 
@@ -1331,34 +1392,29 @@
     <div class="benefits-mini-grid">
       <div class="benefit-mini"><i class="fas fa-file-invoice"></i><span>Accurate tax</span></div>
       <div class="benefit-mini"><i class="fas fa-hand-holding-dollar"></i><span>Refund help</span></div>
-      <div class="benefit-mini"><i class="fas fa-heart"></i><span>Centrelink access</span></div>
+      <div class="benefit-mini"><i class="fas fa-heart"></i><span>Centrelink</span></div>
       <div class="benefit-mini"><i class="fas fa-passport"></i><span>Visa support</span></div>
       <div class="benefit-mini"><i class="fas fa-shield"></i><span>Legal records</span></div>
       <div class="benefit-mini"><i class="fas fa-peace"></i><span>Peace of mind</span></div>
-    </div>
-
-    <!-- note -->
-    <div class="card" style="margin-top: var(--space-sm); background: #f5f3f0;">
-      <p style="font-size: var(--step--1);"><i class="fas fa-circle-info" style="color: var(--color-accent); margin-right: 0.5rem;"></i> Logging in is optional but recommended. Use your own device or ask our team to walk you through it.</p>
     </div>
   </div>
 
   <!-- accommodation -->
   <div class="accommodation-block">
-    <div class="acc-icon"><i class="fas fa-cabin"></i></div>
+    <div class="acc-icon"><i class="fas fa-house"></i></div>
     <div class="acc-text">
       <h3>On-site accommodation</h3>
       <p>Private cabins for all employees — fully furnished, all utilities included.</p>
     </div>
   </div>
 
-  <!-- cta with white border button -->
+  <!-- cta -->
   <div class="cta-block">
     <h2>Ready to join our team?</h2>
     <p>Our comprehensive application form ensures we can match you with the perfect role and provide all necessary support.</p>
     <div class="cta-buttons">
       <a href="applications.html" class="cta-btn">Start application →</a>
-      <a href="tax-refund.html" class="cta-btn-outline">Tax Refund Portal </a>
+      <a href="tax-refund.html" class="cta-btn-outline">Tax Portal</a>
     </div>
   </div>
 
@@ -1409,7 +1465,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2025 Carlton Hill Station — Registered Agricultural Employer · </p>
+      <p>© 2025 Carlton Hill Station — Registered Agricultural Employer</p>
     </div>
   </div>
 </footer>
@@ -1475,4 +1531,5 @@
 </script>
 
 </body>
+</html>
 </html>

