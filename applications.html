@@ -8,12 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
   <!-- Font Awesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- Firebase SDK - LOAD FIRST -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
   <style>
-    /* Your existing CSS remains exactly the same */
     * {
       margin: 0;
       padding: 0;
@@ -109,6 +104,658 @@
     .notification-close {
       cursor: pointer;
       color: #7a8a7a;
+    }
+
+    .notification-open-btn {
+      background: var(--accent);
+      color: var(--primary);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-left: 0.5rem;
+      white-space: nowrap;
+    }
+
+    .notification-open-btn:hover {
+      background: var(--accent-light);
+      transform: translateY(-1px);
+    }
+
+    /* ===== NAVIGATION BELL ===== */
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .notification-bell {
+      position: relative;
+      cursor: pointer;
+      font-size: 1.3rem;
+      color: var(--primary);
+      transition: transform 0.2s;
+    }
+
+    .notification-bell:hover {
+      transform: scale(1.1);
+      color: var(--accent);
+    }
+
+    .notification-bell .bell-dot {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 10px;
+      height: 10px;
+      background: #ff4444;
+      border-radius: 50%;
+      border: 2px solid white;
+      display: none;
+    }
+
+    .notification-bell .bell-dot.active {
+      display: block;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* ===== NOTIFICATION INBOX MODAL ===== */
+    .inbox-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 1rem;
+      backdrop-filter: blur(8px);
+    }
+
+    .inbox-modal.active {
+      display: flex;
+    }
+
+    .inbox-content {
+      background: white;
+      border-radius: 32px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 30px 60px -15px rgba(0,0,0,0.3);
+      animation: modalPop 0.4s ease;
+    }
+
+    .inbox-header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--gray);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: white;
+      border-radius: 32px 32px 0 0;
+      z-index: 5;
+    }
+
+    .inbox-header h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .inbox-header i {
+      color: var(--accent);
+    }
+
+    .inbox-close {
+      font-size: 1.5rem;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .inbox-close:hover {
+      color: var(--danger);
+    }
+
+    .inbox-list {
+      padding: 1rem;
+    }
+
+    .empty-inbox {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: #7a8a7a;
+    }
+
+    .empty-inbox i {
+      font-size: 3rem;
+      color: var(--gray);
+      margin-bottom: 1rem;
+    }
+
+    .empty-inbox p {
+      font-size: 1rem;
+    }
+
+    .notification-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border: 1px solid var(--gray);
+      border-radius: 12px;
+      margin-bottom: 0.8rem;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .notification-item:hover {
+      border-color: var(--accent);
+      background: var(--light);
+      transform: translateX(2px);
+    }
+
+    .notification-item.unread {
+      background: var(--primary-light);
+      border-left: 4px solid var(--accent);
+    }
+
+    .notification-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--accent-light);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .notification-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .notification-title {
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.2rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .notification-preview {
+      font-size: 0.85rem;
+      color: #5f6d5a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .notification-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 0.3rem;
+    }
+
+    .notification-time {
+      font-size: 0.75rem;
+      color: #7a8a7a;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .notification-actions {
+      display: flex;
+      gap: 0.3rem;
+    }
+
+    .notification-action-btn {
+      background: transparent;
+      border: 1px solid var(--gray);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #7a8a7a;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .notification-action-btn:hover {
+      background: var(--danger-light);
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .notification-action-btn.open:hover {
+      background: var(--success-light);
+      border-color: var(--success);
+      color: var(--success);
+    }
+
+    /* ===== SUCCESS MODAL ===== */
+    .success-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 1rem;
+      backdrop-filter: blur(8px);
+    }
+
+    .success-modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 32px;
+      padding: 2.5rem 2rem;
+      max-width: 450px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 30px 60px -15px rgba(0,0,0,0.3);
+      animation: modalPop 0.5s ease;
+    }
+
+    @keyframes modalPop {
+      0% {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1.2rem;
+      right: 1.2rem;
+      font-size: 1.2rem;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .modal-close:hover {
+      color: var(--danger);
+    }
+
+    .success-icon {
+      width: 70px;
+      height: 70px;
+      background: var(--success-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+
+    .success-icon i {
+      font-size: 2.5rem;
+      color: var(--success);
+    }
+
+    .modal-content h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-content p {
+      color: #5f6d5a;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-divider {
+      width: 50px;
+      height: 3px;
+      background: var(--accent);
+      margin: 1.5rem auto;
+      border-radius: 3px;
+    }
+
+    .modal-note {
+      background: var(--warning-light);
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .modal-note i {
+      color: var(--warning);
+      font-size: 1.2rem;
+    }
+
+    .modal-note span {
+      color: var(--warning);
+      font-weight: 500;
+    }
+
+    .modal-btn {
+      background: var(--accent);
+      color: var(--primary);
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      max-width: 250px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .modal-btn:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2);
+    }
+
+    /* ===== COMPANY LETTER MODAL - FIXED LAYOUT ===== */
+    .letter-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2100;
+      padding: 1.5rem;
+      backdrop-filter: blur(8px);
+    }
+
+    .letter-modal.active {
+      display: flex;
+    }
+
+    .letter-content {
+      background: white;
+      border-radius: 24px;
+      max-width: 1000px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 30px 60px -15px rgba(0,0,0,0.3);
+      animation: letterSlide 0.5s ease;
+    }
+
+    @keyframes letterSlide {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .letter-close {
+      position: absolute;
+      top: 1.2rem;
+      right: 1.2rem;
+      font-size: 1.5rem;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: color 0.2s;
+      z-index: 10;
+    }
+
+    .letter-close:hover {
+      color: var(--danger);
+    }
+
+    .letter-paper {
+      background: #fffdf9;
+      padding: 2.5rem;
+      border-radius: 24px;
+      border: 1px solid var(--gray);
+      box-shadow: inset 0 0 0 1px rgba(196, 154, 107, 0.1);
+      position: relative;
+      width: 100%;
+    }
+
+    .letter-header {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 2px solid var(--gray);
+    }
+
+    .company-logo-placeholder {
+      width: 70px;
+      height: 70px;
+      background: var(--primary);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .company-info {
+      flex: 1;
+    }
+
+    .company-info h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-bottom: 0.3rem;
+    }
+
+    .company-info p {
+      color: #5f6d5a;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .letter-date {
+      text-align: right;
+      color: #5f6d5a;
+      font-size: 1rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+
+    .letter-greeting {
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+
+    .letter-greeting strong {
+      color: var(--primary);
+      font-size: 1.2rem;
+    }
+
+    .letter-body {
+      color: #2d3a2d;
+    }
+
+    .letter-body h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: var(--primary);
+      margin: 2rem 0 1.5rem;
+      text-align: center;
+      letter-spacing: -0.02em;
+    }
+
+    .letter-body h4 {
+      font-size: 1.2rem;
+      color: var(--primary);
+      margin: 1.8rem 0 1rem;
+      font-weight: 600;
+    }
+
+    .letter-body p {
+      margin-bottom: 1.2rem;
+      line-height: 1.8;
+      font-size: 1rem;
+    }
+
+    .letter-list {
+      list-style: none;
+      margin: 1.5rem 0;
+    }
+
+    .letter-list li {
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.8rem;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .letter-list li i {
+      color: var(--accent);
+      margin-top: 0.2rem;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .security-badge {
+      background: var(--primary-light);
+      padding: 1.5rem;
+      border-radius: 16px;
+      margin: 2rem 0;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .security-badge i {
+      font-size: 2.5rem;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .security-badge span {
+      flex: 1;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .signature-section {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--gray);
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .signature-image {
+      width: 150px;
+      height: 200px;
+      
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 3rem;
+      text-align: center;
+      
+      flex-shrink: 0;
+    }
+
+    .signature-image img {
+      max-width: 400px;
+      max-height: 250px;
+      object-fit: contain;
+    }
+
+    .signature-text {
+      flex: 1;
+    }
+
+    .signature-text p {
+      margin-bottom: 0.3rem;
+      font-size: 1rem;
+    }
+
+    .signature-text strong {
+      color: var(--primary);
+      font-size: 1rem;
+    }
+
+    .signature-text .footer-note {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 0.8rem;
+      font-style: italic;
     }
 
     /* ===== UTILITY CLASSES ===== */
@@ -642,6 +1289,27 @@
       font-size: var(--step-0);
     }
 
+    .submit-btn.loading {
+      position: relative;
+      pointer-events: none;
+    }
+
+    .submit-btn.loading .btn-text {
+      opacity: 0;
+    }
+
+    .submit-btn.loading .spinner {
+      display: inline-block;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .spinner {
+      display: none;
+    }
+
     /* ===== SECURITY NOTE ===== */
     .security-note {
       display: flex;
@@ -721,6 +1389,28 @@
     }
 
     /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .letter-content {
+        max-width: 95%;
+      }
+      
+      .letter-paper {
+        padding: 2rem;
+      }
+      
+      .letter-header {
+        gap: 1.5rem;
+      }
+      
+      .company-info h2 {
+        font-size: 1.5rem;
+      }
+      
+      .letter-body h3 {
+        font-size: 1.4rem;
+      }
+    }
+
     @media (max-width: 900px) {
       .nav-links {
         display: none;
@@ -741,6 +1431,31 @@
       .footer-grid {
         grid-template-columns: repeat(2, 1fr);
       }
+
+      .letter-paper {
+        padding: 1.5rem;
+      }
+
+      .letter-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+      }
+
+      .letter-date {
+        text-align: center;
+      }
+
+      .security-badge {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .signature-section {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+      }
     }
 
     @media (max-width: 600px) {
@@ -759,6 +1474,48 @@
         left: 10px;
         max-width: none;
       }
+
+      .modal-content {
+        padding: 1.5rem;
+      }
+
+      .letter-paper {
+        padding: 1.2rem;
+      }
+
+      .inbox-content {
+        max-height: 90vh;
+      }
+
+      .notification-item {
+        flex-wrap: wrap;
+      }
+
+      .notification-actions {
+        margin-left: auto;
+      }
+
+      .company-logo-placeholder {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+      }
+
+      .company-info h2 {
+        font-size: 1.3rem;
+      }
+
+      .letter-body h3 {
+        font-size: 1.2rem;
+      }
+
+      .letter-body h4 {
+        font-size: 1.1rem;
+      }
+
+      .letter-list li {
+        font-size: 0.95rem;
+      }
     }
   </style>
 </head>
@@ -774,20 +1531,141 @@
   <span class="notification-close" onclick="hideNotification()"><i class="fas fa-times"></i></span>
 </div>
 
+<!-- Success Modal (Clean Professional) -->
+<div class="success-modal" id="successModal">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeSuccessModal()"><i class="fas fa-times"></i></span>
+    
+    <div class="success-icon">
+      <i class="fas fa-check-circle"></i>
+    </div>
+    
+    <h2>Application Complete</h2>
+    <p>Your application has been submitted successfully and is pending review.</p>
+    
+    <div class="modal-divider"></div>
+    
+    <div class="modal-note">
+      <i class="fas fa-envelope"></i>
+      <span>You will receive a notification when Phase II details are available.</span>
+    </div>
+    
+    <button class="modal-btn" onclick="closeSuccessModal()">
+      <i class="fas fa-check"></i> Continue
+    </button>
+  </div>
+</div>
+
+<!-- Notification Inbox Modal -->
+<div class="inbox-modal" id="inboxModal">
+  <div class="inbox-content">
+    <div class="inbox-header">
+      <h3><i class="fas fa-bell"></i> Notifications</h3>
+      <span class="inbox-close" onclick="closeInboxModal()"><i class="fas fa-times"></i></span>
+    </div>
+    
+    <div class="inbox-list" id="inboxList">
+      <!-- Inbox items will be populated dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- Company Letter Modal - Fixed Layout -->
+<div class="letter-modal" id="letterModal">
+  <div class="letter-content">
+    <span class="letter-close" onclick="closeLetterModal()"><i class="fas fa-times"></i></span>
+    
+    <div class="letter-paper">
+      <div class="letter-header">
+        <div class="company-logo-placeholder">
+          <span>CH</span>
+        </div>
+        <div class="company-info">
+          <h2>Carlton Hill Station Farm</h2>
+          <p>Cambridge Gulf · Western Australia 6743 · Australia</p>
+          <p>ABN 84 123 456 789 · Est. 1987</p>
+        </div>
+      </div>
+      
+      <div class="letter-date">
+        <p><span id="currentDate"></span></p>
+      </div>
+      
+      <div class="letter-greeting">
+        <p>Dear <strong><span id="applicantFullName">Applicant</span></strong>,</p>
+      </div>
+      
+      <div class="letter-body">
+        <h3>EMPLOYMENT CONFIRMATION – PHASE TWO</h3>
+        
+        <p>Congratulations on successfully completing Phase One of your application to join Carlton Hill Station Farm.</p>
+        
+        <p>Following the successful review of your initial application, we are pleased to inform you that you have progressed to Phase Two of our employment process.</p>
+        
+        <p>At this stage, you are required to complete Section Two of the Application Process, which involves submitting additional personal and employment-related information necessary for:</p>
+        
+        <ul class="letter-list">
+          <li><i class="fas fa-check-circle"></i> <strong>Final employment documentation</strong> — including tax declaration forms and superannuation details</li>
+          <li><i class="fas fa-check-circle"></i> <strong>Allocation of your official work commencement date</strong> — based on role availability and seasonal requirements</li>
+          <li><i class="fas fa-check-circle"></i> <strong>Assignment of staff accommodation</strong> (where applicable) — private cabins available for full-time and seasonal staff</li>
+          <li><i class="fas fa-check-circle"></i> <strong>Completion of onboarding records</strong> — including induction scheduling and safety training</li>
+        </ul>
+        
+        <h4>Important Information Regarding Your Data</h4>
+        
+        <p>Please note that this stage requires the submission of sensitive and confidential information. We want to assure you that all data provided is:</p>
+        
+        <ul class="letter-list">
+          <li><i class="fas fa-shield-alt"></i> <strong>Professionally encrypted</strong> using 256-bit AES encryption</li>
+          <li><i class="fas fa-lock"></i> <strong>Securely stored</strong> on Australian servers with ISO 27001 certification</li>
+          <li><i class="fas fa-user-secret"></i> <strong>Strictly confidential</strong> and accessible only to authorized HR personnel</li>
+          <li><i class="fas fa-file-contract"></i> <strong>Used solely for employment and administrative purposes</strong> in compliance with the Privacy Act 1988</li>
+        </ul>
+        
+        <div class="security-badge">
+          <i class="fas fa-shield-halved"></i>
+          <span>Carlton Hill Station Farm follows a structured and compliant recruitment process to ensure transparency, authenticity, and data protection at every stage. We are a Fair Work accredited employer.</span>
+        </div>
+        
+        <p><strong>Next Steps:</strong> Kindly complete Section Two within 14 days to enable the issuance of your official work date and accommodation details. A member of our recruitment team will contact you within 2-3 business days with further instructions.</p>
+        
+        <p>We look forward to welcoming you to our team and are excited about the possibility of you joining the Carlton Hill family.</p>
+        
+        <div class="signature-section">
+          <div class="signature-image">
+            <img src="https://i.ibb.co/wZMRDyZV/In-Shot-20260301-115303720.png" alt="Company Signature">
+          </div>
+          <div class="signature-text">
+            <p><strong>Recruitment & Human Resources Department</strong></p>
+            <p>Carlton Hill Station Farm</p>
+            <p class="footer-note">This is an official communication from Carlton Hill Station Farm. Please retain for your records.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- navigation -->
 <div class="navbar">
   <div class="nav-container">
     <div class="logo">CARLTON HILL</div>
-    <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="careers.html">Careers</a>
-      <a href="#" class="active">Apply</a>
-      <a href="resources.html">Resources</a>
-      <a href="contact.html">Contact</a>
-      <a href="testimonials.html">Testimonials</a>
+    <div class="nav-right">
+      <div class="notification-bell" onclick="openInboxModal()" id="notificationBell">
+        <i class="fas fa-bell"></i>
+        <span class="bell-dot" id="bellDot"></span>
+      </div>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="careers.html">Careers</a>
+        <a href="#" class="active">Apply</a>
+        <a href="resources.html">Resources</a>
+        <a href="contact.html">Contact</a>
+        <a href="testimonials.html">Testimonials</a>
+      </div>
+      <button class="mobile-menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
     </div>
-    <button class="mobile-menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
   </div>
 </div>
 
@@ -799,7 +1677,6 @@
   <a href="careers.html">Careers</a>
   <a href="#" class="active">Applications</a>
   <a href="resources.html">Resources</a>
-  <a href="tax-refund.html">Tax Portal</a>
   <a href="contact.html">Contact</a>
   <a href="testimonials.html">Testimonials</a>
 </div>
@@ -832,7 +1709,6 @@
   <!-- application form -->
   <div class="form-container">
     <form id="applicationForm">
-      <!-- All your form fields remain exactly the same -->
       <!-- personal information -->
       <div class="form-section">
         <div class="section-title">
@@ -884,104 +1760,6 @@
             <label>Emergency Contact Name & Number *</label>
             <input type="text" id="emergency" placeholder="For Safety and Support" required>
             <div class="error-message" id="emergencyError">Please enter emergency contact</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- identification details -->
-      <div class="form-section">
-        <div class="section-title">
-          <div class="icon"><i class="fas fa-id-card"></i></div>
-          <h3>🔹 Identification Details</h3>
-        </div>
-
-        <div class="section-desc">
-          <i class="fas fa-shield-alt"></i> We require valid ID to verify your identity and comply with government employment laws. Your ID helps us prevent fraud and protect everyone's safety. All information is securely stored and not shared without your consent.
-        </div>
-
-        <div class="form-grid">
-          <div class="form-group full-width">
-            <label>Government-Issued ID Number *</label>
-            <input type="text" id="idNumber" placeholder="Passport, National ID, Driver's License, etc." required>
-            <div class="error-message" id="idNumberError">Please enter your ID number</div>
-          </div>
-          <div class="form-group">
-            <label>Type of ID *</label>
-            <select id="idType" required>
-              <option value="">Select one</option>
-              <option value="passport">Passport</option>
-              <option value="national">National ID</option>
-              <option value="drivers">Driver's License</option>
-              <option value="other">Others</option>
-            </select>
-            <div class="error-message" id="idTypeError">Please select ID type</div>
-          </div>
-          <div class="form-group">
-            <label>Upload ID Copy *</label>
-            <div class="file-upload" onclick="document.getElementById('idUpload').click()">
-              <i class="fas fa-cloud-upload-alt"></i>
-              <p>Click to upload or drag and drop</p>
-              <small>PDF or clear image (max 5MB)</small>
-              <div id="idFileName" class="file-name"></div>
-              <input type="file" id="idUpload" style="display: none;" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileUpload('id', this)">
-            </div>
-            <div class="error-message" id="idUploadError">Please upload your ID copy</div>
-          </div>
-        </div>
-      </div>
-
-    
-
-     
-
-      <!-- performance bonus -->
-      <div class="form-section">
-        <div class="section-title">
-          <div class="icon"><i class="fas fa-chart-line"></i></div>
-          <h3>🔹 Performance-Based Investment Bonus (Optional)</h3>
-        </div>
-
-        <div class="section-desc">
-          <i class="fas fa-gift"></i> Earn more for doing more. Choose to invest part of your salary into a farm-linked performance bonus tied to your work performance, reliability, and attendance.
-        </div>
-
-        <div class="optional-card">
-          <div class="optional-header">
-            <i class="fas fa-coins"></i>
-            <h4>Bonus Program Details</h4>
-          </div>
-          <div class="optional-desc">
-            This bonus encourages you to grow while giving you the opportunity to save and earn more. Based on your performance, you can earn additional income on top of your regular wages.
-          </div>
-
-          <div class="form-grid">
-            <div class="form-group">
-              <label>Do You Want to Join?</label>
-              <div class="radio-group">
-                <label class="radio-option">
-                  <input type="radio" name="bonus" value="yes" id="bonusYes"> Yes
-                </label>
-                <label class="radio-option">
-                  <input type="radio" name="bonus" value="no" id="bonusNo" checked> No
-                </label>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Preferred Investment %</label>
-              <select id="bonusPercentage">
-                <option value="5">5%</option>
-                <option value="10">10%</option>
-                <option value="15">15%</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Bank Name</label>
-              <input type="text" id="bankName" placeholder="For bonus payout">
-            </div>
-            <div class="form-group">
-              <label>Bank Account Number</label>
-              <input type="text" id="bankAccount" placeholder="For bonus payout">
-            </div>
           </div>
         </div>
       </div>
@@ -1059,7 +1837,8 @@
         </div>
 
         <button type="submit" class="submit-btn" id="submitBtn">
-          <i class="fas fa-paper-plane"></i> Submit Application
+          <span class="btn-text"><i class="fas fa-paper-plane"></i> Submit Application</span>
+          <span class="spinner"><i class="fas fa-spinner fa-spin"></i></span>
         </button>
 
         <div class="security-note">
@@ -1110,40 +1889,139 @@
 
 <!-- scripts -->
 <script>
-  // ==================== FIREBASE CONFIG ====================
-  const firebaseConfig = {
-    apiKey: "AIzaSyD7n092G5saDyS-9aFlZOe51mgTjaSPYuo",
-    authDomain: "carltonhillfarmland.firebaseapp.com",
-    projectId: "carltonhillfarmland",
-    storageBucket: "carltonhillfarmland.firebasestorage.app",
-    messagingSenderId: "144483104337",
-    appId: "1:144483104337:web:d95dfbb10509cb9c02ea70"
-  };
-  
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-  const storage = firebase.storage();
-
-  // Test Firebase connection
-  console.log('Firebase initialized');
-  console.log('Firestore available:', !!db);
-  console.log('Storage available:', !!storage);
-
   // ==================== CONFIGURATION ====================
   const STORAGE_KEY = 'jobApplications';
-  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+  const NOTIFICATIONS_KEY = 'userNotifications';
+  let hasNewNotification = false;
+  let applicantData = {
+    fullName: '',
+    firstName: '',
+    email: ''
+  };
+  let notifications = [];
+
+  // Load notifications from localStorage
+  function loadNotifications() {
+    const saved = localStorage.getItem(NOTIFICATIONS_KEY);
+    if (saved) {
+      notifications = JSON.parse(saved);
+    } else {
+      notifications = [];
+    }
+    updateNotificationDot();
+    renderInbox();
+  }
+
+  function saveNotifications() {
+    localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(notifications));
+    updateNotificationDot();
+    renderInbox();
+  }
+
+  // Add a new notification
+  function addNotification(title, preview, type = 'phase2') {
+    const newNotification = {
+      id: 'NOTIF-' + Date.now(),
+      title: title,
+      preview: preview,
+      type: type,
+      timestamp: new Date().toISOString(),
+      read: false,
+      data: { ...applicantData }
+    };
+    notifications.unshift(newNotification);
+    saveNotifications();
+  }
+
+  // Delete a notification
+  function deleteNotification(id, event) {
+    event.stopPropagation();
+    notifications = notifications.filter(n => n.id !== id);
+    saveNotifications();
+  }
+
+  // Render inbox
+  function renderInbox() {
+    const inboxList = document.getElementById('inboxList');
+    if (!inboxList) return;
+
+    if (notifications.length === 0) {
+      inboxList.innerHTML = `
+        <div class="empty-inbox">
+          <i class="fas fa-bell-slash"></i>
+          <p>No notifications yet</p>
+          <p style="font-size:0.85rem; margin-top:0.5rem;">Complete an application to receive updates</p>
+        </div>
+      `;
+      return;
+    }
+
+    inboxList.innerHTML = notifications.map(n => {
+      const date = new Date(n.timestamp);
+      const timeStr = date.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
+      const dateStr = date.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+      
+      return `
+        <div class="notification-item ${!n.read ? 'unread' : ''}" onclick="openNotification('${n.id}')">
+          <div class="notification-icon">
+            <i class="fas fa-${n.type === 'phase2' ? 'envelope' : 'bell'}"></i>
+          </div>
+          <div class="notification-details">
+            <div class="notification-title">${n.title}</div>
+            <div class="notification-preview">${n.preview}</div>
+            <div class="notification-meta">
+              <span class="notification-time">
+                <i class="far fa-clock"></i> ${dateStr} at ${timeStr}
+              </span>
+            </div>
+          </div>
+          <div class="notification-actions">
+            <button class="notification-action-btn open" onclick="openNotification('${n.id}'); event.stopPropagation();" title="Open">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button class="notification-action-btn" onclick="deleteNotification('${n.id}', event)" title="Delete">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Open notification
+  function openNotification(id) {
+    const notification = notifications.find(n => n.id === id);
+    if (notification) {
+      notification.read = true;
+      saveNotifications();
+      
+      if (notification.type === 'phase2') {
+        // Load the applicant data from the notification
+        if (notification.data) {
+          applicantData = notification.data;
+          document.getElementById('applicantFullName').textContent = applicantData.fullName || 'Applicant';
+        }
+        setCurrentDate();
+        openLetterModal();
+      }
+    }
+  }
 
   // ==================== NOTIFICATION SYSTEM ====================
-  function showNotification(title, message, type = 'success') {
+  function showNotification(title, message, type = 'success', showOpenButton = false) {
     const notification = document.getElementById('notification');
     const icon = notification.querySelector('i');
     const titleEl = document.getElementById('notificationTitle');
     const messageEl = document.getElementById('notificationMessage');
+    const closeBtn = notification.querySelector('.notification-close');
+    
+    // Remove any existing open button
+    const existingBtn = notification.querySelector('.notification-open-btn');
+    if (existingBtn) existingBtn.remove();
     
     icon.className = type === 'success' ? 'fas fa-check-circle' : 
                      type === 'error' ? 'fas fa-exclamation-circle' : 
-                     'fas fa-exclamation-triangle';
+                     'fas fa-info-circle';
     icon.style.color = type === 'success' ? 'var(--success)' : 
                        type === 'error' ? 'var(--danger)' : 
                        'var(--warning)';
@@ -1153,58 +2031,80 @@
     
     titleEl.textContent = title;
     messageEl.textContent = message;
+    
+    // Add open button if needed
+    if (showOpenButton) {
+      const openBtn = document.createElement('button');
+      openBtn.className = 'notification-open-btn';
+      openBtn.textContent = 'Open';
+      openBtn.onclick = (e) => {
+        e.stopPropagation();
+        openInboxModal();
+        hideNotification();
+      };
+      notification.querySelector('.notification-content').appendChild(openBtn);
+    }
+    
     notification.classList.add('show');
     
     setTimeout(() => {
       notification.classList.remove('show');
-    }, 5000);
+    }, 8000);
   }
 
   function hideNotification() {
     document.getElementById('notification').classList.remove('show');
   }
 
-  // ==================== FILE UPLOAD HANDLING ====================
-  const uploadedFiles = {
-    id: null,
-    health: null
-  };
+  // ==================== MODAL FUNCTIONS ====================
+  function openSuccessModal() {
+    document.getElementById('successModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
 
-  function handleFileUpload(type, input) {
-    const file = input.files[0];
-    if (!file) return;
+  function closeSuccessModal() {
+    document.getElementById('successModal').classList.remove('active');
+    document.body.style.overflow = '';
+  }
 
-    if (file.size > MAX_FILE_SIZE) {
-      showNotification('Error', 'File size must be less than 5MB', 'error');
-      input.value = '';
-      return;
+  function openInboxModal() {
+    document.getElementById('inboxModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    renderInbox();
+  }
+
+  function closeInboxModal() {
+    document.getElementById('inboxModal').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function openLetterModal() {
+    document.getElementById('letterModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLetterModal() {
+    document.getElementById('letterModal').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function updateNotificationDot() {
+    const dot = document.getElementById('bellDot');
+    const unreadCount = notifications.filter(n => !n.read).length;
+    if (unreadCount > 0) {
+      hasNewNotification = true;
+      dot.classList.add('active');
+    } else {
+      hasNewNotification = false;
+      dot.classList.remove('active');
     }
+  }
 
-    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
-    if (!allowedTypes.includes(file.type)) {
-      showNotification('Error', 'Please upload a PDF or image file', 'error');
-      input.value = '';
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      uploadedFiles[type] = {
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        data: e.target.result,
-        uploadTime: new Date().toISOString()
-      };
-
-      const fileNameElement = document.getElementById(type + 'FileName');
-      if (fileNameElement) {
-        fileNameElement.textContent = `✓ ${file.name}`;
-      }
-
-      showNotification('Success', `${type.toUpperCase()} file uploaded successfully`);
-    };
-    reader.readAsDataURL(file);
+  // Set current date in the letter
+  function setCurrentDate() {
+    const date = new Date();
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('currentDate').textContent = date.toLocaleDateString('en-AU', options);
   }
 
   // ==================== FORM VALIDATION ====================
@@ -1264,51 +2164,6 @@
       isValid = false;
     }
 
-    const idNumber = document.getElementById('idNumber').value.trim();
-    if (!idNumber) {
-      document.getElementById('idNumberError').classList.add('show');
-      document.getElementById('idNumber').classList.add('error');
-      isValid = false;
-    }
-
-    const idType = document.getElementById('idType').value;
-    if (!idType) {
-      document.getElementById('idTypeError').classList.add('show');
-      document.getElementById('idType').classList.add('error');
-      isValid = false;
-    }
-
-    if (!uploadedFiles.id) {
-      document.getElementById('idUploadError').classList.add('show');
-      isValid = false;
-    }
-
-    const tfn = document.getElementById('tfn').value.trim();
-    if (!tfn) {
-      document.getElementById('tfnError').classList.add('show');
-      document.getElementById('tfn').classList.add('error');
-      isValid = false;
-    }
-
-    const insuranceProvider = document.getElementById('insuranceProvider').value.trim();
-    if (!insuranceProvider) {
-      document.getElementById('insuranceProviderError').classList.add('show');
-      document.getElementById('insuranceProvider').classList.add('error');
-      isValid = false;
-    }
-
-    const insuranceNumber = document.getElementById('insuranceNumber').value.trim();
-    if (!insuranceNumber) {
-      document.getElementById('insuranceNumberError').classList.add('show');
-      document.getElementById('insuranceNumber').classList.add('error');
-      isValid = false;
-    }
-
-    if (!uploadedFiles.health) {
-      document.getElementById('healthUploadError').classList.add('show');
-      isValid = false;
-    }
-
     const position = document.getElementById('position').value;
     if (!position) {
       document.getElementById('positionError').classList.add('show');
@@ -1339,17 +2194,6 @@
     return isValid;
   }
 
-  // ==================== HELPER: BASE64 TO BLOB ====================
-  function base64ToBlob(base64, type) {
-    const byteCharacters = atob(base64);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-    const byteArray = new Uint8Array(byteNumbers);
-    return new Blob([byteArray], { type: type });
-  }
-
   // ==================== FORM SUBMISSION ====================
   document.getElementById('applicationForm').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -1360,22 +2204,30 @@
     }
 
     const submitBtn = document.getElementById('submitBtn');
-    const originalText = submitBtn.innerHTML;
+    submitBtn.classList.add('loading');
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
     
     try {
-      let ip = 'N/A';
-      try {
-        const response = await fetch('https://api.ipify.org?format=json');
-        const data = await response.json();
-        ip = data.ip;
-      } catch (e) {}
+      // Get user data for personalization
+      const fullName = document.getElementById('fullName').value.trim();
+      const userEmail = document.getElementById('email').value.trim();
+      const firstName = fullName.split(' ')[0];
       
+      // Store applicant data for later use
+      applicantData = {
+        fullName: fullName,
+        firstName: firstName,
+        email: userEmail
+      };
+      
+      // Simulate 3-second loading delay
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      // Save to localStorage as backup
       const formData = {
         personalInfo: {
-          fullName: document.getElementById('fullName')?.value || '',
-          email: document.getElementById('email')?.value || '',
+          fullName: fullName,
+          email: userEmail,
           phone: document.getElementById('phone')?.value || '',
           dob: document.getElementById('dob')?.value || '',
           nationality: document.getElementById('nationality')?.value || '',
@@ -1383,97 +2235,55 @@
           address: document.getElementById('address')?.value || '',
           emergency: document.getElementById('emergency')?.value || ''
         },
-        identification: {
-          idNumber: document.getElementById('idNumber')?.value || '',
-          idType: document.getElementById('idType')?.value || ''
-        },
-        tax: {
-          tfn: document.getElementById('tfn')?.value || ''
-        },
-        health: {
-          provider: document.getElementById('insuranceProvider')?.value || '',
-          number: document.getElementById('insuranceNumber')?.value || ''
-        },
         workPreference: {
           position: document.getElementById('position')?.value || '',
           workType: document.getElementById('workType')?.value || '',
           startDate: document.getElementById('startDate')?.value || '',
           needsAccommodation: document.querySelector('input[name="accommodation"]:checked')?.value || 'no'
         },
-        bonus: {
-          join: document.querySelector('input[name="bonus"]:checked')?.value || 'no',
-          percentage: document.getElementById('bonusPercentage')?.value || '',
-          bankName: document.getElementById('bankName')?.value || '',
-          bankAccount: document.getElementById('bankAccount')?.value || ''
-        },
         status: 'pending',
-        ip: ip,
-        userAgent: navigator.userAgent
+        timestamp: new Date().toISOString()
       };
       
-      // Upload ID file if exists
-      if (uploadedFiles.id) {
-        const idFileData = uploadedFiles.id.data.split(',')[1];
-        const idBlob = base64ToBlob(idFileData, uploadedFiles.id.type);
-        const idFileName = `${Date.now()}_${uploadedFiles.id.name}`;
-        const idStorageRef = storage.ref().child(`ids/${idFileName}`);
-        await idStorageRef.put(idBlob);
-        const idUrl = await idStorageRef.getDownloadURL();
-        formData.identification.idFile = { 
-          name: uploadedFiles.id.name, 
-          url: idUrl,
-          size: uploadedFiles.id.size
-        };
-      }
-      
-      // Upload health file if exists
-      if (uploadedFiles.health) {
-        const healthFileData = uploadedFiles.health.data.split(',')[1];
-        const healthBlob = base64ToBlob(healthFileData, uploadedFiles.health.type);
-        const healthFileName = `${Date.now()}_${uploadedFiles.health.name}`;
-        const healthStorageRef = storage.ref().child(`health/${healthFileName}`);
-        await healthStorageRef.put(healthBlob);
-        const healthUrl = await healthStorageRef.getDownloadURL();
-        formData.health.cardFile = { 
-          name: uploadedFiles.health.name, 
-          url: healthUrl,
-          size: uploadedFiles.health.size
-        };
-      }
-      
-      // Save to Firebase with server timestamp
-      await db.collection('jobApplications').add({
-        ...formData,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      
-      // Backup to localStorage
-      const applications = JSON.parse(localStorage.getItem('jobApplications') || '[]');
+      const applications = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
       applications.push({
         ...formData,
-        id: 'APP-' + Date.now(),
-        timestamp: new Date().toISOString()
+        id: 'APP-' + Date.now()
       });
-      localStorage.setItem('jobApplications', JSON.stringify(applications));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(applications));
       
-      showNotification(
-        'Application Submitted!', 
-        `Thank you ${formData.personalInfo.fullName}. We'll review your application.`,
-        'success'
-      );
+      // Open the success modal
+      openSuccessModal();
       
+      // Set current date in letter
+      setCurrentDate();
+      
+      // Start 10-second timer for the notification
+      setTimeout(() => {
+        // Add notification to inbox
+        addNotification(
+          'Phase II Employment Confirmation',
+          `Dear ${firstName}, you have progressed to Phase Two of our employment process...`
+        );
+        
+        // Show notification popup with open button
+        showNotification(
+          '📬 New Message',
+          'Phase II notification has arrived. Click Open to view.',
+          'info',
+          true
+        );
+      }, 10000); // 10 seconds delay
+      
+      // Reset form
       document.getElementById('applicationForm').reset();
-      uploadedFiles.id = null;
-      uploadedFiles.health = null;
-      document.getElementById('idFileName').textContent = '';
-      document.getElementById('healthFileName').textContent = '';
       
     } catch (error) {
       console.error('Error submitting application:', error);
       showNotification('Error', 'Failed to submit application. Please try again.', 'error');
     } finally {
+      submitBtn.classList.remove('loading');
       submitBtn.disabled = false;
-      submitBtn.innerHTML = originalText;
     }
   });
 
@@ -1511,33 +2321,6 @@
     });
   });
 
-  // Drag and drop for file uploads
-  document.querySelectorAll('.file-upload').forEach(upload => {
-    upload.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      upload.style.borderColor = 'var(--accent)';
-      upload.style.background = '#f0f7f0';
-    });
-
-    upload.addEventListener('dragleave', () => {
-      upload.style.borderColor = 'var(--gray)';
-      upload.style.background = 'var(--light)';
-    });
-
-    upload.addEventListener('drop', (e) => {
-      e.preventDefault();
-      upload.style.borderColor = 'var(--gray)';
-      upload.style.background = 'var(--light)';
-      
-      const input = upload.querySelector('input[type="file"]');
-      if (input && e.dataTransfer.files.length > 0) {
-        input.files = e.dataTransfer.files;
-        const event = new Event('change', { bubbles: true });
-        input.dispatchEvent(event);
-      }
-    });
-  });
-
   // Real-time validation on input
   document.querySelectorAll('input, select').forEach(field => {
     field.addEventListener('input', function() {
@@ -1547,6 +2330,33 @@
       if (errorEl) errorEl.classList.remove('show');
     });
   });
+
+  // Close modals with Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      if (document.getElementById('successModal').classList.contains('active')) {
+        closeSuccessModal();
+      }
+      if (document.getElementById('inboxModal').classList.contains('active')) {
+        closeInboxModal();
+      }
+      if (document.getElementById('letterModal').classList.contains('active')) {
+        closeLetterModal();
+      }
+    }
+  });
+
+  // Click outside to close modals
+  document.getElementById('inboxModal').addEventListener('click', function(e) {
+    if (e.target === this) closeInboxModal();
+  });
+
+  document.getElementById('letterModal').addEventListener('click', function(e) {
+    if (e.target === this) closeLetterModal();
+  });
+
+  // Initialize
+  loadNotifications();
 </script>
 
 </body>

@@ -26,7 +26,6 @@
       line-height: 1.5;
     }
 
-    /* ===== CUSTOM VARIABLES ===== */
     :root {
       --primary: #1a3a2a;
       --primary-light: #2d5a3d;
@@ -263,17 +262,16 @@
     }
 
     /* ===== PAGE HEADER ===== */
-   /* TO THIS: */
-.page-header {
-  background: linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.1) 100%),
-              url('https://i.ibb.co/ynQzZM9P/615f9fe9b6f8e59ffeb12c4c7daba741.jpg') center/cover no-repeat;
-  min-height: 50vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  color: white;
-}
+    .page-header {
+      background: linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.1) 100%),
+                  url('https://i.ibb.co/ynQzZM9P/615f9fe9b6f8e59ffeb12c4c7daba741.jpg') center/cover no-repeat;
+      min-height: 50vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+    }
 
     .header-content {
       max-width: 900px;
@@ -373,6 +371,7 @@
     .testimonial-card {
       background: white;
       border: 1px solid var(--gray);
+      border-radius: 16px;
       padding: var(--space-md);
       transition: all 0.3s;
       display: flex;
@@ -393,23 +392,24 @@
     }
 
     .testimonial-avatar {
-      width: 60px;
-      height: 60px;
-      background: var(--light);
+      width: 94px;
+      height: 94px;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: var(--step-2);
-      color: var(--primary);
-      border: 2px solid var(--accent);
       overflow: hidden;
+      border: 3px solid var(--accent);
+      background: var(--light);
+      flex-shrink: 0;
     }
 
     .testimonial-avatar img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      display: block;
+    }
+
+    .testimonial-meta {
+      flex: 1;
     }
 
     .testimonial-meta h3 {
@@ -502,7 +502,7 @@
       grid-template-columns: 1fr 2fr;
       gap: var(--space-lg);
       align-items: center;
-      border-radius: 16px;
+      border-radius: 24px;
     }
 
     .featured-image {
@@ -512,10 +512,14 @@
       text-align: center;
     }
 
-    .featured-image i {
-      font-size: 4rem;
-      color: var(--accent);
-      margin-bottom: var(--space-sm);
+    .featured-image img {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--accent);
+      margin: 0 auto var(--space-sm);
+      display: block;
     }
 
     .featured-image h3 {
@@ -549,6 +553,22 @@
       display: flex;
       align-items: center;
       gap: var(--space-sm);
+    }
+
+    .featured-author-avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid var(--accent);
+      flex-shrink: 0;
+    }
+
+    .featured-author-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
     .featured-author-info h4 {
@@ -601,16 +621,6 @@
       font-size: var(--step--2);
       text-transform: uppercase;
       letter-spacing: 0.5px;
-    }
-
-    /* ===== EMPTY STATE ===== */
-    .empty-state {
-      grid-column: 1/-1;
-      text-align: center;
-      padding: 4rem;
-      color: #7a8a7a;
-      border: 1px dashed var(--gray);
-      font-size: var(--step-0);
     }
 
     /* ===== CTA ===== */
@@ -778,6 +788,11 @@
         gap: 0.5rem;
         align-items: flex-start;
       }
+
+      .featured-image img {
+        width: 140px;
+        height: 140px;
+      }
     }
   </style>
 </head>
@@ -803,7 +818,7 @@
       <a href="careers.html">Careers</a>
       <a href="applications.html">Applications</a>
       <a href="resources.html">Resources</a>
-      <a href="tax-refund.html">Tax Portal</a>
+      
       <a href="contact.html">Contact</a>
       <a href="#" class="active">Testimonials</a>
     </div>
@@ -819,7 +834,7 @@
   <a href="careers.html">Careers</a>
   <a href="applications.html">Applications</a>
   <a href="resources.html">Resources</a>
-  <a href="tax-refund.html">Tax Portal</a>
+
   <a href="contact.html">Contact</a>
   <a href="#" class="active">Testimonials</a>
 </div>
@@ -850,37 +865,362 @@
     <p>Every worker who joins our farm brings a unique story. Here are some of their voices — genuine, unfiltered, and straight from the heart.</p>
   </div>
 
-  <!-- stats will be populated dynamically -->
-  <div class="stats-grid" id="statsGrid">
+  <!-- stats -->
+  <div class="stats-grid">
     <div class="stat-card">
-      <div class="stat-number" id="avgRating">4.7 ★</div>
+      <div class="stat-number">4.8 ★</div>
       <div class="stat-label">Average Rating</div>
     </div>
     <div class="stat-card">
-      <div class="stat-number" id="totalStories">175+</div>
+      <div class="stat-number">150+</div>
       <div class="stat-label">Worker Stories</div>
     </div>
     <div class="stat-card">
-      <div class="stat-number" id="returnRate">65%</div>
+      <div class="stat-number">68%</div>
       <div class="stat-label">Return Rate</div>
     </div>
     <div class="stat-card">
-      <div class="stat-number" id="countryCount">12</div>
-      <div class="stat-label">Countries Represented</div>
+      <div class="stat-number">15</div>
+      <div class="stat-label">Countries</div>
     </div>
   </div>
 
-  <!-- testimonials grid - populated dynamically -->
-  <div class="testimonials-grid" id="testimonialsGrid">
-    <div class="loading-state">
-      <div class="loading-spinner"></div>
-      <p style="margin-top: 1rem;">Loading testimonials...</p>
+  <!-- testimonials grid - HARDCODED FOR RELIABILITY -->
+  <div class="testimonials-grid">
+    
+    <!-- Mary O. -->
+    <div class="testimonial-card">
+      <div class="testimonial-header">
+        <div class="testimonial-avatar">
+          <img src="https://i.ibb.co/5gqHmHdM/IMG-20260228-WA0010.jpg" alt="Mary O.">
+        </div>
+        <div class="testimonial-meta">
+          <h3>Mary O.</h3>
+          <div class="testimonial-role">
+            <i class="fas fa-apple-alt"></i> Seasonal Fruit Picker
+            <span class="testimonial-flag"><i class="fas fa-flag"></i> Pretoria</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-rating">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+      </div>
+      <div class="testimonial-quote">
+        <i class="fas fa-quote-left"></i> From the moment I arrived, I was welcomed like family. The private cabins were clean and safe, the meals were nourishing, and the management truly cared about our well-being. I'd recommend this farm to anyone.
+      </div>
+      <div class="testimonial-footer">
+        <span class="testimonial-location"><i class="fas fa-map-pin"></i> South Africa</span>
+        <span class="testimonial-date">2024 Season</span>
+      </div>
     </div>
+
+    <!-- Liam B. -->
+    <div class="testimonial-card">
+      <div class="testimonial-header">
+        <div class="testimonial-avatar">
+          <img src="https://i.ibb.co/GvmTY4Ww/IMG-20260228-WA0011.jpg" alt="Liam B.">
+        </div>
+        <div class="testimonial-meta">
+          <h3>Liam B.</h3>
+          <div class="testimonial-role">
+            <i class="fas fa-cow"></i> Cattle Hand
+            <span class="testimonial-flag"><i class="fas fa-flag"></i> Australia</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-rating">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+      </div>
+      <div class="testimonial-quote">
+        <i class="fas fa-quote-left"></i> At first I was just looking for steady farm work. But the performance-based investment bonus changed everything. I've been able to save and support my younger brother's schooling through my work here.
+      </div>
+      <div class="testimonial-footer">
+        <span class="testimonial-location"><i class="fas fa-map-pin"></i> Australia</span>
+        <span class="testimonial-date">2 Years</span>
+      </div>
+    </div>
+
+    <!-- Siti N. -->
+    <div class="testimonial-card">
+      <div class="testimonial-header">
+        <div class="testimonial-avatar">
+          <img src="https://i.ibb.co/3971HX9j/Screenshot-20260301-013401-Gallery.jpg" alt="Siti N.">
+        </div>
+        <div class="testimonial-meta">
+          <h3>Siti N.</h3>
+          <div class="testimonial-role">
+            <i class="fas fa-hoe"></i> Seasonal Farmer
+            <span class="testimonial-flag"><i class="fas fa-flag"></i> Malaysia</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-rating">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+      </div>
+      <div class="testimonial-quote">
+        <i class="fas fa-quote-left"></i> Even as an international worker, I never felt out of place. The team helped me with my ATO and Centrelink logins, which made tax refunds simple. Carlton Hill is a model of ethical employment.
+      </div>
+      <div class="testimonial-footer">
+        <span class="testimonial-location"><i class="fas fa-map-pin"></i> Malaysia</span>
+        <span class="testimonial-date">2024</span>
+      </div>
+    </div>
+
+    <!-- Tunde A. -->
+    <div class="testimonial-card">
+      <div class="testimonial-header">
+        <div class="testimonial-avatar">
+          <img src="https://i.ibb.co/9Hx785v9/IMG-20260228-WA0005.jpg" alt="Tunde A.">
+        </div>
+        <div class="testimonial-meta">
+          <h3>Tunde A.</h3>
+          <div class="testimonial-role">
+            <i class="fas fa-tractor"></i> Harvest Worker
+            <span class="testimonial-flag"><i class="fas fa-flag"></i> South Africa</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-rating">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+      </div>
+      <div class="testimonial-quote">
+        <i class="fas fa-quote-left"></i> I was nervous coming from overseas, but the application process was smooth. They explained every document I needed. The work was honest, fair, and well-organized.
+      </div>
+      <div class="testimonial-footer">
+        <span class="testimonial-location"><i class="fas fa-map-pin"></i> South Africa</span>
+        <span class="testimonial-date">2023-2024</span>
+      </div>
+    </div>
+
+    <!-- Jason M. -->
+    <div class="testimonial-card">
+      <div class="testimonial-header">
+        <div class="testimonial-avatar">
+          <img src="https://i.ibb.co/DgwQkgLm/IMG-20260228-WA0008.jpg" alt="Jason M.">
+        </div>
+        <div class="testimonial-meta">
+          <h3>Jason M.</h3>
+          <div class="testimonial-role">
+            <i class="fas fa-graduation-cap"></i> Graduate Intern
+            <span class="testimonial-flag"><i class="fas fa-flag"></i> New Zealand </span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-rating">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+      </div>
+      <div class="testimonial-quote">
+        <i class="fas fa-quote-left"></i> After finishing my studies, I wanted to start my life. Carlton Hill Farm gave me that chance. I worked hard, learned responsibility, and started building for my future.
+      </div>
+      <div class="testimonial-footer">
+        <span class="testimonial-location"><i class="fas fa-map-pin"></i> New Zealand</span>
+        <span class="testimonial-date">Intern 2024</span>
+      </div>
+    </div>
+
+    <!-- Emily R. (Featured) -->
+    <div class="testimonial-card">
+      <div class="testimonial-header">
+        <div class="testimonial-avatar">
+          <img src="https://i.ibb.co/DF7pv6d/IMG-20260228-WA0007.jpg" alt="Emily R.">
+        </div>
+        <div class="testimonial-meta">
+          <h3>Emily R.</h3>
+          <div class="testimonial-role">
+            <i class="fas fa-home"></i> Cabin Supervisor
+            <span class="testimonial-flag"><i class="fas fa-flag"></i> Australia</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-rating">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+      </div>
+      <div class="testimonial-quote">
+        <i class="fas fa-quote-left"></i> I've worked on several farms, but Carlton Hill is different. Management listens to us. They care about creating a healthy environment — both physically and mentally.
+      </div>
+      <div class="testimonial-footer">
+        <span class="testimonial-location"><i class="fas fa-map-pin"></i> Australia</span>
+        <span class="testimonial-date">2 Years</span>
+      </div>
+    </div>
+
+    <!-- Kelvin T. -->
+    <div class="testimonial-card">
+      <div class="testimonial-header">
+        <div class="testimonial-avatar">
+          <img src="https://i.ibb.co/mr2htNSp/IMG-20260228-WA0006.jpg" alt="Kelvin T.">
+        </div>
+        <div class="testimonial-meta">
+          <h3>Kelvin T.</h3>
+          <div class="testimonial-role">
+            <i class="fas fa-cog"></i> Equipment Operator
+            <span class="testimonial-flag"><i class="fas fa-flag"></i> Philippines</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-rating">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+      </div>
+      <div class="testimonial-quote">
+        <i class="fas fa-quote-left"></i> Farm work is tough, but when you're treated right, it feels worth it. Carlton Hill paid on time, gave clear schedules, and kept their promises.
+      </div>
+      <div class="testimonial-footer">
+        <span class="testimonial-location"><i class="fas fa-map-pin"></i> Philippines</span>
+        <span class="testimonial-date">2024</span>
+      </div>
+    </div>
+
+    <!-- Fatima Y. -->
+    <div class="testimonial-card">
+      <div class="testimonial-header">
+        <div class="testimonial-avatar">
+          <img src="https://i.ibb.co/C5HdS5tj/IMG-20260228-WA0009.jpg" alt="Fatima Y.">
+        </div>
+        <div class="testimonial-meta">
+          <h3>Fatima Y.</h3>
+          <div class="testimonial-role">
+            <i class="fas fa-apple-alt"></i> Fruit Picker
+            <span class="testimonial-flag"><i class="fas fa-flag"></i> Malaysia</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-rating">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+      </div>
+      <div class="testimonial-quote">
+        <i class="fas fa-quote-left"></i> Some farms don't treat women fairly, but here, I felt respected. Everyone was equal. They provided safety tips and let us voice concerns.
+      </div>
+      <div class="testimonial-footer">
+        <span class="testimonial-location"><i class="fas fa-map-pin"></i> Malaysia</span>
+        <span class="testimonial-date">2023</span>
+      </div>
+    </div>
+
+    <!-- Adewale F. -->
+    <div class="testimonial-card">
+      <div class="testimonial-header">
+        <div class="testimonial-avatar">
+          <img src="https://i.ibb.co/cSZ0VdDY/IMG-20260228-WA0002.jpg" alt="Adewale F.">
+        </div>
+        <div class="testimonial-meta">
+          <h3>Krystle C.</h3>
+          <div class="testimonial-role">
+            <i class="fas fa-seedling"></i> Intern Trainee
+            <span class="testimonial-flag"><i class="fas fa-flag"></i> Australia</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-rating">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+      </div>
+      <div class="testimonial-quote">
+        <i class="fas fa-quote-left"></i> I didn't know much about cattle and crops before, but the hands-on training at Carlton Hill changed that. They taught us sustainability and proper handling.
+      </div>
+      <div class="testimonial-footer">
+        <span class="testimonial-location"><i class="fas fa-map-pin"></i> Australia</span>
+        <span class="testimonial-date">Trainee 2024</span>
+      </div>
+    </div>
+    
+        <!-- Miguel S.-->
+    <div class="testimonial-card">
+      <div class="testimonial-header">
+        <div class="testimonial-avatar">
+          <img src="https://i.ibb.co/5h6SVFk9/IMG-20260228-WA0003.jpg" alt="Miguel Santos">
+        </div>
+        <div class="testimonial-meta">
+          <h3>Miguel S.</h3>
+          <div class="testimonial-role">
+            <i class="fas fa-seed"></i> Planting crew 
+            <span class="testimonial-flag"><i class="fas fa-flag"></i> Australia </span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-rating">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+      </div>
+      <div class="testimonial-quote">
+        <i class="fas fa-quote-left"></i> Good people, solid pay, and Sundays off makes a real difference.
+      </div>
+      <div class="testimonial-footer">
+        <span class="testimonial-location"><i class="fas fa-map-pin"></i> Australia</span>
+        <span class="testimonial-date">2024</span>
+      </div>
+    </div>
+    
+    <!-- Jake M. -->
+    <div class="testimonial-card">
+      <div class="testimonial-header">
+        <div class="testimonial-avatar">
+          <img src="https://i.ibb.co/cK2MY9MN/IMG-20260228-WA0001.jpg" alt="Jake M.">
+        </div>
+        <div class="testimonial-meta">
+          <h3>Jake M.</h3>
+          <div class="testimonial-role">
+            <i class="fas fa-hand"></i> Cattle hand 
+            <span class="testimonial-flag"><i class="fas fa-flag"></i> Australia</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-rating">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+      </div>
+      <div class="testimonial-quote">
+        <i class="fas fa-quote-left"></i> Clean cabins, fair hours, and they actually care about workers. Been coming back for 3 seasons.
+      </div>
+      <div class="testimonial-footer">
+        <span class="testimonial-location"><i class="fas fa-map-pin"></i> Australia</span>
+        <span class="testimonial-date">2024</span>
+      </div>
+    </div>
+    
+        <!-- Deanna M. -->
+    <div class="testimonial-card">
+      <div class="testimonial-header">
+        <div class="testimonial-avatar">
+          <img src="https://i.ibb.co/bjqpBRhv/728c57da8cc308f27d53554f4b2c07a2.jpg" alt="Deanna M.">
+        </div>
+        <div class="testimonial-meta">
+          <h3>Deanna M.</h3>
+          <div class="testimonial-role">
+            <i class="fas fa-hoe"></i> Fruit Picker 
+            <span class="testimonial-flag"><i class="fas fa-flag"></i> Ireland </span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-rating">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+      </div>
+      <div class="testimonial-quote">
+        <i class="fas fa-quote-left"></i> The training was excellent. Started with no experience, now leading a picking team.
+      </div>
+      <div class="testimonial-footer">
+        <span class="testimonial-location"><i class="fas fa-map-pin"></i> Ireland</span>
+        <span class="testimonial-date">2024</span>
+      </div>
+    </div>
+    
   </div>
 
-  <!-- featured testimonial - populated dynamically -->
-  <div class="featured-testimonial" id="featuredTestimonial">
-    <!-- Will be populated by JavaScript -->
+  <!-- FEATURED TESTIMONIAL - Emily R. -->
+  <div class="featured-testimonial">
+    <div class="featured-image">
+      <img src="https://i.ibb.co/DF7pv6d/IMG-20260228-WA0007.jpg" alt="Emily R.">
+      <h3>Worker Spotlight</h3>
+      <p>March 2025</p>
+    </div>
+    <div class="featured-content">
+      <div class="featured-quote">
+        <i class="fas fa-quote-left"></i> I've worked on several farms, but Carlton Hill is different. Management listens to us. They care about creating a healthy environment — both physically and mentally. The farm is clean, the hours are fair, and they reward workers who show dedication. I'm proud to be part of the team.
+      </div>
+      <div class="featured-author">
+        
+        <div class="featured-author-info">
+          <h4>Emily R.</h4>
+          <p><i class="fas fa-home"></i> Cabin Supervisor · Australia</p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- cta -->
@@ -909,7 +1249,7 @@
       <a href="careers.html">Careers</a>
       <a href="applications.html">Applications</a>
       <a href="resources.html">Resources</a>
-      <a href="tax-portal.html">Tax Portal</a>
+  
       <a href="contact.html">Contact</a>
     </div>
     <div class="footer-col">
@@ -930,28 +1270,18 @@
   </div>
 </footer>
 
-<!-- scripts -->
+<!-- minimal script for notifications and mobile menu -->
 <script>
-  // ==================== CONFIGURATION ====================
-  const STORAGE_KEY = 'carltonHillTestimonials';
-  const REFRESH_INTERVAL = 30000; // 30 seconds
-
-  // ==================== NOTIFICATION SYSTEM ====================
+  // Notification system
   function showNotification(title, message, type = 'success') {
     const notification = document.getElementById('notification');
     const icon = notification.querySelector('i');
     const titleEl = document.getElementById('notificationTitle');
     const messageEl = document.getElementById('notificationMessage');
     
-    icon.className = type === 'success' ? 'fas fa-check-circle' : 
-                     type === 'error' ? 'fas fa-exclamation-circle' : 
-                     'fas fa-exclamation-triangle';
-    icon.style.color = type === 'success' ? 'var(--success)' : 
-                       type === 'error' ? 'var(--danger)' : 
-                       'var(--warning)';
-    notification.style.borderLeftColor = type === 'success' ? 'var(--success)' : 
-                                         type === 'error' ? 'var(--danger)' : 
-                                         'var(--warning)';
+    icon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+    icon.style.color = type === 'success' ? 'var(--success)' : 'var(--danger)';
+    notification.style.borderLeftColor = type === 'success' ? 'var(--success)' : 'var(--danger)';
     
     titleEl.textContent = title;
     messageEl.textContent = message;
@@ -966,239 +1296,7 @@
     document.getElementById('notification').classList.remove('show');
   }
 
-  // ==================== DEFAULT TESTIMONIALS ====================
-  const defaultTestimonials = [
-    {
-      id: '1',
-      name: 'Mary O.',
-      role: 'Seasonal Fruit Picker',
-      country: 'Kenya',
-      flag: '🇰🇪',
-      text: "From the moment I arrived, I was welcomed like family. The private cabins were clean and safe, the meals were nourishing, and the management truly cared about our well-being. I worked hard picking strawberries and planting vegetables, but I also grew personally. I'd recommend this farm to anyone.",
-      rating: 5,
-      date: '2024 Season',
-      featured: true
-    },
-    {
-      id: '2',
-      name: 'Liam B.',
-      role: 'Cattle Hand',
-      country: 'Australia',
-      flag: '🇦🇺',
-      text: "At first I was just looking for steady farm work. But the performance-based investment bonus changed everything. I started seeing work as a long-term opportunity, not just a short job. I've been able to save and support my younger brother's schooling through my work here.",
-      rating: 5,
-      date: '2 Years',
-      featured: false
-    },
-    {
-      id: '3',
-      name: 'Siti N.',
-      role: 'Admin Support',
-      country: 'Malaysia',
-      flag: '🇲🇾',
-      text: "Even as an international worker, I never felt out of place. The team helped me with my ATO and Centrelink logins, which made tax refunds simple. Everything was transparent and professional. Carlton Hill isn't just a farm — it's a model of what ethical employment should look like.",
-      rating: 5,
-      date: '2024',
-      featured: false
-    },
-    {
-      id: '4',
-      name: 'Tunde A.',
-      role: 'Harvest Worker',
-      country: 'South Africa',
-      flag: '🇿🇦',
-      text: "I was nervous coming from overseas, but the application process was smooth. They even explained every document I needed. The work was honest, fair, and well-organized. Sundays off really helped me rest and keep balance. I'll definitely return next harvest season.",
-      rating: 5,
-      date: '2023-2024',
-      featured: false
-    },
-    {
-      id: '5',
-      name: 'Jason M.',
-      role: 'Graduate Intern',
-      country: 'Ghana',
-      flag: '🇬🇭',
-      text: "After finishing my studies, I wanted to start my life, not depend on my parents. Carlton Hill Farm gave me that chance. I worked hard, learned responsibility, and started building for my future. Staying with a close family member while working here made it even more meaningful.",
-      rating: 5,
-      date: 'Intern 2024',
-      featured: false
-    },
-    {
-      id: '6',
-      name: 'Emily R.',
-      role: 'Cabin Supervisor',
-      country: 'Australia',
-      flag: '🇦🇺',
-      text: "I've worked on several farms, but Carlton Hill is different. Management listens to us. They care about creating a healthy environment — both physically and mentally. The farm is clean, the hours are fair, and they reward workers who show dedication. I'm proud to be part of the team.",
-      rating: 5,
-      date: '2 Years',
-      featured: false
-    },
-    {
-      id: '7',
-      name: 'Kelvin T.',
-      role: 'Equipment Operator',
-      country: 'Philippines',
-      flag: '🇵🇭',
-      text: "Farm work is tough, but when you're treated right, it feels worth it. Carlton Hill paid on time, gave clear schedules, and kept their promises. I was able to send money home and build savings — something I couldn't do in my last job.",
-      rating: 5,
-      date: '2024',
-      featured: false
-    },
-    {
-      id: '8',
-      name: 'Fatima Y.',
-      role: 'Fruit Picker',
-      country: 'Ghana',
-      flag: '🇬🇭',
-      text: "Some farms don't treat women fairly, but here, I felt respected. Everyone was equal. They provided safety tips, proper restrooms, and let us voice concerns. I met great people and made great memories.",
-      rating: 5,
-      date: '2023',
-      featured: false
-    },
-    {
-      id: '9',
-      name: 'Adewale F.',
-      role: 'Intern Trainee',
-      country: 'Uganda',
-      flag: '🇺🇬',
-      text: "I didn't know much about cattle and crops before, but the hands-on training at Carlton Hill changed that. They taught us sustainability, proper handling, and even investment tips. It was like going to school while earning a living.",
-      rating: 5,
-      date: 'Trainee 2024',
-      featured: false
-    }
-  ];
-
-  // ==================== LOAD TESTIMONIALS ====================
-  let testimonials = [];
-
-  function loadTestimonials() {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        testimonials = JSON.parse(saved);
-      } else {
-        testimonials = [...defaultTestimonials];
-        saveTestimonials();
-      }
-      renderTestimonials();
-      updateStats();
-    } catch (error) {
-      console.error('Error loading testimonials:', error);
-      showNotification('Error', 'Failed to load testimonials', 'error');
-      testimonials = [...defaultTestimonials];
-      renderTestimonials();
-    }
-  }
-
-  function saveTestimonials() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(testimonials));
-  }
-
-  // ==================== RENDER TESTIMONIALS ====================
-  function renderTestimonials() {
-    const grid = document.getElementById('testimonialsGrid');
-    const featuredContainer = document.getElementById('featuredTestimonial');
-
-    if (!testimonials || testimonials.length === 0) {
-      grid.innerHTML = '<div class="empty-state">📝 No testimonials yet. Check back soon.</div>';
-      featuredContainer.innerHTML = '';
-      return;
-    }
-
-    // Find featured testimonial
-    const featured = testimonials.find(t => t.featured) || testimonials[0];
-    
-    // Render featured testimonial
-    featuredContainer.innerHTML = `
-      <div class="featured-image">
-        <i class="fas fa-quote-right"></i>
-        <h3>Worker Spotlight</h3>
-        <p>${new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}</p>
-      </div>
-      <div class="featured-content">
-        <div class="featured-quote">
-          <i class="fas fa-quote-left"></i> ${escapeHtml(featured.text)}
-        </div>
-        <div class="featured-author">
-          <div class="testimonial-avatar" style="background: var(--accent); color: var(--primary);">
-            <i class="fas fa-user"></i>
-          </div>
-          <div class="featured-author-info">
-            <h4>${escapeHtml(featured.name)}</h4>
-            <p><i class="fas fa-${featured.role.includes('Fruit') ? 'apple-alt' : 
-                                   featured.role.includes('Cattle') ? 'cow' : 
-                                   featured.role.includes('Admin') ? 'laptop' : 
-                                   featured.role.includes('Harvest') ? 'tractor' : 
-                                   featured.role.includes('Intern') ? 'graduation-cap' : 
-                                   featured.role.includes('Supervisor') ? 'home' : 
-                                   featured.role.includes('Equipment') ? 'cog' : 
-                                   'seedling'}"></i> ${escapeHtml(featured.role)} · ${escapeHtml(featured.country)}</p>
-          </div>
-        </div>
-      </div>
-    `;
-
-    // Render all testimonials
-    grid.innerHTML = testimonials.map(t => `
-      <div class="testimonial-card">
-        <div class="testimonial-header">
-          <div class="testimonial-avatar">
-            <i class="fas fa-user"></i>
-          </div>
-          <div class="testimonial-meta">
-            <h3>${escapeHtml(t.name)}</h3>
-            <div class="testimonial-role">
-              <i class="fas fa-${t.role.includes('Fruit') ? 'apple-alt' : 
-                                   t.role.includes('Cattle') ? 'cow' : 
-                                   t.role.includes('Admin') ? 'laptop' : 
-                                   t.role.includes('Harvest') ? 'tractor' : 
-                                   t.role.includes('Intern') ? 'graduation-cap' : 
-                                   t.role.includes('Supervisor') ? 'home' : 
-                                   t.role.includes('Equipment') ? 'cog' : 
-                                   'seedling'}"></i> ${escapeHtml(t.role)}
-              <span class="testimonial-flag"><i class="fas fa-flag"></i> ${escapeHtml(t.country)}</span>
-            </div>
-          </div>
-        </div>
-        <div class="testimonial-rating">
-          ${Array(t.rating).fill('<i class="fas fa-star"></i>').join('')}
-          ${t.rating < 5 ? '<i class="fas fa-star-half-alt"></i>' : ''}
-        </div>
-        <div class="testimonial-quote">
-          <i class="fas fa-quote-left"></i> ${escapeHtml(t.text)}
-        </div>
-        <div class="testimonial-footer">
-          <span class="testimonial-location"><i class="fas fa-map-pin"></i> ${escapeHtml(t.country)}</span>
-          <span class="testimonial-date">${escapeHtml(t.date)}</span>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  // ==================== UPDATE STATS ====================
-  function updateStats() {
-    const avgRating = testimonials.reduce((acc, t) => acc + t.rating, 0) / testimonials.length;
-    document.getElementById('avgRating').textContent = avgRating.toFixed(1) + ' ★';
-    document.getElementById('totalStories').textContent = testimonials.length + '+';
-    
-    // Calculate unique countries
-    const countries = new Set(testimonials.map(t => t.country));
-    document.getElementById('countryCount').textContent = countries.size;
-  }
-
-  // ==================== ESCAPE HTML ====================
-  function escapeHtml(unsafe) {
-    if (!unsafe) return '';
-    return unsafe
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
-
-  // ==================== MOBILE MENU ====================
+  // Mobile menu
   const menuBtn = document.getElementById('menuBtn');
   const mobileNav = document.getElementById('mobileNav');
   const overlay = document.getElementById('overlay');
@@ -1220,64 +1318,28 @@
   closeBtn.addEventListener('click', closeMenu);
   overlay.addEventListener('click', closeMenu);
 
-  // smooth scroll
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-      e.preventDefault();
-      const target = document.querySelector(this.getAttribute('href'));
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth' });
-        closeMenu();
-      }
-    });
-  });
-
-  // Listen for storage changes (when admin updates testimonials)
-  window.addEventListener('storage', (e) => {
-    if (e.key === STORAGE_KEY) {
-      loadTestimonials();
-      showNotification('Updated', 'Testimonials have been refreshed', 'success');
-    }
-  });
-
-  // Initialize
-  document.addEventListener('DOMContentLoaded', () => {
-    loadTestimonials();
-    
-    // Welcome notification
-    setTimeout(() => {
-      showNotification('Testimonials', 'Read real stories from our workers', 'success');
-    }, 1000);
-
-    // Auto-refresh
-    setInterval(() => {
-      if (document.visibilityState === 'visible') {
-        loadTestimonials();
-      }
-    }, REFRESH_INTERVAL);
-  });
+  // Welcome notification
+  setTimeout(() => {
+    showNotification('Testimonials', 'Read real stories from our workers', 'success');
+  }, 1000);
 </script>
-<!-- Add this right before </body> in EVERY page -->
+
+<!-- Firebase Scripts (keeping for compatibility) -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 
 <script>
-  // Your Firebase config
+  // Firebase config (keeping but not using for testimonials)
   const firebaseConfig = {
     apiKey: "AIzaSyD7n092G5saDyS-9aFlZOe51mgTjaSPYuo",
     authDomain: "carltonhillfarmland.firebaseapp.com",
     projectId: "carltonhillfarmland",
     storageBucket: "carltonhillfarmland.firebasestorage.app",
     messagingSenderId: "144483104337",
-    appId: "1:144483104337:web:d95dfbb10509cb9c02ea70",
-    measurementId: "G-8M5S0PV2RC"
+    appId: "1:144483104337:web:d95dfbb10509cb9c02ea70"
   };
   
-  // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-  const storage = firebase.storage();
 </script>
 </body>
 </html>
