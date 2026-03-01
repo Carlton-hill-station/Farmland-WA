@@ -334,6 +334,65 @@
       margin: 0 auto;
     }
 
+    /* ===== LOADING ANIMATION ===== */
+    .loading-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      background: white;
+      border: 1px solid var(--gray);
+      border-radius: 24px;
+      margin: 2rem 0;
+    }
+
+    .loading-spinner-large {
+      width: 60px;
+      height: 60px;
+      border: 4px solid var(--gray);
+      border-top-color: var(--accent);
+      border-right-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+      margin-bottom: 1.5rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-size: var(--step-0);
+      color: var(--primary);
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .loading-progress {
+      width: 200px;
+      height: 6px;
+      background: var(--gray);
+      border-radius: 100px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+
+    .loading-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--primary));
+      border-radius: 100px;
+      transition: width 0.3s ease;
+    }
+
+    .loading-tip {
+      color: #7a8a7a;
+      font-size: var(--step--1);
+      margin-top: 1rem;
+      font-style: italic;
+    }
+
     /* ===== DOCUMENTS GRID ===== */
     .documents-grid {
       display: grid;
@@ -350,6 +409,7 @@
       display: flex;
       flex-direction: column;
       position: relative;
+      border-radius: 16px;
     }
 
     .document-card:hover {
@@ -364,17 +424,18 @@
       right: 1rem;
       background: var(--success);
       color: white;
-      padding: 0.2rem 0.5rem;
+      padding: 0.2rem 0.8rem;
       border-radius: 20px;
       font-size: 0.7rem;
       font-weight: 600;
+      letter-spacing: 0.5px;
     }
 
     .document-icon {
       background: var(--light);
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -402,19 +463,30 @@
       font-size: var(--step--1);
       margin-bottom: var(--space-sm);
       flex-grow: 1;
+      line-height: 1.6;
     }
 
     .document-meta {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 1rem;
       margin-bottom: var(--space-sm);
       font-size: var(--step--2);
       color: #7a8a7a;
+      padding: 0.5rem 0;
+      border-top: 1px dashed var(--gray);
+      border-bottom: 1px dashed var(--gray);
+    }
+
+    .document-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
     }
 
     .document-meta i {
       color: var(--accent);
+      font-size: 0.9rem;
     }
 
     .download-btn {
@@ -425,21 +497,23 @@
       background: var(--light);
       color: var(--primary);
       border: 1px solid var(--gray);
-      padding: 0.6rem 1rem;
-      font-weight: 500;
+      padding: 0.7rem 1rem;
+      font-weight: 600;
       font-size: var(--step--1);
       transition: 0.2s;
       margin-top: auto;
       cursor: pointer;
       width: 100%;
-      border-radius: 8px;
+      border-radius: 10px;
       text-decoration: none;
+      letter-spacing: 0.3px;
     }
 
     .download-btn:hover {
       background: var(--accent);
       color: white;
       border-color: var(--accent);
+      transform: scale(1.02);
     }
 
     .download-btn:disabled {
@@ -459,29 +533,7 @@
       color: #7a8a7a;
       border: 1px dashed var(--gray);
       font-size: var(--step-0);
-    }
-
-    /* ===== LOADING STATE ===== */
-    .loading-state {
-      grid-column: 1/-1;
-      text-align: center;
-      padding: 4rem;
-      color: #7a8a7a;
-    }
-
-    .loading-spinner {
-      display: inline-block;
-      width: 40px;
-      height: 40px;
-      border: 3px solid var(--gray);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-bottom: 1rem;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+      border-radius: 24px;
     }
 
     /* ===== COMING SOON SECTION ===== */
@@ -491,6 +543,7 @@
       padding: var(--space-lg);
       margin: var(--space-xl) 0;
       text-align: center;
+      border-radius: 24px;
     }
 
     .coming-soon h3 {
@@ -516,9 +569,10 @@
     .tag {
       background: white;
       border: 1px solid var(--gray);
-      padding: 0.3rem 1rem;
+      padding: 0.4rem 1.2rem;
       font-size: var(--step--2);
       color: var(--primary);
+      border-radius: 30px;
     }
 
     /* ===== HELP SECTION ===== */
@@ -532,6 +586,7 @@
       align-items: center;
       justify-content: space-between;
       gap: var(--space-md);
+      border-radius: 24px;
     }
 
     .help-text {
@@ -562,7 +617,7 @@
       align-items: center;
       gap: 0.5rem;
       white-space: nowrap;
-      border-radius: 8px;
+      border-radius: 12px;
     }
 
     .help-btn:hover {
@@ -577,7 +632,7 @@
       text-align: center;
       padding: var(--space-xl) var(--space-md);
       margin: var(--space-xl) 0;
-      border-radius: 16px;
+      border-radius: 24px;
     }
 
     .cta-block h2 {
@@ -605,7 +660,7 @@
       transition: 0.2s;
       text-decoration: none;
       display: inline-block;
-      border-radius: 8px;
+      border-radius: 12px;
     }
 
     .cta-btn:hover {
@@ -712,6 +767,14 @@
         left: 10px;
         max-width: none;
       }
+
+      .loading-wrapper {
+        padding: 3rem 1rem;
+      }
+
+      .loading-progress {
+        width: 160px;
+      }
     }
   </style>
 </head>
@@ -737,8 +800,8 @@
       <a href="careers.html">Careers</a>
       <a href="applications.html">Applications</a>
       <a href="#" class="active">Resources</a>
-      <a href="testimonials.html">Testimonials</a>
       <a href="contact.html">Contact</a>
+      <a href="testimonials.html">Testimonials</a>
     </div>
     <button class="mobile-menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
   </div>
@@ -752,8 +815,8 @@
   <a href="careers.html">Careers</a>
   <a href="applications.html">Applications</a>
   <a href="#" class="active">Resources</a>
-  <a href="testimonials.html">Testimonials</a>
   <a href="contact.html">Contact</a>
+  <a href="testimonials.html">Testimonials</a>
 </div>
 <div class="overlay" id="overlay"></div>
 
@@ -787,13 +850,18 @@
     <p>Essential documents for applicants and current workers</p>
   </div>
 
-  <!-- Dynamic Documents Grid -->
-  <div class="documents-grid" id="documentsGrid">
-    <div class="loading-state">
-      <div class="loading-spinner"></div>
-      <p>Loading documents...</p>
+  <!-- Loading Animation (9 seconds) -->
+  <div id="loadingContainer" class="loading-wrapper">
+    <div class="loading-spinner-large"></div>
+    <div class="loading-text">Loading Documents</div>
+    <div class="loading-progress">
+      <div class="loading-progress-bar" id="loadingProgressBar"></div>
     </div>
+    <div class="loading-tip" id="loadingTip">Preparing your resources...</div>
   </div>
+
+  <!-- Dynamic Documents Grid (initially hidden) -->
+  <div class="documents-grid" id="documentsGrid" style="display: none;"></div>
 
   <!-- coming soon section -->
   <div class="coming-soon">
@@ -884,6 +952,46 @@
   // ==================== CONFIGURATION ====================
   const STORAGE_KEY = 'carltonHillRealDocuments';
 
+  // ==================== GOOGLE DRIVE PDF LINKS ====================
+  const googleDriveDocs = [
+    {
+      name: 'Farm Rules',
+      description: 'Essential guide for all workers covering safety protocols, daily routines, accommodation rules, and farm policies.',
+      type: 'PDF',
+      size: '1.2 MB',
+      url: 'https://drive.google.com/file/d/1nU1a3Oz-2Oae1orAbwLZc00LE3fAJDQS/view?usp=drivesdk',
+      icon: 'fa-file-pdf',
+      badge: 'NEW'
+    },
+    {
+      name: 'Employment Benefits',
+      description: 'Complete guide to on-site accommodation, shared facilities, amenities, and housekeeping schedules for all workers.',
+      type: 'PDF',
+      size: '2.8 MB',
+      url: 'https://drive.google.com/file/d/1BLWykcnP6uR4qX2QCRrVlsvdJXmo1-Mo/view?usp=drivesdk',
+      icon: 'fa-file-pdf',
+      badge: ''
+    },
+    {
+      name: 'Trade Investment Bonus',
+      description: 'Carlton Hill Station Farm offers eligible employees an opportunity to participate in the Trade Investment Bonus Program. This initiative is designed to support financial growth beyond regular salary earnings.',
+      type: 'PDF',
+      size: '1.5 MB',
+      url: 'https://drive.google.com/file/d/16q8xGLMPRVhkEz1ay9uxLZgLzSU35Ej9/view?usp=drivesdk',
+      icon: 'fa-file-pdf',
+      badge: ''
+    },
+    {
+      name: 'Financial Risk Disclosure',
+      description: 'This document is issued to ensure full transparency regarding financial participation in the Trade Investment Bonus Program.',
+      type: 'PDF',
+      size: '1.8 MB',
+      url: 'https://drive.google.com/file/d/1mci2dVLWfgfRdfNBX2Az7zxrku-E7Hjw/view?usp=drivesdk',
+      icon: 'fa-file-pdf',
+      badge: 'NEW'
+    }
+  ];
+
   // ==================== NOTIFICATION SYSTEM ====================
   function showNotification(title, message, type = 'success') {
     const notification = document.getElementById('notification');
@@ -925,58 +1033,83 @@
       .replace(/'/g, "&#039;");
   }
 
-  // ==================== LOAD DOCUMENTS FROM FIREBASE ====================
+  // ==================== SIMULATE LOADING DELAY ====================
+  function simulateLoading() {
+    return new Promise((resolve) => {
+      const loadingContainer = document.getElementById('loadingContainer');
+      const documentsGrid = document.getElementById('documentsGrid');
+      const progressBar = document.getElementById('loadingProgressBar');
+      const loadingTip = document.getElementById('loadingTip');
+      
+      const tips = [
+        'Preparing your resources...',
+        'Organizing documents...',
+        'Almost there...',
+        'Just a moment...',
+        'Loading complete!'
+      ];
+      
+      let progress = 0;
+      let tipIndex = 0;
+      
+      const interval = setInterval(() => {
+        progress += 1.11; // 100/90 = 1.11% per 100ms for 9 seconds
+        progressBar.style.width = Math.min(progress, 100) + '%';
+        
+        // Update tip every 2 seconds
+        if (progress > tipIndex * 20 && tipIndex < tips.length - 1) {
+          tipIndex++;
+          loadingTip.textContent = tips[tipIndex];
+        }
+        
+        if (progress >= 100) {
+          clearInterval(interval);
+          loadingTip.textContent = tips[tips.length - 1];
+          
+          setTimeout(() => {
+            loadingContainer.style.display = 'none';
+            documentsGrid.style.display = 'grid';
+            resolve();
+          }, 500);
+        }
+      }, 100); // 100ms * 90 = 9000ms (9 seconds)
+    });
+  }
+
+  // ==================== LOAD DOCUMENTS ====================
   async function loadDocuments() {
     const grid = document.getElementById('documentsGrid');
     
     try {
-      const snapshot = await db.collection('resourceDocuments')
-        .orderBy('timestamp', 'desc')
-        .get();
+      // Wait for loading animation to complete
+      await simulateLoading();
       
-      const documents = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      
-      if (documents.length === 0) {
-        grid.innerHTML = '<div class="empty-state">📁 No documents available yet. Check back soon.</div>';
-        return;
-      }
-      
-      grid.innerHTML = documents.map(doc => {
-        // Handle timestamp safely
-        let timestamp = 0;
-        if (doc.timestamp) {
-          if (doc.timestamp.toDate) {
-            timestamp = doc.timestamp.toDate().getTime();
-          } else if (typeof doc.timestamp === 'string') {
-            timestamp = new Date(doc.timestamp).getTime();
-          }
-        }
-        
-        const isNew = timestamp > (Date.now() - 7 * 24 * 60 * 60 * 1000);
-        
-        return `
+      // Display the four Google Drive documents
+      grid.innerHTML = googleDriveDocs.map(doc => `
         <div class="document-card">
-          ${isNew ? '<span class="document-badge">NEW</span>' : ''}
-          <div class="document-icon"><i class="fas fa-file-pdf"></i></div>
-          <h3>${escapeHtml(doc.name || 'Untitled')}</h3>
-          <p class="document-desc">${escapeHtml(doc.description || '')}</p>
+          ${doc.badge ? '<span class="document-badge">' + doc.badge + '</span>' : ''}
+          <div class="document-icon"><i class="fas ${doc.icon}"></i></div>
+          <h3>${escapeHtml(doc.name)}</h3>
+          <p class="document-desc">${escapeHtml(doc.description)}</p>
           <div class="document-meta">
-            <i class="fas fa-file"></i> <span>${doc.type || 'PDF'}</span>
-            <i class="fas fa-download"></i> <span>${doc.size || '0 KB'}</span>
+            <span><i class="fas fa-file"></i> ${doc.type}</span>
+            <span><i class="fas fa-download"></i> ${doc.size}</span>
           </div>
-          <a href="${doc.url}" download class="download-btn">
+          <a href="${doc.url}" target="_blank" class="download-btn" onclick="handleDownload('${doc.name}')">
             <i class="fas fa-download"></i> Download
           </a>
         </div>
-      `}).join('');
+      `).join('');
       
     } catch (error) {
       console.error('Error loading documents:', error);
       grid.innerHTML = '<div class="empty-state">❌ Error loading documents. Please refresh.</div>';
     }
+  }
+
+  // ==================== HANDLE DOWNLOAD ====================
+  function handleDownload(docName) {
+    showNotification('Download Started', `${docName} is being downloaded`, 'success');
   }
 
   // ==================== MOBILE MENU ====================
@@ -1003,19 +1136,18 @@
 
   // ==================== INITIALIZATION ====================
   document.addEventListener('DOMContentLoaded', () => {
-    // Load documents
+    // Load documents with 9-second delay
     loadDocuments();
   });
 
-  // ==================== REAL-TIME UPDATES ====================
-  db.collection('resourceDocuments')
-    .orderBy('timestamp', 'desc')
-    .onSnapshot((snapshot) => {
-      if (snapshot.docChanges().length > 0) {
-        loadDocuments();
-        showNotification('Updated', 'New documents available', 'success');
-      }
-    });
+  // ==================== ADD DOWNLOAD HANDLER TO ALL DOWNLOAD BUTTONS ====================
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('download-btn') || e.target.closest('.download-btn')) {
+      const btn = e.target.closest('.download-btn');
+      const docName = btn.closest('.document-card')?.querySelector('h3')?.textContent || 'Document';
+      handleDownload(docName);
+    }
+  });
 </script>
 
 </body>
