@@ -774,6 +774,135 @@
       color: var(--color-text-light);
     }
 
+    /* Salary Section - New */
+    .salary-section {
+      margin: var(--space-xl) 0;
+    }
+
+    .salary-card {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      padding: var(--space-lg);
+    }
+
+    .salary-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: var(--space-md);
+    }
+
+    .salary-header i {
+      font-size: 2rem;
+      color: var(--color-accent);
+      background: var(--color-secondary);
+      padding: 1rem;
+      border-radius: 12px;
+      color: white;
+    }
+
+    .salary-header h2 {
+      font-size: var(--step-2);
+      font-weight: 600;
+      color: var(--color-primary);
+    }
+
+    .salary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+
+    .salary-item {
+      background: #f5f3f0;
+      padding: var(--space-md);
+      border-radius: 12px;
+    }
+
+    .salary-item h3 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: var(--step-0);
+      font-weight: 600;
+      color: var(--color-primary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .salary-item h3 i {
+      color: var(--color-accent);
+    }
+
+    .salary-item p {
+      color: var(--color-text-light);
+      font-size: var(--step--1);
+    }
+
+    .salary-item ul {
+      list-style: none;
+      margin-top: var(--space-xs);
+    }
+
+    .salary-item ul li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: var(--step--1);
+      color: var(--color-text-light);
+      margin-bottom: 0.3rem;
+    }
+
+    .salary-item ul li i {
+      color: var(--color-accent);
+      font-size: 0.8rem;
+    }
+
+    .earnings-box {
+      background: var(--color-primary);
+      color: white;
+      padding: var(--space-md);
+      border-radius: 12px;
+      margin-top: var(--space-md);
+    }
+
+    .earnings-box h4 {
+      font-size: var(--step-0);
+      font-weight: 600;
+      margin-bottom: var(--space-xs);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .earnings-box p {
+      font-size: var(--step--1);
+      opacity: 0.9;
+      margin-bottom: 0.2rem;
+    }
+
+    .earnings-box strong {
+      color: var(--color-accent);
+      font-size: var(--step-0);
+    }
+
+    .transparency-note {
+      background: var(--color-accent-light);
+      color: var(--color-primary);
+      padding: var(--space-sm);
+      border-radius: 8px;
+      margin-top: var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .transparency-note i {
+      font-size: 1.5rem;
+    }
+
     /* cta */
     .cta-block {
       background: var(--color-primary);
@@ -931,7 +1060,7 @@
       color: rgba(255,255,255,0.6);
     }
 
-    /* ===== RESPONSIVE BREAKPOINTS - ONLY ADDED/MODIFIED THESE ===== */
+    /* ===== RESPONSIVE BREAKPOINTS ===== */
     @media (max-width: 1024px) {
       .roles-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -973,6 +1102,10 @@
       
       .privacy-item:last-child {
         border-bottom: none;
+      }
+
+      .salary-grid {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -1069,6 +1202,11 @@
       
       .acc-icon {
         margin: 0 auto;
+      }
+
+      .salary-header {
+        flex-direction: column;
+        text-align: center;
       }
     }
 
@@ -1408,6 +1546,53 @@
     </div>
   </div>
 
+  <!-- NEW: Salary & Payment Options Section -->
+  <div class="salary-section">
+    <div class="salary-card">
+      <div class="salary-header">
+        <i class="fas fa-dollar"></i>
+        <h2>💼 Salary & Payment Options</h2>
+      </div>
+      <p style="margin-bottom: var(--space-md); color: var(--color-text-light);">At Carlton Hill Station Farm, we believe in fairness, equality, and flexibility. All employees are paid under the same transparent pay structure, with the option to choose how they prefer to receive their earnings.</p>
+
+      <div class="salary-grid">
+        <div class="salary-item">
+          <h3><i class="fas fa-clock"></i> Hourly Rate</h3>
+          <p>All employees are paid:</p>
+          <p style="font-size: 1.5rem; font-weight: 700; color: var(--color-primary);">AU$28 – AU$32 per hour</p>
+          <p>Wages are calculated strictly based on total hours worked. Overtime is compensated in accordance with Australian workplace regulations.</p>
+        </div>
+
+        <div class="salary-item">
+          <h3><i class="fas fa-calendar-check"></i> Payment Options</h3>
+          <p>Although pay is calculated hourly, employees may choose their preferred payment schedule:</p>
+          <ul>
+            <li><i class="fas fa-check"></i> ✅ Hourly Tracking – Earnings are calculated per hour worked.</li>
+            <li><i class="fas fa-check"></i> ✅ Weekly Payment – Paid at the end of each working week.</li>
+            <li><i class="fas fa-check"></i> ✅ Monthly Payment – Paid at the end of each month.</li>
+          </ul>
+          <p>All payments are processed via secure bank transfer.</p>
+        </div>
+      </div>
+
+      <div class="earnings-box">
+        <h4><i class="fas fa-calculator"></i> Estimated Earnings</h4>
+        <p>Based on a standard 38–40 hour work week:</p>
+        <p><strong>Estimated Weekly Earnings:</strong> AU$1,064 – AU$1,280</p>
+        <p><strong>Estimated Monthly Earnings:</strong> AU$4,200 – AU$5,120</p>
+        <p>Earnings may increase with approved overtime hours.</p>
+      </div>
+
+      <div class="transparency-note">
+        <i class="fas fa-file-invoice"></i>
+        <div>
+          <strong>Payroll Transparency</strong>
+          <p style="margin: 0;">Each employee receives official payslips, clear breakdown of hours worked, tax deductions in compliance with Australian law, and superannuation contributions as required. We are committed to maintaining a transparent, lawful, and secure payroll system for every member of our team.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- cta -->
   <div class="cta-block">
     <h2>Ready to join our team?</h2>
@@ -1530,5 +1715,4 @@
 </script>
 
 </body>
-</html>
 </html>
