@@ -2,16 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Carlton Hill Station | Master Admin Panel</title>
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-  <!-- Font Awesome 6 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Carlton Hill · Admin Dashboard</title>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     * {
       margin: 0;
@@ -20,22 +18,797 @@
     }
 
     body {
-      font-family: 'Space Grotesk', sans-serif;
-      background: #f0f2f5;
-      color: #1e2a1e;
-      line-height: 1.5;
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      min-height: 100vh;
     }
 
     :root {
-      --primary: #1a3a2a;
-      --primary-light: #2d5a3d;
-      --accent: #c49a6b;
-      --accent-light: #dbb68c;
-      --light: #f9f6ef;
-      --gray: #eae7de;
-      --danger: #b04a4a;
-      --success: #4caf50;
-      --warning: #ff9800;
+      --primary: #0b4f3c;
+      --primary-dark: #083c2d;
+      --primary-light: #e8f0ec;
+      --accent: #0a7e5c;
+      --accent-light: #e2f0ea;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-600: #475569;
+      --gray-700: #334155;
+      --gray-800: #1e293b;
+      --gray-900: #0f172a;
+      --success: #0f7b4b;
+      --success-light: #e6f7ef;
+      --warning: #b45309;
+      --warning-light: #fff3e0;
+      --danger: #b91c1c;
+      --danger-light: #fee2e2;
+      --border: #e2e8f0;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      --shadow-md: 0 6px 12px -2px rgba(0,0,0,0.1);
+      --sidebar-width: 280px;
+    }
+
+    /* Login Screen */
+    .login-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 1rem;
+    }
+
+    .login-container.hidden {
+      display: none;
+    }
+
+    .login-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: var(--shadow-md);
+      animation: slideUp 0.5s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .login-logo {
+      width: 60px;
+      height: 60px;
+      background: var(--primary);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .login-header h2 {
+      color: var(--gray-900);
+      font-size: 1.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .login-header p {
+      color: var(--gray-600);
+      font-size: 0.9rem;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 1rem;
+    }
+
+    .input-group i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-400);
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(10,126,92,0.1);
+    }
+
+    .login-error {
+      color: var(--danger);
+      font-size: 0.85rem;
+      margin: -0.5rem 0 1rem;
+      display: none;
+    }
+
+    .login-error.show {
+      display: block;
+    }
+
+    .login-btn {
+      width: 100%;
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .login-btn:hover {
+      background: var(--primary);
+    }
+
+    .demo-credentials {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: var(--gray-50);
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+
+    .demo-credentials p {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0.25rem 0;
+      color: var(--gray-600);
+    }
+
+    .demo-credentials i {
+      color: var(--accent);
+      width: 20px;
+    }
+
+    /* Admin Panel */
+    .admin-panel {
+      display: none;
+    }
+
+    .admin-panel.active {
+      display: block;
+    }
+
+    /* Layout */
+    .admin-wrapper {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: white;
+      border-right: 1px solid var(--border);
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 2rem 1.5rem;
+      z-index: 100;
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar-header {
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-header h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .sidebar-header h2 i {
+      color: var(--accent);
+    }
+
+    .sidebar-header p {
+      font-size: 0.85rem;
+      color: var(--gray-600);
+      margin-top: 0.25rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      color: var(--gray-700);
+      margin-bottom: 0.25rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-item:hover {
+      background: var(--gray-100);
+    }
+
+    .nav-item.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 500;
+      border-left: 3px solid var(--accent);
+    }
+
+    .nav-item i {
+      width: 20px;
+      font-size: 1.1rem;
+    }
+
+    .nav-item .badge {
+      margin-left: auto;
+      background: var(--accent);
+      color: white;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 100px;
+      min-width: 24px;
+      text-align: center;
+    }
+
+    /* Mobile Menu */
+    .mobile-menu-btn {
+      display: none;
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 99;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .mobile-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0,0,0,0.5);
+      z-index: 90;
+      backdrop-filter: blur(4px);
+    }
+
+    .mobile-overlay.active {
+      display: block;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      padding: 2rem;
+      transition: margin-left 0.3s ease;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      background: white;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .page-title h1 {
+      font-size: clamp(1.2rem, 4vw, 1.5rem);
+      font-weight: 600;
+      color: var(--gray-900);
+    }
+
+    .page-title p {
+      color: var(--gray-600);
+      font-size: clamp(0.8rem, 3vw, 0.9rem);
+      margin-top: 0.2rem;
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      position: relative;
+      min-width: 250px;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-600);
+    }
+
+    .search-box input {
+      padding: 0.7rem 1rem 0.7rem 2.5rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      width: 100%;
+      font-size: 0.9rem;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .btn {
+      padding: 0.7rem 1.2rem;
+      border-radius: 8px;
+      border: none;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+      font-size: 0.9rem;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary);
+    }
+
+    .btn-outline {
+      background: white;
+      border: 1px solid var(--border);
+      color: var(--gray-700);
+    }
+
+    .btn-outline:hover {
+      background: var(--gray-100);
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--primary-light);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+
+    .stat-content h3 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      line-height: 1.2;
+    }
+
+    .stat-content p {
+      color: var(--gray-600);
+      font-size: 0.9rem;
+    }
+
+    /* Charts Row */
+    .charts-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .chart-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .chart-header h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--gray-800);
+    }
+
+    .chart-container {
+      height: 250px;
+      position: relative;
+    }
+
+    /* Filter Tabs */
+    .filter-tabs {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .filter-tab {
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      background: white;
+      color: var(--gray-700);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid var(--border);
+    }
+
+    .filter-tab:hover {
+      background: var(--gray-100);
+    }
+
+    .filter-tab.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    /* Phase Toggle */
+    .phase-toggle {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .phase-btn {
+      padding: 0.5rem 1.2rem;
+      border-radius: 8px;
+      background: white;
+      border: 1px solid var(--border);
+      color: var(--gray-700);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .phase-btn:hover {
+      background: var(--gray-100);
+    }
+
+    .phase-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Table Container */
+    .table-container {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .table-header h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--gray-800);
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 800px;
+    }
+
+    th {
+      text-align: left;
+      padding: 1rem 0.5rem;
+      color: var(--gray-600);
+      font-weight: 500;
+      font-size: 0.85rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 1rem 0.5rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: var(--gray-50);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-badge.completed {
+      background: var(--success-light);
+      color: var(--success);
+    }
+
+    .status-badge.pending {
+      background: var(--warning-light);
+      color: var(--warning);
+    }
+
+    .status-badge.phase1 {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .status-badge.phase2 {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .action-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: all 0.2s;
+      background: transparent;
+      border: none;
+    }
+
+    .action-btn:hover {
+      background: var(--gray-200);
+    }
+
+    .action-btn.view:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .action-btn.delete:hover {
+      background: var(--danger-light);
+      color: var(--danger);
+    }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: white;
+    }
+
+    .modal-header h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--gray-600);
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .detail-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .detail-group h4 {
+      color: var(--primary);
+      font-size: 1rem;
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .detail-row {
+      display: flex;
+      margin-bottom: 0.8rem;
+      padding: 0.5rem;
+      background: var(--gray-50);
+      border-radius: 8px;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .detail-label {
+      width: 120px;
+      font-weight: 500;
+      color: var(--gray-700);
+    }
+
+    .detail-value {
+      flex: 1;
+      color: var(--gray-900);
+      word-break: break-word;
+    }
+
+    .file-preview {
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .file-preview img {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .pagination-info {
+      color: var(--gray-600);
+      font-size: 0.9rem;
+    }
+
+    .pagination-btns {
+      display: flex;
+      gap: 0.5rem;
     }
 
     /* Notification */
@@ -47,14 +820,15 @@
       border-left: 4px solid var(--success);
       border-radius: 8px;
       padding: 1rem 1.5rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      box-shadow: var(--shadow-md);
       display: flex;
       align-items: center;
       gap: 1rem;
-      z-index: 1000;
+      z-index: 10001;
       transform: translateX(400px);
       transition: transform 0.3s ease;
       max-width: 400px;
+      width: calc(100% - 40px);
     }
 
     .notification.show {
@@ -63,6 +837,7 @@
 
     .notification i {
       font-size: 1.5rem;
+      color: var(--success);
     }
 
     .notification-content {
@@ -71,1331 +846,1209 @@
 
     .notification-title {
       font-weight: 600;
-      color: var(--primary);
+      color: var(--gray-900);
       margin-bottom: 0.2rem;
     }
 
     .notification-message {
       font-size: 0.9rem;
-      color: #5f6d5a;
+      color: var(--gray-600);
     }
 
     .notification-close {
       cursor: pointer;
-      color: #7a8a7a;
+      color: var(--gray-400);
     }
 
-    /* Login Page */
-    .login-container {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, var(--primary) 0%, #2d5a3d 100%);
-      padding: 1rem;
-    }
-
-    .login-card {
-      background: white;
-      padding: 2.5rem;
-      border-radius: 15px;
-      width: 100%;
-      max-width: 400px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    }
-
-    .login-card h2 {
-      text-align: center;
-      color: var(--primary);
-      margin-bottom: 2rem;
-      font-family: 'Playfair Display', serif;
-    }
-
-    .login-input {
-      width: 100%;
-      padding: 0.8rem;
-      margin-bottom: 1rem;
-      border: 2px solid var(--gray);
-      border-radius: 5px;
-      font-family: inherit;
-    }
-
-    .login-input:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-
-    .login-btn {
-      width: 100%;
-      padding: 1rem;
-      background: var(--accent);
-      color: var(--primary);
-      border: none;
-      border-radius: 5px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .login-btn:hover {
-      background: var(--accent-light);
-    }
-
-    .login-error {
-      background: #ffebee;
-      border-left: 4px solid var(--danger);
-      padding: 1rem;
-      margin-bottom: 1rem;
-      color: var(--danger);
-      display: none;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .login-note {
-      text-align: center;
-      margin-top: 1rem;
-      color: #7a8a7a;
-      font-size: 0.85rem;
-    }
-
-    /* Admin Dashboard */
-    .admin-nav {
-      background: white;
-      border-bottom: 1px solid var(--gray);
-      padding: 1rem 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.3rem;
-      font-weight: 600;
-      color: var(--primary);
-    }
-
-    .logout-btn {
-      background: none;
-      border: 1px solid var(--danger);
-      color: var(--danger);
-      padding: 0.5rem 1.5rem;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .logout-btn:hover {
-      background: var(--danger);
-      color: white;
-    }
-
-    .admin-container {
-      max-width: 1400px;
-      margin: 2rem auto;
-      padding: 0 2rem;
-    }
-
-    /* Stats Grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .stat-card {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .stat-icon {
-      width: 50px;
-      height: 50px;
-      background: var(--light);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--accent);
-      font-size: 1.5rem;
-    }
-
-    .stat-info h3 {
-      font-size: 1.8rem;
-      color: var(--primary);
-      line-height: 1.2;
-    }
-
-    .stat-info p {
-      color: #7a8a7a;
-      font-size: 0.9rem;
-    }
-
-    /* Tab Navigation */
-    .tab-nav {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-
-    .tab-btn {
-      padding: 0.8rem 1.5rem;
-      background: white;
-      border: 1px solid var(--gray);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.2s;
-      font-weight: 500;
-      color: #5f6d5a;
-    }
-
-    .tab-btn:hover {
-      border-color: var(--accent);
-      color: var(--primary);
-    }
-
-    .tab-btn.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-
-    /* Admin Cards */
-    .admin-card {
-      background: white;
-      border-radius: 15px;
-      padding: 2rem;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-      margin-bottom: 2rem;
-      display: none;
-    }
-
-    .admin-card.active {
-      display: block;
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 2px solid var(--gray);
-    }
-
-    .card-header h2 {
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .refresh-btn {
-      background: var(--light);
-      border: 1px solid var(--gray);
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .refresh-btn:hover {
-      background: var(--accent);
-      color: white;
-    }
-
-    /* Data Grid */
-    .data-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-      gap: 1.5rem;
-      margin-top: 1rem;
-    }
-
-    .data-card {
-      background: white;
-      border: 1px solid var(--gray);
-      border-radius: 12px;
-      overflow: hidden;
-      transition: all 0.3s;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-
-    .data-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 24px -8px var(--primary);
-      border-color: var(--accent);
-    }
-
-    .card-header-colored {
-      padding: 1rem 1.5rem;
-      background: linear-gradient(135deg, var(--primary) 0%, #2d5a3d 100%);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .card-header-colored h3 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .card-badge {
-      background: var(--accent);
-      color: var(--primary);
-      padding: 0.2rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-
-    .badge-warning {
-      background: var(--warning);
-      color: white;
-    }
-
-    .badge-success {
-      background: var(--success);
-      color: white;
-    }
-
-    .card-body {
-      padding: 1.5rem;
-    }
-
-    .info-row {
-      display: flex;
-      margin-bottom: 0.8rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px dashed var(--gray);
-    }
-
-    .info-label {
-      width: 100px;
-      font-weight: 600;
-      color: var(--primary);
-      font-size: 0.9rem;
-    }
-
-    .info-value {
-      flex: 1;
-      color: #4a5f4a;
-      font-size: 0.9rem;
-      word-break: break-word;
-    }
-
-    .password-value {
-      font-family: monospace;
-      background: var(--light);
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.85rem;
-    }
-
-    .document-preview {
-      background: var(--light);
-      border: 1px solid var(--gray);
-      border-radius: 8px;
-      padding: 0.8rem;
-      margin: 0.5rem 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .document-preview i {
-      font-size: 1.5rem;
-      color: var(--accent);
-      margin-right: 0.5rem;
-    }
-
-    .document-info {
-      flex: 1;
-    }
-
-    .document-name {
-      font-weight: 500;
-      font-size: 0.9rem;
-    }
-
-    .document-size {
-      font-size: 0.75rem;
-      color: #7a8a7a;
-    }
-
-    .download-icon-btn {
-      background: var(--accent);
-      color: var(--primary);
-      border: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-    }
-
-    .download-icon-btn:hover {
-      background: var(--accent-light);
-      transform: scale(1.1);
-    }
-
-    .card-footer {
-      background: var(--light);
-      padding: 0.8rem 1.5rem;
-      border-top: 1px solid var(--gray);
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .action-btn {
-      background: white;
-      border: 1px solid var(--gray);
-      padding: 0.4rem 1rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
-
-    .action-btn:hover {
-      background: var(--accent);
-      color: white;
-      border-color: var(--accent);
-    }
-
+    /* Empty State */
     .empty-state {
       text-align: center;
       padding: 3rem;
-      color: #7a8a7a;
-      grid-column: 1/-1;
+      color: var(--gray-600);
     }
 
-    /* Upload Area */
-    .upload-area {
-      border: 2px dashed var(--accent);
-      padding: 2.5rem;
-      text-align: center;
-      background: var(--light);
-      cursor: pointer;
-      transition: 0.2s;
-      border-radius: 10px;
-      margin-bottom: 2rem;
-    }
-
-    .upload-area:hover {
-      background: #f0e9e0;
-      border-color: var(--primary);
-    }
-
-    .upload-area i {
+    .empty-state i {
       font-size: 3rem;
-      color: var(--accent);
+      color: var(--gray-300);
       margin-bottom: 1rem;
     }
 
-    .upload-area p {
-      color: var(--primary);
-      font-weight: 500;
-      margin-bottom: 0.5rem;
+    /* Logout Button */
+    .logout-btn {
+      width: 100%;
+      margin-top: 2rem;
+      padding: 0.75rem;
+      border-radius: 8px;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--gray-700);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
     }
 
-    .upload-area small {
-      color: #7a8a7a;
+    .logout-btn:hover {
+      background: var(--danger-light);
+      border-color: var(--danger);
+      color: var(--danger);
     }
 
-    /* Modal */
-    .modal-overlay {
+    /* Loading */
+    .loading-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
+      height: 100vh;
+      background: rgba(255,255,255,0.9);
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 1000;
+      z-index: 10000;
     }
 
-    .modal-overlay.active {
+    .loading-overlay.active {
       display: flex;
     }
 
-    .modal-content {
-      background: white;
-      border-radius: 15px;
-      padding: 2rem;
-      max-width: 600px;
-      width: 90%;
-      max-height: 80vh;
-      overflow-y: auto;
+    .loading-spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid var(--gray-200);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
     }
 
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.5rem;
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .modal-header h3 {
-      color: var(--primary);
-    }
-
-    .modal-close {
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: #7a8a7a;
-    }
-
-    .modal-body {
-      margin-bottom: 1.5rem;
-    }
-
-    .detail-row {
-      margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid var(--gray);
-    }
-
-    .detail-label {
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 0.2rem;
-    }
-
-    .detail-value {
-      color: #4a5f4a;
-      word-break: break-word;
-      white-space: pre-wrap;
-    }
-
-    @media (max-width: 900px) {
+    /* Responsive */
+    @media (max-width: 1024px) {
       .stats-grid {
         grid-template-columns: repeat(2, 1fr);
       }
+      
+      .charts-row {
+        grid-template-columns: 1fr;
+      }
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
+      .mobile-menu-btn {
+        display: flex;
+      }
+
+      .sidebar {
+        transform: translateX(-100%);
+        width: 260px;
+      }
+      
+      .sidebar.active {
+        transform: translateX(0);
+        box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+      }
+      
+      .main-content {
+        margin-left: 0;
+        padding: 5rem 1rem 1rem;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+      
+      .admin-actions {
+        width: 100%;
+      }
+      
+      .search-box {
+        min-width: 100%;
+      }
+      
+      .pagination {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+      }
+      
+      .pagination-btns {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 576px) {
       .stats-grid {
         grid-template-columns: 1fr;
       }
-      .data-grid {
-        grid-template-columns: 1fr;
+      
+      .top-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .admin-actions {
+        flex-direction: column;
+      }
+      
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .filter-tabs {
+        flex-direction: column;
+      }
+      
+      .filter-tab {
+        text-align: center;
+      }
+      
+      .phase-toggle {
+        flex-direction: column;
+      }
+      
+      .phase-btn {
+        width: 100%;
+      }
+      
+      .detail-row {
+        flex-direction: column;
+      }
+      
+      .detail-label {
+        width: 100%;
+      }
+      
+      .notification {
+        left: 20px;
+        right: 20px;
+        max-width: none;
       }
     }
   </style>
 </head>
 <body>
+  <!-- Login Screen -->
+  <div class="login-container" id="loginScreen">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-logo">CH</div>
+        <h2>Admin Login</h2>
+        <p>Enter your credentials to access the dashboard</p>
+      </div>
+      
+      <div class="input-group">
+        <i class="fas fa-user"></i>
+        <input type="text" id="username" placeholder="Username" value="admin">
+      </div>
+      
+      <div class="input-group">
+        <i class="fas fa-lock"></i>
+        <input type="password" id="password" placeholder="Password" value="admin123">
+      </div>
+      
+      <div class="login-error" id="loginError">Invalid username or password</div>
+      
+      <button class="login-btn" id="loginBtn">Sign In</button>
+      
+      <div class="demo-credentials">
+        <p><i class="fas fa-info-circle"></i> Demo Credentials:</p>
+        <p><i class="fas fa-user"></i> Username: admin</p>
+        <p><i class="fas fa-lock"></i> Password: admin123</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Panel -->
+  <div class="admin-panel" id="adminPanel">
+    <!-- Mobile Menu -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+      <i class="fas fa-bars"></i> Menu
+    </button>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <div class="admin-wrapper">
+      <!-- Sidebar -->
+      <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <h2><i class="fas fa-leaf"></i> Carlton Hill</h2>
+          <p>Admin Dashboard</p>
+        </div>
+
+        <div class="nav-item active" onclick="switchTab('dashboard')">
+          <i class="fas fa-chart-pie"></i>
+          <span>Dashboard</span>
+          <span class="badge" id="dashboardBadge">0</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('phase1')">
+          <i class="fas fa-file-alt"></i>
+          <span>Phase I</span>
+          <span class="badge" id="phase1Badge">0</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('phase2')">
+          <i class="fas fa-file-invoice"></i>
+          <span>Phase II</span>
+          <span class="badge" id="phase2Badge">0</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('combined')">
+          <i class="fas fa-layer-group"></i>
+          <span>Complete Profiles</span>
+          <span class="badge" id="combinedBadge">0</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('files')">
+          <i class="fas fa-folder"></i>
+          <span>Uploaded Files</span>
+          <span class="badge" id="filesBadge">0</span>
+        </div>
+        
+        <button class="logout-btn" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+          <div class="page-title">
+            <h1 id="pageTitle">Dashboard</h1>
+            <p id="pageSubtitle">Overview of all applications</p>
+          </div>
+          <div class="admin-actions">
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input type="text" placeholder="Search..." id="searchInput" onkeyup="filterData()">
+            </div>
+            <button class="btn btn-outline" onclick="exportData()">
+              <i class="fas fa-download"></i> Export
+            </button>
+            <button class="btn btn-primary" onclick="refreshData()">
+              <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid" id="statsGrid"></div>
+
+        <!-- Phase Toggle -->
+        <div class="phase-toggle" id="phaseToggle" style="display: none;">
+          <button class="phase-btn active" onclick="filterByPhase('all')">All</button>
+          <button class="phase-btn" onclick="filterByPhase('phase1')">Phase I Only</button>
+          <button class="phase-btn" onclick="filterByPhase('phase2')">Phase II Only</button>
+          <button class="phase-btn" onclick="filterByPhase('completed')">Completed</button>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-row" id="chartsRow"></div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs" id="filterTabs"></div>
+
+        <!-- Table -->
+        <div class="table-container">
+          <div class="table-header">
+            <h2 id="tableTitle">Recent Applications</h2>
+          </div>
+          <div class="table-wrapper">
+            <table id="dataTable">
+              <thead id="tableHeader"></thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+          
+          <!-- Pagination -->
+          <div class="pagination">
+            <span class="pagination-info" id="paginationInfo">Showing 1-10 of 0</span>
+            <div class="pagination-btns">
+              <button class="btn btn-outline" onclick="prevPage()" id="prevBtn" disabled>Prev</button>
+              <button class="btn btn-outline" onclick="nextPage()" id="nextBtn" disabled>Next</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <div class="modal" id="detailsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-user"></i> Application Details</h3>
+        <button class="modal-close" onclick="closeModal('detailsModal')">&times;</button>
+      </div>
+      <div class="modal-body" id="detailsContent"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="previewModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-file"></i> File Preview</h3>
+        <button class="modal-close" onclick="closeModal('previewModal')">&times;</button>
+      </div>
+      <div class="modal-body" id="previewContent"></div>
+    </div>
+  </div>
+
   <!-- Notification -->
-  <div id="notification" class="notification">
+  <div class="notification" id="notification">
     <i class="fas fa-check-circle"></i>
     <div class="notification-content">
       <div class="notification-title" id="notificationTitle">Success</div>
-      <div class="notification-message" id="notificationMessage">Operation completed successfully</div>
+      <div class="notification-message" id="notificationMessage">Operation completed</div>
     </div>
     <span class="notification-close" onclick="hideNotification()"><i class="fas fa-times"></i></span>
   </div>
 
-  <!-- Login Page -->
-  <div id="loginPage" class="login-container">
-    <div class="login-card">
-      <h2>Master Admin Login</h2>
-      <div id="loginError" class="login-error">
-        <i class="fas fa-exclamation-circle"></i> Invalid credentials
-      </div>
-      <input type="text" id="username" class="login-input" placeholder="Username" value="admin">
-      <input type="password" id="password" class="login-input" placeholder="Password" value="admin123">
-      <button class="login-btn" onclick="handleLogin()">Access Master Dashboard</button>
-      <p class="login-note">Use: admin / admin123</p>
-    </div>
-  </div>
-
-  <!-- Admin Dashboard -->
-  <div id="dashboardPage" style="display: none;">
-    <div class="admin-nav">
-      <div class="logo">CARLTON HILL · MASTER ADMIN</div>
-      <button class="logout-btn" onclick="logout()">
-        <i class="fas fa-sign-out-alt"></i> Logout
-      </button>
-    </div>
-
-    <div class="admin-container">
-      <!-- Stats Overview -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon"><i class="fas fa-file-invoice"></i></div>
-          <div class="stat-info">
-            <h3 id="taxCount">0</h3>
-            <p>Tax Submissions</p>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon"><i class="fas fa-file-signature"></i></div>
-          <div class="stat-info">
-            <h3 id="applicationCount">0</h3>
-            <p>Job Applications</p>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon"><i class="fas fa-envelope"></i></div>
-          <div class="stat-info">
-            <h3 id="contactCount">0</h3>
-            <p>Contact Messages</p>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon"><i class="fas fa-users"></i></div>
-          <div class="stat-info">
-            <h3 id="loginCount">0</h3>
-            <p>User Logins</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tab Navigation -->
-      <div class="tab-nav">
-        <button class="tab-btn active" onclick="switchTab('tax', event)">💰 Tax Portal Logins</button>
-        <button class="tab-btn" onclick="switchTab('applications', event)">📝 Job Applications</button>
-        <button class="tab-btn" onclick="switchTab('contact', event)">📬 Contact Messages</button>
-        <button class="tab-btn" onclick="switchTab('documents', event)">📄 Resource Documents</button>
-        <button class="tab-btn" onclick="switchTab('logins', event)">🔐 User Login History</button>
-      </div>
-
-      <!-- Tax Submissions Tab -->
-      <div id="taxTab" class="admin-card active">
-        <div class="card-header">
-          <h2><i class="fas fa-file-invoice"></i> Tax Portal Submissions</h2>
-          <button class="refresh-btn" onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Refresh</button>
-        </div>
-        <div class="data-grid" id="taxGrid"></div>
-      </div>
-
-      <!-- Job Applications Tab -->
-      <div id="applicationsTab" class="admin-card">
-        <div class="card-header">
-          <h2><i class="fas fa-file-signature"></i> Job Applications</h2>
-          <button class="refresh-btn" onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Refresh</button>
-        </div>
-        <div class="data-grid" id="applicationsGrid"></div>
-      </div>
-
-      <!-- Contact Messages Tab -->
-      <div id="contactTab" class="admin-card">
-        <div class="card-header">
-          <h2><i class="fas fa-envelope"></i> Contact Messages</h2>
-          <button class="refresh-btn" onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Refresh</button>
-        </div>
-        <div class="data-grid" id="contactGrid"></div>
-      </div>
-
-      <!-- Resource Documents Tab -->
-      <div id="documentsTab" class="admin-card">
-        <div class="card-header">
-          <h2><i class="fas fa-file-alt"></i> Resource Documents</h2>
-          <button class="refresh-btn" onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Refresh</button>
-        </div>
-
-        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-          <i class="fas fa-cloud-upload-alt"></i>
-          <p>Click to upload files (PDF, Word, Images, Text)</p>
-          <small>Files sync across all devices instantly</small>
-          <input type="file" id="fileInput" multiple style="display: none;" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt">
-        </div>
-
-        <div class="data-grid" id="documentsGrid"></div>
-      </div>
-
-      <!-- User Logins Tab -->
-      <div id="loginsTab" class="admin-card">
-        <div class="card-header">
-          <h2><i class="fas fa-users"></i> User Login History</h2>
-          <button class="refresh-btn" onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Refresh</button>
-        </div>
-        <div class="data-grid" id="loginsGrid"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Detail Modal -->
-  <div id="detailModal" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="modalTitle">Details</h3>
-        <span class="modal-close" onclick="closeModal()">&times;</span>
-      </div>
-      <div class="modal-body" id="modalBody"></div>
-    </div>
+  <!-- Loading -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
   </div>
 
   <script>
-    // ==================== FIREBASE CONFIGURATION ====================
-    const firebaseConfig = {
-      apiKey: "AIzaSyD7n092G5saDyS-9aFlZOe51mgTjaSPYuo",
-      authDomain: "carltonhillfarmland.firebaseapp.com",
-      projectId: "carltonhillfarmland",
-      storageBucket: "carltonhillfarmland.firebasestorage.app",
-      messagingSenderId: "144483104337",
-      appId: "1:144483104337:web:d95dfbb10509cb9c02ea70"
-    };
+    // Configuration
+    const PHASE1_KEY = 'jobApplications';
+    const PHASE2_KEY = 'phase2_submissions';
+    
+    let phase1Data = [];
+    let phase2Data = [];
+    let combinedData = [];
+    let filteredData = [];
+    
+    let currentPage = 1;
+    let itemsPerPage = 10;
+    let currentTab = 'dashboard';
+    let currentFilter = 'all';
+    let currentPhaseFilter = 'all';
+    
+    let charts = {};
+    let notificationTimer = null;
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const storage = firebase.storage();
+    // ==================== LOGIN ====================
+    document.getElementById('loginBtn').addEventListener('click', function() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      
+      if (username === 'admin' && password === 'admin123') {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('adminPanel').classList.add('active');
+        loadAllData();
+        showNotification('Welcome', 'Successfully logged in', 'success');
+      } else {
+        document.getElementById('loginError').classList.add('show');
+        setTimeout(() => {
+          document.getElementById('loginError').classList.remove('show');
+        }, 3000);
+      }
+    });
 
-    // Test Firebase connection
-    console.log('Firebase initialized:', firebase.app().name);
-    console.log('Firestore available:', !!db);
-    console.log('Storage available:', !!storage);
+    // Enter key login
+    document.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter' && !document.getElementById('adminPanel').classList.contains('active')) {
+        document.getElementById('loginBtn').click();
+      }
+    });
 
-    // ==================== NOTIFICATION SYSTEM ====================
+    // ==================== LOGOUT ====================
+    function logout() {
+      document.getElementById('adminPanel').classList.remove('active');
+      document.getElementById('loginScreen').classList.remove('hidden');
+      if (window.innerWidth <= 768) {
+        document.getElementById('sidebar').classList.remove('active');
+        document.getElementById('mobileOverlay').classList.remove('active');
+      }
+      showNotification('Logged out', 'See you next time', 'info');
+    }
+
+    // ==================== MOBILE MENU ====================
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const sidebar = document.getElementById('sidebar');
+    const mobileOverlay = document.getElementById('mobileOverlay');
+
+    mobileMenuBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+      mobileOverlay.classList.toggle('active');
+    });
+
+    mobileOverlay.addEventListener('click', () => {
+      sidebar.classList.remove('active');
+      mobileOverlay.classList.remove('active');
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        sidebar.classList.remove('active');
+        mobileOverlay.classList.remove('active');
+      }
+    });
+
+    // ==================== DATA LOADING ====================
+    function loadAllData() {
+      showLoading();
+      
+      setTimeout(() => {
+        try {
+          phase1Data = JSON.parse(localStorage.getItem(PHASE1_KEY) || '[]');
+          phase2Data = JSON.parse(localStorage.getItem(PHASE2_KEY) || '[]');
+          
+          combineData();
+          updateBadges();
+          updateStats();
+          
+          if (currentTab === 'dashboard') {
+            renderDashboard();
+          }
+          
+          filterData();
+          hideLoading();
+        } catch (error) {
+          console.error('Error:', error);
+          hideLoading();
+          showNotification('Error', 'Failed to load data', 'error');
+        }
+      }, 500);
+    }
+
+    function combineData() {
+      combinedData = [];
+      
+      // Map Phase II by email
+      const phase2Map = {};
+      phase2Data.forEach(p2 => {
+        const email = p2.phase1?.email || p2.phase1_email || '';
+        if (email) {
+          if (!phase2Map[email]) phase2Map[email] = [];
+          phase2Map[email].push(p2);
+        }
+      });
+      
+      // Add Phase I entries
+      phase1Data.forEach(p1 => {
+        const email = p1.personalInfo?.email || p1.email || '';
+        combinedData.push({
+          type: 'combined',
+          phase1: p1,
+          phase2: phase2Map[email] || [],
+          hasPhase2: (phase2Map[email] || []).length > 0,
+          email: email,
+          fullName: p1.personalInfo?.fullName || p1.full_name || '',
+          timestamp: p1.timestamp || new Date().toISOString()
+        });
+      });
+      
+      // Add Phase II only entries
+      phase2Data.forEach(p2 => {
+        const email = p2.phase1?.email || p2.phase1_email || '';
+        const exists = combinedData.some(c => c.email === email);
+        
+        if (!exists && email) {
+          combinedData.push({
+            type: 'combined',
+            phase1: null,
+            phase2: [p2],
+            hasPhase2: true,
+            email: email,
+            fullName: p2.phase1?.fullName || p2.phase1_name || 'Unknown',
+            timestamp: p2.timestamp || new Date().toISOString()
+          });
+        }
+      });
+      
+      combinedData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    }
+
+    // ==================== UI UPDATES ====================
+    function updateBadges() {
+      document.getElementById('dashboardBadge').textContent = combinedData.length;
+      document.getElementById('phase1Badge').textContent = phase1Data.length;
+      document.getElementById('phase2Badge').textContent = phase2Data.length;
+      document.getElementById('combinedBadge').textContent = combinedData.length;
+      document.getElementById('filesBadge').textContent = phase2Data.filter(p => p.health?.fileName).length;
+    }
+
+    function updateStats() {
+      const today = new Date().toDateString();
+      const todayCount = combinedData.filter(d => new Date(d.timestamp).toDateString() === today).length;
+      const fileCount = phase2Data.filter(p => p.health?.fileName).length;
+      
+      document.getElementById('statsGrid').innerHTML = `
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-users"></i></div>
+          <div class="stat-content">
+            <h3>${combinedData.length}</h3>
+            <p>Total Applicants</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+          <div class="stat-content">
+            <h3>${todayCount}</h3>
+            <p>Today's Apps</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+          <div class="stat-content">
+            <h3>${phase1Data.length}</h3>
+            <p>Phase I</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-file-invoice"></i></div>
+          <div class="stat-content">
+            <h3>${phase2Data.length}</h3>
+            <p>Phase II</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+          <div class="stat-content">
+            <h3>${combinedData.filter(d => d.hasPhase2).length}</h3>
+            <p>Completed</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-folder"></i></div>
+          <div class="stat-content">
+            <h3>${fileCount}</h3>
+            <p>Uploaded Files</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderDashboard() {
+      const medicareCount = phase2Data.filter(p => p.health?.type === 'medicare').length;
+      const ovhcCount = phase2Data.filter(p => p.health?.type === 'ovhc').length;
+      
+      // Last 7 days
+      const last7Days = [];
+      const phase1Counts = [];
+      const phase2Counts = [];
+      
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        last7Days.push(date.toLocaleDateString('en-AU', { weekday: 'short' }));
+        
+        phase1Counts.push(phase1Data.filter(d => 
+          new Date(d.timestamp).toDateString() === date.toDateString()
+        ).length);
+        
+        phase2Counts.push(phase2Data.filter(d => 
+          new Date(d.timestamp).toDateString() === date.toDateString()
+        ).length);
+      }
+      
+      document.getElementById('chartsRow').innerHTML = `
+        <div class="chart-card">
+          <div class="chart-header"><h3>Applications by Phase</h3></div>
+          <div class="chart-container"><canvas id="phaseChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header"><h3>Health Coverage</h3></div>
+          <div class="chart-container"><canvas id="healthChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header"><h3>7-Day Activity</h3></div>
+          <div class="chart-container"><canvas id="timelineChart"></canvas></div>
+        </div>
+      `;
+      
+      setTimeout(() => {
+        // Clean up old charts
+        Object.values(charts).forEach(chart => chart?.destroy());
+        
+        // Phase Chart
+        const phaseCtx = document.getElementById('phaseChart')?.getContext('2d');
+        if (phaseCtx) {
+          charts.phase = new Chart(phaseCtx, {
+            type: 'doughnut',
+            data: {
+              labels: ['Phase I Only', 'Completed'],
+              datasets: [{
+                data: [
+                  combinedData.filter(d => !d.hasPhase2).length,
+                  combinedData.filter(d => d.hasPhase2).length
+                ],
+                backgroundColor: ['#b45309', '#0f7b4b'],
+                borderWidth: 0
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { position: 'bottom' } }
+            }
+          });
+        }
+        
+        // Health Chart
+        const healthCtx = document.getElementById('healthChart')?.getContext('2d');
+        if (healthCtx) {
+          charts.health = new Chart(healthCtx, {
+            type: 'pie',
+            data: {
+              labels: ['Medicare', 'OVHC'],
+              datasets: [{
+                data: [medicareCount, ovhcCount],
+                backgroundColor: ['#0b4f3c', '#0a7e5c'],
+                borderWidth: 0
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { position: 'bottom' } }
+            }
+          });
+        }
+        
+        // Timeline Chart
+        const timelineCtx = document.getElementById('timelineChart')?.getContext('2d');
+        if (timelineCtx) {
+          charts.timeline = new Chart(timelineCtx, {
+            type: 'line',
+            data: {
+              labels: last7Days,
+              datasets: [
+                { label: 'Phase I', data: phase1Counts, borderColor: '#b45309', tension: 0.4 },
+                { label: 'Phase II', data: phase2Counts, borderColor: '#0f7b4b', tension: 0.4 }
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { position: 'bottom' } },
+              scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            }
+          });
+        }
+      }, 100);
+    }
+
+    // ==================== TAB SWITCHING ====================
+    function switchTab(tab) {
+      currentTab = tab;
+      currentPage = 1;
+      currentFilter = 'all';
+      currentPhaseFilter = 'all';
+      
+      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      
+      const titles = {
+        'dashboard': 'Dashboard',
+        'phase1': 'Phase I Applications',
+        'phase2': 'Phase II Submissions',
+        'combined': 'Complete Profiles',
+        'files': 'Uploaded Files'
+      };
+      
+      document.getElementById('pageTitle').textContent = titles[tab];
+      document.getElementById('pageSubtitle').textContent = `Viewing ${titles[tab].toLowerCase()}`;
+      
+      document.getElementById('phaseToggle').style.display = tab === 'combined' ? 'flex' : 'none';
+      document.getElementById('chartsRow').style.display = tab === 'dashboard' ? 'grid' : 'none';
+      
+      updateFilterTabs();
+      filterData();
+      
+      if (tab === 'dashboard') renderDashboard();
+      
+      // Close mobile menu
+      if (window.innerWidth <= 768) {
+        sidebar.classList.remove('active');
+        mobileOverlay.classList.remove('active');
+      }
+    }
+
+    function updateFilterTabs() {
+      const filterTabs = document.getElementById('filterTabs');
+      
+      if (currentTab === 'phase1') {
+        filterTabs.innerHTML = `
+          <span class="filter-tab active" onclick="filterByType('all')">All</span>
+          <span class="filter-tab" onclick="filterByType('pending')">Pending</span>
+          <span class="filter-tab" onclick="filterByType('accommodation')">Needs Accommodation</span>
+        `;
+      } else if (currentTab === 'phase2') {
+        filterTabs.innerHTML = `
+          <span class="filter-tab active" onclick="filterByType('all')">All</span>
+          <span class="filter-tab" onclick="filterByType('medicare')">Medicare</span>
+          <span class="filter-tab" onclick="filterByType('ovhc')">OVHC</span>
+        `;
+      } else if (currentTab === 'combined') {
+        filterTabs.innerHTML = `
+          <span class="filter-tab active" onclick="filterByType('all')">All</span>
+          <span class="filter-tab" onclick="filterByType('phase1')">Phase I Only</span>
+          <span class="filter-tab" onclick="filterByType('phase2')">Phase II Only</span>
+          <span class="filter-tab" onclick="filterByType('completed')">Completed</span>
+        `;
+      } else {
+        filterTabs.innerHTML = '';
+      }
+    }
+
+    // ==================== FILTERING ====================
+    function filterByType(type) {
+      currentFilter = type;
+      currentPage = 1;
+      
+      document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      
+      filterData();
+    }
+
+    function filterByPhase(phase) {
+      currentPhaseFilter = phase;
+      currentPage = 1;
+      
+      document.querySelectorAll('.phase-btn').forEach(btn => btn.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      
+      filterData();
+    }
+
+    function filterData() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      
+      // Get base data
+      let baseData = [];
+      if (currentTab === 'phase1') {
+        baseData = phase1Data.map(p => ({ type: 'phase1', data: p }));
+      } else if (currentTab === 'phase2') {
+        baseData = phase2Data.map(p => ({ type: 'phase2', data: p }));
+      } else if (currentTab === 'files') {
+        baseData = phase2Data.filter(p => p.health?.fileName).map(p => ({ type: 'file', data: p }));
+      } else {
+        baseData = combinedData.map(p => ({ type: 'combined', data: p }));
+      }
+      
+      // Apply filters
+      filteredData = baseData.filter(item => {
+        let passes = true;
+        
+        // Type filter
+        if (currentFilter !== 'all') {
+          if (currentTab === 'phase1') {
+            if (currentFilter === 'pending') passes = passes && !item.data.processed;
+            if (currentFilter === 'accommodation') passes = passes && item.data.workPreference?.needsAccommodation === 'yes';
+          } else if (currentTab === 'phase2') {
+            if (currentFilter === 'medicare') passes = passes && item.data.health?.type === 'medicare';
+            if (currentFilter === 'ovhc') passes = passes && item.data.health?.type === 'ovhc';
+          } else if (currentTab === 'combined') {
+            if (currentFilter === 'phase1') passes = passes && !item.data.hasPhase2;
+            if (currentFilter === 'phase2') passes = passes && item.data.hasPhase2 && !item.data.phase1;
+            if (currentFilter === 'completed') passes = passes && item.data.hasPhase2 && item.data.phase1;
+          }
+        }
+        
+        // Phase filter
+        if (currentTab === 'combined' && currentPhaseFilter !== 'all') {
+          if (currentPhaseFilter === 'phase1') passes = passes && !item.data.hasPhase2;
+          if (currentPhaseFilter === 'phase2') passes = passes && item.data.hasPhase2 && !item.data.phase1;
+          if (currentPhaseFilter === 'completed') passes = passes && item.data.hasPhase2 && item.data.phase1;
+        }
+        
+        // Search
+        if (searchTerm && passes) {
+          let name = '', email = '';
+          if (item.type === 'phase1') {
+            name = item.data.personalInfo?.fullName || '';
+            email = item.data.personalInfo?.email || '';
+          } else if (item.type === 'phase2') {
+            name = item.data.phase1?.fullName || item.data.phase1_name || '';
+            email = item.data.phase1?.email || item.data.phase1_email || '';
+          } else {
+            name = item.data.fullName || '';
+            email = item.data.email || '';
+          }
+          passes = passes && (name.toLowerCase().includes(searchTerm) || email.toLowerCase().includes(searchTerm));
+        }
+        
+        return passes;
+      });
+      
+      renderTable();
+    }
+
+    // ==================== TABLE RENDERING ====================
+    function renderTable() {
+      const thead = document.getElementById('tableHeader');
+      const tbody = document.getElementById('tableBody');
+      
+      const start = (currentPage - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      const pageData = filteredData.slice(start, end);
+      
+      // Table headers
+      if (currentTab === 'phase1') {
+        thead.innerHTML = `
+          <tr>
+            <th>Name</th><th>Email</th><th>Position</th><th>Phone</th>
+            <th>Start Date</th><th>Accommodation</th><th>Submitted</th><th>Actions</th>
+          </tr>
+        `;
+      } else if (currentTab === 'phase2') {
+        thead.innerHTML = `
+          <tr>
+            <th>Name</th><th>Email</th><th>Health Type</th><th>TFN</th>
+            <th>File</th><th>Submitted</th><th>Actions</th>
+          </tr>
+        `;
+      } else if (currentTab === 'files') {
+        thead.innerHTML = `
+          <tr>
+            <th>Name</th><th>Email</th><th>File Name</th><th>Type</th>
+            <th>Uploaded</th><th>Actions</th>
+          </tr>
+        `;
+      } else {
+        thead.innerHTML = `
+          <tr>
+            <th>Name</th><th>Email</th><th>Phase I</th><th>Phase II</th>
+            <th>Health</th><th>Submitted</th><th>Status</th><th>Actions</th>
+          </tr>
+        `;
+      }
+      
+      // Table body
+      if (pageData.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align: center; padding: 3rem;">
+              <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <p>No data found</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        updatePagination();
+        return;
+      }
+      
+      tbody.innerHTML = pageData.map((item, index) => {
+        const globalIndex = start + index;
+        
+        if (currentTab === 'phase1') {
+          const data = item.data;
+          const personal = data.personalInfo || {};
+          const work = data.workPreference || {};
+          return `
+            <tr>
+              <td><strong>${personal.fullName || 'N/A'}</strong></td>
+              <td>${personal.email || 'N/A'}</td>
+              <td>${work.position || 'N/A'}</td>
+              <td>${personal.phone || 'N/A'}</td>
+              <td>${work.startDate || 'N/A'}</td>
+              <td>${work.needsAccommodation === 'yes' ? 'Yes' : 'No'}</td>
+              <td>${new Date(data.timestamp).toLocaleDateString()}</td>
+              <td>
+                <button class="action-btn view" onclick="viewDetails('phase1', ${globalIndex})">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </td>
+            </tr>
+          `;
+        } else if (currentTab === 'phase2') {
+          const data = item.data;
+          const phase1 = data.phase1 || {};
+          const health = data.health || {};
+          return `
+            <tr>
+              <td><strong>${phase1.fullName || data.phase1_name || 'N/A'}</strong></td>
+              <td>${phase1.email || data.phase1_email || 'N/A'}</td>
+              <td><span class="status-badge ${health.type === 'medicare' ? 'phase1' : 'phase2'}">${health.type?.toUpperCase() || 'N/A'}</span></td>
+              <td>${data.tfn?.number ? '••••' + data.tfn.number.slice(-4) : 'N/A'}</td>
+              <td>
+                ${health.fileName ? 
+                  `<span class="status-badge completed" onclick="previewFile(${globalIndex})" style="cursor:pointer;">View File</span>` : 
+                  '<span class="status-badge pending">No file</span>'}
+              </td>
+              <td>${new Date(data.timestamp).toLocaleDateString()}</td>
+              <td>
+                <button class="action-btn view" onclick="viewDetails('phase2', ${globalIndex})"><i class="fas fa-eye"></i></button>
+                <button class="action-btn delete" onclick="deleteSubmission(${globalIndex})"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+          `;
+        } else {
+          const data = item.data;
+          const phase1 = data.phase1 || {};
+          return `
+            <tr>
+              <td><strong>${data.fullName || phase1.fullName || 'N/A'}</strong></td>
+              <td>${data.email || phase1.email || 'N/A'}</td>
+              <td>${data.phase1 ? '✅' : '⏳'}</td>
+              <td>${data.hasPhase2 ? '✅' : '⏳'}</td>
+              <td>${data.phase2?.[0]?.health?.type?.toUpperCase() || 'N/A'}</td>
+              <td>${new Date(data.timestamp).toLocaleDateString()}</td>
+              <td><span class="status-badge ${data.hasPhase2 ? 'completed' : 'pending'}">${data.hasPhase2 ? 'Completed' : 'Phase I'}</span></td>
+              <td>
+                <button class="action-btn view" onclick="viewDetails('combined', ${globalIndex})"><i class="fas fa-eye"></i></button>
+              </td>
+            </tr>
+          `;
+        }
+      }).join('');
+      
+      updatePagination();
+    }
+
+    // ==================== PAGINATION ====================
+    function updatePagination() {
+      const total = filteredData.length;
+      const start = (currentPage - 1) * itemsPerPage + 1;
+      const end = Math.min(currentPage * itemsPerPage, total);
+      
+      document.getElementById('paginationInfo').textContent = 
+        total > 0 ? `Showing ${start}-${end} of ${total}` : 'Showing 0 of 0';
+      
+      document.getElementById('prevBtn').disabled = currentPage === 1;
+      document.getElementById('nextBtn').disabled = end >= total;
+    }
+
+    function prevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        renderTable();
+      }
+    }
+
+    function nextPage() {
+      if (currentPage * itemsPerPage < filteredData.length) {
+        currentPage++;
+        renderTable();
+      }
+    }
+
+    // ==================== VIEW DETAILS ====================
+    function viewDetails(type, index) {
+      const item = filteredData[index];
+      if (!item) return;
+      
+      const content = document.getElementById('detailsContent');
+      
+      if (type === 'phase1') {
+        const data = item.data;
+        const personal = data.personalInfo || {};
+        const work = data.workPreference || {};
+        
+        content.innerHTML = `
+          <div class="detail-group">
+            <h4>Personal Information</h4>
+            <div class="detail-row"><span class="detail-label">Name:</span><span class="detail-value">${personal.fullName || 'N/A'}</span></div>
+            <div class="detail-row"><span class="detail-label">Email:</span><span class="detail-value">${personal.email || 'N/A'}</span></div>
+            <div class="detail-row"><span class="detail-label">Phone:</span><span class="detail-value">${personal.phone || 'N/A'}</span></div>
+            <div class="detail-row"><span class="detail-label">DOB:</span><span class="detail-value">${personal.dob || 'N/A'}</span></div>
+          </div>
+          <div class="detail-group">
+            <h4>Work Preference</h4>
+            <div class="detail-row"><span class="detail-label">Position:</span><span class="detail-value">${work.position || 'N/A'}</span></div>
+            <div class="detail-row"><span class="detail-label">Start Date:</span><span class="detail-value">${work.startDate || 'N/A'}</span></div>
+            <div class="detail-row"><span class="detail-label">Accommodation:</span><span class="detail-value">${work.needsAccommodation === 'yes' ? 'Yes' : 'No'}</span></div>
+          </div>
+        `;
+      } else if (type === 'phase2') {
+        const data = item.data;
+        const phase1 = data.phase1 || {};
+        const health = data.health || {};
+        
+        content.innerHTML = `
+          <div class="detail-group">
+            <h4>Applicant</h4>
+            <div class="detail-row"><span class="detail-label">Name:</span><span class="detail-value">${phase1.fullName || data.phase1_name || 'N/A'}</span></div>
+            <div class="detail-row"><span class="detail-label">Email:</span><span class="detail-value">${phase1.email || data.phase1_email || 'N/A'}</span></div>
+          </div>
+          <div class="detail-group">
+            <h4>Health Coverage</h4>
+            <div class="detail-row"><span class="detail-label">Type:</span><span class="detail-value">${health.type?.toUpperCase() || 'N/A'}</span></div>
+          </div>
+        `;
+      } else {
+        const data = item.data;
+        const phase1 = data.phase1 || {};
+        
+        content.innerHTML = `
+          <div class="detail-group">
+            <h4>Applicant</h4>
+            <div class="detail-row"><span class="detail-label">Name:</span><span class="detail-value">${data.fullName || phase1.fullName || 'N/A'}</span></div>
+            <div class="detail-row"><span class="detail-label">Email:</span><span class="detail-value">${data.email || phase1.email || 'N/A'}</span></div>
+          </div>
+          <div class="detail-group">
+            <h4>Status</h4>
+            <div class="detail-row"><span class="detail-label">Phase I:</span><span class="detail-value">${data.phase1 ? 'Completed' : 'Pending'}</span></div>
+            <div class="detail-row"><span class="detail-label">Phase II:</span><span class="detail-value">${data.hasPhase2 ? 'Completed' : 'Pending'}</span></div>
+          </div>
+        `;
+      }
+      
+      openModal('detailsModal');
+    }
+
+    // ==================== FILE PREVIEW ====================
+    function previewFile(index) {
+      const item = filteredData[index];
+      if (!item || !item.data?.health?.fileName) return;
+      
+      const content = document.getElementById('previewContent');
+      const fileName = item.data.health.fileName;
+      
+      content.innerHTML = `
+        <div class="file-preview">
+          <i class="fas fa-file-pdf" style="font-size: 3rem; color: var(--danger);"></i>
+          <h4>${fileName}</h4>
+          <p>Uploaded on ${new Date(item.data.timestamp).toLocaleDateString()}</p>
+          <button class="btn btn-primary" onclick="downloadFile('${fileName}')">Download</button>
+        </div>
+      `;
+      
+      openModal('previewModal');
+    }
+
+    function downloadFile(fileName) {
+      showNotification('Download Started', `Downloading ${fileName}`, 'success');
+    }
+
+    function deleteSubmission(index) {
+      if (!confirm('Delete this submission?')) return;
+      
+      const item = filteredData[index];
+      const actualIndex = phase2Data.findIndex(s => s.timestamp === item.data.timestamp);
+      
+      if (actualIndex > -1) {
+        phase2Data.splice(actualIndex, 1);
+        localStorage.setItem(PHASE2_KEY, JSON.stringify(phase2Data));
+        showNotification('Success', 'Submission deleted', 'success');
+        refreshData();
+      }
+    }
+
+    // ==================== EXPORT ====================
+    function exportData() {
+      const dataStr = JSON.stringify({
+        phase1: phase1Data,
+        phase2: phase2Data,
+        combined: combinedData,
+        exportDate: new Date().toISOString()
+      }, null, 2);
+      
+      const link = document.createElement('a');
+      link.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+      link.download = `carlton_hill_export_${new Date().toISOString().split('T')[0]}.json`;
+      link.click();
+      
+      showNotification('Success', 'Data exported', 'success');
+    }
+
+    function refreshData() {
+      loadAllData();
+    }
+
+    // ==================== NOTIFICATION ====================
     function showNotification(title, message, type = 'success') {
       const notification = document.getElementById('notification');
       const icon = notification.querySelector('i');
       const titleEl = document.getElementById('notificationTitle');
       const messageEl = document.getElementById('notificationMessage');
       
-      icon.className = type === 'success' ? 'fas fa-check-circle' : 
-                       type === 'error' ? 'fas fa-exclamation-circle' : 
-                       'fas fa-exclamation-triangle';
-      icon.style.color = type === 'success' ? 'var(--success)' : 
-                         type === 'error' ? 'var(--danger)' : 
-                         'var(--warning)';
-      notification.style.borderLeftColor = type === 'success' ? 'var(--success)' : 
-                                           type === 'error' ? 'var(--danger)' : 
-                                           'var(--warning)';
+      // Clear any existing timer
+      if (notificationTimer) {
+        clearTimeout(notificationTimer);
+      }
+      
+      // Set colors based on type
+      const colors = {
+        success: { icon: 'fa-check-circle', color: 'var(--success)' },
+        error: { icon: 'fa-exclamation-circle', color: 'var(--danger)' },
+        info: { icon: 'fa-info-circle', color: 'var(--warning)' }
+      };
+      
+      icon.className = `fas ${colors[type].icon}`;
+      icon.style.color = colors[type].color;
+      notification.style.borderLeftColor = colors[type].color;
       
       titleEl.textContent = title;
       messageEl.textContent = message;
       notification.classList.add('show');
       
-      setTimeout(() => {
+      // Auto hide after 4 seconds
+      notificationTimer = setTimeout(() => {
         notification.classList.remove('show');
-      }, 5000);
+        notificationTimer = null;
+      }, 4000);
     }
 
     function hideNotification() {
-      document.getElementById('notification').classList.remove('show');
+      const notification = document.getElementById('notification');
+      notification.classList.remove('show');
+      if (notificationTimer) {
+        clearTimeout(notificationTimer);
+        notificationTimer = null;
+      }
     }
 
-    // ==================== UPLOAD FILE TO STORAGE ====================
-    async function uploadFile(file) {
-      const fileName = `${Date.now()}_${file.name}`;
-      const storageRef = storage.ref().child(`documents/${fileName}`);
-      const snapshot = await storageRef.put(file);
-      const downloadUrl = await snapshot.ref.getDownloadURL();
+    // ==================== MODAL ====================
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.add('active');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    // ==================== LOADING ====================
+    function showLoading() {
+      document.getElementById('loadingOverlay').classList.add('active');
+    }
+
+    function hideLoading() {
+      document.getElementById('loadingOverlay').classList.remove('active');
+    }
+
+    // ==================== KEYBOARD SHORTCUTS ====================
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeModal('detailsModal');
+        closeModal('previewModal');
+        if (window.innerWidth <= 768) {
+          sidebar.classList.remove('active');
+          mobileOverlay.classList.remove('active');
+        }
+      }
+    });
+
+    // ==================== CLOSE MODALS ON CLICK OUTSIDE ====================
+    document.getElementById('detailsModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal('detailsModal');
+    });
+
+    document.getElementById('previewModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal('previewModal');
+    });
+
+    // ==================== AUTO REFRESH ====================
+    setInterval(() => {
+      const newPhase1 = JSON.parse(localStorage.getItem(PHASE1_KEY) || '[]').length;
+      const newPhase2 = JSON.parse(localStorage.getItem(PHASE2_KEY) || '[]').length;
       
-      return {
-        name: file.name,
-        url: downloadUrl,
-        type: file.type,
-        size: file.size,
-        path: `documents/${fileName}`
-      };
-    }
-
-    // ==================== LOAD ALL DATA ====================
-    async function loadAllData() {
-      await Promise.all([
-        loadTaxSubmissions(),
-        loadApplications(),
-        loadContacts(),
-        loadDocuments(),
-        loadLogins()
-      ]);
-    }
-
-    // ==================== LOAD TAX SUBMISSIONS ====================
-    async function loadTaxSubmissions() {
-      try {
-        const snapshot = await db.collection('taxSubmissions')
-          .orderBy('timestamp', 'desc')
-          .get();
-        
-        const submissions = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-
-        const grid = document.getElementById('taxGrid');
-        const count = document.getElementById('taxCount');
-        
-        count.textContent = submissions.length;
-
-        if (submissions.length === 0) {
-          grid.innerHTML = '<div class="empty-state">No tax submissions yet</div>';
-          return;
-        }
-
-        grid.innerHTML = submissions.map(sub => {
-          const timestamp = sub.timestamp?.toDate?.() || new Date();
-          return `
-          <div class="data-card">
-            <div class="card-header-colored">
-              <h3><i class="fas fa-user-lock"></i> Tax Portal Login</h3>
-              <span class="card-badge">${sub.status || 'pending'}</span>
-            </div>
-            <div class="card-body">
-              <div class="info-row">
-                <span class="info-label">Email</span>
-                <span class="info-value">${sub.email || 'N/A'}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Password</span>
-                <span class="info-value password-value">${sub.password || 'N/A'}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Date</span>
-                <span class="info-value">${timestamp.toLocaleString()}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">IP Address</span>
-                <span class="info-value">${sub.ip || 'N/A'}</span>
-              </div>
-            </div>
-            <div class="card-footer">
-              <button class="action-btn" onclick="viewTaxDetails('${sub.id}')">
-                <i class="fas fa-eye"></i> View Full
-              </button>
-            </div>
-          </div>
-        `}).join('');
-      } catch (error) {
-        console.error('Error loading tax:', error);
-        document.getElementById('taxGrid').innerHTML = '<div class="empty-state">Error loading tax submissions</div>';
+      if (newPhase1 > phase1Data.length || newPhase2 > phase2Data.length) {
+        refreshData();
+        showNotification('New Data', 'New applications received', 'info');
       }
-    }
+    }, 10000);
 
-    // ==================== LOAD JOB APPLICATIONS ====================
-    async function loadApplications() {
-      try {
-        const snapshot = await db.collection('jobApplications')
-          .orderBy('timestamp', 'desc')
-          .get();
-        
-        const apps = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-
-        const grid = document.getElementById('applicationsGrid');
-        const count = document.getElementById('applicationCount');
-        
-        count.textContent = apps.length;
-
-        if (apps.length === 0) {
-          grid.innerHTML = '<div class="empty-state">No job applications yet</div>';
-          return;
-        }
-
-        grid.innerHTML = apps.map(app => {
-          const personal = app.personalInfo || {};
-          const work = app.workPreference || {};
-          const timestamp = app.timestamp?.toDate?.() || new Date();
-          
-          return `
-          <div class="data-card">
-            <div class="card-header-colored">
-              <h3><i class="fas fa-user"></i> ${personal.fullName || 'Applicant'}</h3>
-              <span class="card-badge">${app.status || 'pending'}</span>
-            </div>
-            <div class="card-body">
-              <div class="info-row">
-                <span class="info-label">Email</span>
-                <span class="info-value">${personal.email || 'N/A'}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Phone</span>
-                <span class="info-value">${personal.phone || 'N/A'}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Position</span>
-                <span class="info-value">${work.position || 'N/A'}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Date</span>
-                <span class="info-value">${timestamp.toLocaleDateString()}</span>
-              </div>
-            </div>
-            <div class="card-footer">
-              <button class="action-btn" onclick="viewApplicationDetails('${app.id}')">
-                <i class="fas fa-eye"></i> View All
-              </button>
-            </div>
-          </div>
-        `}).join('');
-      } catch (error) {
-        console.error('Error loading applications:', error);
-        document.getElementById('applicationsGrid').innerHTML = '<div class="empty-state">Error loading applications</div>';
-      }
-    }
-
-    // ==================== LOAD CONTACT MESSAGES ====================
-    async function loadContacts() {
-      try {
-        console.log('Loading contacts from Firebase...');
-        
-        const snapshot = await db.collection('contactMessages')
-          .orderBy('timestamp', 'desc')
-          .get();
-        
-        const contacts = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        
-        console.log('Contacts loaded:', contacts.length);
-
-        const grid = document.getElementById('contactGrid');
-        const count = document.getElementById('contactCount');
-        
-        count.textContent = contacts.length;
-
-        if (contacts.length === 0) {
-          grid.innerHTML = '<div class="empty-state">No contact messages yet</div>';
-          return;
-        }
-
-        grid.innerHTML = contacts.map(contact => {
-          const timestamp = contact.timestamp?.toDate?.() || new Date();
-          
-          return `
-          <div class="data-card">
-            <div class="card-header-colored">
-              <h3><i class="fas fa-envelope"></i> ${contact.name || 'Unknown'}</h3>
-              <span class="card-badge ${contact.status === 'unread' ? 'badge-warning' : 'badge-success'}" style="background: ${contact.status === 'unread' ? '#ff9800' : '#4caf50'}; color: white;">
-                ${contact.status || 'unread'}
-              </span>
-            </div>
-            <div class="card-body">
-              <div class="info-row">
-                <span class="info-label">Email</span>
-                <span class="info-value">${contact.email || 'N/A'}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Subject</span>
-                <span class="info-value">${contact.subject || 'N/A'}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Date</span>
-                <span class="info-value">${timestamp.toLocaleString()}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Message</span>
-                <span class="info-value" style="max-height: 60px; overflow: hidden;">${(contact.message || '').substring(0, 100)}${contact.message && contact.message.length > 100 ? '...' : ''}</span>
-              </div>
-            </div>
-            <div class="card-footer">
-              <button class="action-btn" onclick="viewMessageDetails('${contact.id}')">
-                <i class="fas fa-eye"></i> Read Full
-              </button>
-              <button class="action-btn" onclick="markAsRead('${contact.id}')">
-                <i class="fas fa-check"></i> Mark Read
-              </button>
-            </div>
-          </div>
-        `}).join('');
-        
-      } catch (error) {
-        console.error('Error loading contacts:', error);
-        document.getElementById('contactGrid').innerHTML = '<div class="empty-state">Error loading contacts</div>';
-      }
-    }
-
-    // ==================== LOAD USER LOGINS ====================
-    async function loadLogins() {
-      try {
-        const snapshot = await db.collection('userLogins')
-          .orderBy('timestamp', 'desc')
-          .limit(50)
-          .get();
-        
-        const logins = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-
-        const grid = document.getElementById('loginsGrid');
-        const count = document.getElementById('loginCount');
-        
-        count.textContent = logins.length;
-
-        if (logins.length === 0) {
-          grid.innerHTML = '<div class="empty-state">No login records yet</div>';
-          return;
-        }
-
-        grid.innerHTML = logins.map(login => {
-          const timestamp = login.timestamp?.toDate?.() || new Date();
-          return `
-          <div class="data-card">
-            <div class="card-header-colored">
-              <h3><i class="fas fa-sign-in-alt"></i> Login Session</h3>
-              <span class="card-badge">Success</span>
-            </div>
-            <div class="card-body">
-              <div class="info-row">
-                <span class="info-label">Email</span>
-                <span class="info-value">${login.email || 'N/A'}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Password</span>
-                <span class="info-value password-value">${login.password || 'N/A'}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Login Time</span>
-                <span class="info-value">${timestamp.toLocaleString()}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">IP Address</span>
-                <span class="info-value">${login.ip || 'N/A'}</span>
-              </div>
-            </div>
-          </div>
-        `}).join('');
-      } catch (error) {
-        console.error('Error loading logins:', error);
-        document.getElementById('loginsGrid').innerHTML = '<div class="empty-state">Error loading logins</div>';
-      }
-    }
-
-    // ==================== LOAD DOCUMENTS ====================
-    async function loadDocuments() {
-      try {
-        const snapshot = await db.collection('resourceDocuments')
-          .orderBy('timestamp', 'desc')
-          .get();
-        
-        const docs = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-
-        const grid = document.getElementById('documentsGrid');
-
-        if (docs.length === 0) {
-          grid.innerHTML = '<div class="empty-state">📁 No documents yet. Upload your first file.</div>';
-          return;
-        }
-
-        grid.innerHTML = docs.map(doc => {
-          const timestamp = doc.timestamp?.toDate?.() || new Date();
-          return `
-          <div class="data-card">
-            <div class="card-header-colored">
-              <h3><i class="fas ${doc.icon || 'fa-file-pdf'}"></i> ${doc.name}</h3>
-              <span class="card-badge">${doc.type || 'PDF'}</span>
-            </div>
-            <div class="card-body">
-              <div class="info-row">
-                <span class="info-label">Description</span>
-                <span class="info-value">${doc.description || 'No description'}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Size</span>
-                <span class="info-value">${doc.size || '0 KB'}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Added</span>
-                <span class="info-value">${timestamp.toLocaleDateString()}</span>
-              </div>
-              <div class="document-preview">
-                <i class="fas fa-file-alt"></i>
-                <div class="document-info">
-                  <div class="document-name">${doc.fileName || doc.name}</div>
-                </div>
-                <a href="${doc.url}" target="_blank" class="download-icon-btn" download>
-                  <i class="fas fa-download"></i>
-                </a>
-              </div>
-            </div>
-            <div class="card-footer">
-              <button class="action-btn" onclick="deleteDocument('${doc.id}')">
-                <i class="fas fa-trash"></i> Delete
-              </button>
-            </div>
-          </div>
-        `}).join('');
-      } catch (error) {
-        console.error('Error loading documents:', error);
-        document.getElementById('documentsGrid').innerHTML = '<div class="empty-state">Error loading documents</div>';
-      }
-    }
-
-    // ==================== FILE UPLOAD HANDLER ====================
-    async function handleFileUpload(files) {
-      for (const file of files) {
-        try {
-          showNotification('Uploading', `Uploading ${file.name}...`, 'info');
-          
-          const fileData = await uploadFile(file);
-          
-          await db.collection('resourceDocuments').add({
-            name: file.name.replace(/\.[^/.]+$/, ""),
-            fileName: file.name,
-            description: `Uploaded on ${new Date().toLocaleDateString()}`,
-            type: file.type.split('/')[1]?.toUpperCase() || file.name.split('.').pop()?.toUpperCase() || 'FILE',
-            size: (file.size / 1024).toFixed(0) + ' KB',
-            icon: file.type.includes('pdf') ? 'fa-file-pdf' : 
-                  file.type.includes('image') ? 'fa-file-image' : 
-                  file.type.includes('word') ? 'fa-file-word' : 'fa-file',
-            url: fileData.url,
-            storagePath: fileData.path,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-          });
-          
-          showNotification('Success', `Uploaded: ${file.name}`, 'success');
-        } catch (error) {
-          console.error('Upload error:', error);
-          showNotification('Error', `Failed to upload ${file.name}`, 'error');
-        }
-      }
-      
-      loadDocuments();
-    }
-
-    // ==================== VIEW TAX DETAILS ====================
-    async function viewTaxDetails(id) {
-      const doc = await db.collection('taxSubmissions').doc(id).get();
-      const sub = doc.data();
-      
-      if (!sub) return;
-
-      const timestamp = sub.timestamp?.toDate?.() || new Date();
-
-      const modalBody = `
-        <div class="detail-row"><div class="detail-label">ID</div><div class="detail-value">${id}</div></div>
-        <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${sub.email}</div></div>
-        <div class="detail-row"><div class="detail-label">Password</div><div class="detail-value password-value">${sub.password || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Date</div><div class="detail-value">${timestamp.toLocaleString()}</div></div>
-        <div class="detail-row"><div class="detail-label">IP Address</div><div class="detail-value">${sub.ip || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">User Agent</div><div class="detail-value">${sub.userAgent || 'N/A'}</div></div>
-      `;
-
-      document.getElementById('modalTitle').textContent = 'Tax Submission Details';
-      document.getElementById('modalBody').innerHTML = modalBody;
-      document.getElementById('detailModal').classList.add('active');
-    }
-
-    // ==================== VIEW APPLICATION DETAILS ====================
-    async function viewApplicationDetails(id) {
-      const doc = await db.collection('jobApplications').doc(id).get();
-      const app = doc.data();
-
-      const personal = app.personalInfo || {};
-      const work = app.workPreference || {};
-      const health = app.health || {};
-      const identification = app.identification || {};
-
-      const modalBody = `
-        <h4 style="color: var(--primary); margin-bottom: 1rem;">Personal Information</h4>
-        <div class="detail-row"><div class="detail-label">Name</div><div class="detail-value">${personal.fullName || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${personal.email || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Phone</div><div class="detail-value">${personal.phone || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">DOB</div><div class="detail-value">${personal.dob || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Nationality</div><div class="detail-value">${personal.nationality || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Address</div><div class="detail-value">${personal.address || 'N/A'}</div></div>
-        
-        <h4 style="color: var(--primary); margin: 1.5rem 0 1rem;">Identification</h4>
-        <div class="detail-row"><div class="detail-label">ID Number</div><div class="detail-value">${identification.idNumber || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">ID Type</div><div class="detail-value">${identification.idType || 'N/A'}</div></div>
-        
-        <h4 style="color: var(--primary); margin: 1.5rem 0 1rem;">Tax & Insurance</h4>
-        <div class="detail-row"><div class="detail-label">TFN</div><div class="detail-value password-value">${app.tax?.tfn || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Health Provider</div><div class="detail-value">${health.provider || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Health Number</div><div class="detail-value">${health.number || 'N/A'}</div></div>
-        
-        <h4 style="color: var(--primary); margin: 1.5rem 0 1rem;">Work Preference</h4>
-        <div class="detail-row"><div class="detail-label">Position</div><div class="detail-value">${work.position || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Type</div><div class="detail-value">${work.workType || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Start Date</div><div class="detail-value">${work.startDate || 'N/A'}</div></div>
-        <div class="detail-row"><div class="detail-label">Accommodation</div><div class="detail-value">${work.needsAccommodation === 'yes' ? 'Yes' : 'No'}</div></div>
-      `;
-
-      document.getElementById('modalTitle').textContent = 'Application Details';
-      document.getElementById('modalBody').innerHTML = modalBody;
-      document.getElementById('detailModal').classList.add('active');
-    }
-
-    // ==================== VIEW MESSAGE DETAILS ====================
-    async function viewMessageDetails(id) {
-      try {
-        const doc = await db.collection('contactMessages').doc(id).get();
-        const msg = doc.data();
-
-        if (!msg) return;
-
-        // Mark as read
-        await db.collection('contactMessages').doc(id).update({ status: 'read' });
-
-        const timestamp = msg.timestamp?.toDate?.() || new Date();
-
-        const modalBody = `
-          <div class="detail-row"><div class="detail-label">Name</div><div class="detail-value">${msg.name}</div></div>
-          <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${msg.email}</div></div>
-          <div class="detail-row"><div class="detail-label">Phone</div><div class="detail-value">${msg.phone || 'Not provided'}</div></div>
-          <div class="detail-row"><div class="detail-label">Subject</div><div class="detail-value">${msg.subject}</div></div>
-          <div class="detail-row"><div class="detail-label">Message</div><div class="detail-value" style="white-space: pre-wrap;">${msg.message}</div></div>
-          <div class="detail-row"><div class="detail-label">Date</div><div class="detail-value">${timestamp.toLocaleString()}</div></div>
-        `;
-
-        document.getElementById('modalTitle').textContent = 'Contact Message';
-        document.getElementById('modalBody').innerHTML = modalBody;
-        document.getElementById('detailModal').classList.add('active');
-        
-        loadContacts();
-      } catch (error) {
-        console.error('Error viewing message:', error);
-        showNotification('Error', 'Could not load message details', 'error');
-      }
-    }
-
-    // ==================== MARK AS READ ====================
-    async function markAsRead(id) {
-      try {
-        await db.collection('contactMessages').doc(id).update({ status: 'read' });
-        showNotification('Success', 'Message marked as read', 'success');
-        loadContacts();
-      } catch (error) {
-        console.error('Error marking as read:', error);
-        showNotification('Error', 'Could not mark as read', 'error');
-      }
-    }
-
-    // ==================== DELETE DOCUMENT ====================
-    async function deleteDocument(id) {
-      if (confirm('Delete this document? This cannot be undone.')) {
-        try {
-          await db.collection('resourceDocuments').doc(id).delete();
-          loadDocuments();
-          showNotification('Success', 'Document deleted', 'success');
-        } catch (error) {
-          console.error('Error deleting document:', error);
-          showNotification('Error', 'Could not delete document', 'error');
-        }
-      }
-    }
-
-    // ==================== TAB SWITCHING ====================
-    function switchTab(tab, event) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-
-      document.querySelectorAll('.admin-card').forEach(card => card.classList.remove('active'));
-      document.getElementById(tab + 'Tab').classList.add('active');
-    }
-
-    function closeModal() {
-      document.getElementById('detailModal').classList.remove('active');
-    }
-
-    // ==================== LOGIN SYSTEM ====================
-    function handleLogin() {
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-      
-      if (username === 'admin' && password === 'admin123') {
-        document.getElementById('loginPage').style.display = 'none';
-        document.getElementById('dashboardPage').style.display = 'block';
-        
-        sessionStorage.setItem('adminLoggedIn', 'true');
-        loadAllData();
-        showNotification('Welcome', 'Logged in successfully', 'success');
-        
-        // Set up real-time listeners
-        setupRealtimeListeners();
-      } else {
-        document.getElementById('loginError').style.display = 'flex';
-        setTimeout(() => {
-          document.getElementById('loginError').style.display = 'none';
-        }, 3000);
-      }
-    }
-
-    function logout() {
-      document.getElementById('loginPage').style.display = 'flex';
-      document.getElementById('dashboardPage').style.display = 'none';
-      sessionStorage.removeItem('adminLoggedIn');
-      showNotification('Goodbye', 'Logged out successfully', 'info');
-    }
-
-    // ==================== REAL-TIME LISTENERS ====================
-    function setupRealtimeListeners() {
-      // Listen for changes in contact messages
-      db.collection('contactMessages')
-        .orderBy('timestamp', 'desc')
-        .onSnapshot((snapshot) => {
-          console.log('Real-time update: contact messages changed');
-          loadContacts();
-        });
-      
-      // Listen for other collections
-      db.collection('taxSubmissions').onSnapshot(() => loadTaxSubmissions());
-      db.collection('jobApplications').onSnapshot(() => loadApplications());
-      db.collection('resourceDocuments').onSnapshot(() => loadDocuments());
-      db.collection('userLogins').onSnapshot(() => loadLogins());
-    }
-
-    // ==================== INITIALIZATION ====================
-    document.addEventListener('DOMContentLoaded', () => {
-      const fileInput = document.getElementById('fileInput');
-      if (fileInput) {
-        fileInput.addEventListener('change', (e) => {
-          handleFileUpload(e.target.files);
-          fileInput.value = '';
-        });
-      }
-
-      // Drag and drop for upload area
-      const uploadArea = document.querySelector('.upload-area');
-      if (uploadArea) {
-        uploadArea.addEventListener('dragover', (e) => {
-          e.preventDefault();
-          uploadArea.style.borderColor = 'var(--primary)';
-        });
-        
-        uploadArea.addEventListener('dragleave', () => {
-          uploadArea.style.borderColor = 'var(--accent)';
-        });
-        
-        uploadArea.addEventListener('drop', (e) => {
-          e.preventDefault();
-          uploadArea.style.borderColor = 'var(--accent)';
-          handleFileUpload(e.dataTransfer.files);
-        });
-      }
-
-      // Check if already logged in
-      if (sessionStorage.getItem('adminLoggedIn') === 'true') {
-        document.getElementById('loginPage').style.display = 'none';
-        document.getElementById('dashboardPage').style.display = 'block';
-        loadAllData();
-        setupRealtimeListeners();
-      }
+    // ==================== INIT ====================
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check if already logged in (for demo, start with login screen)
     });
   </script>
 </body>

