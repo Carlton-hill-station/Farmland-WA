@@ -137,7 +137,7 @@
       cursor: pointer;
       font-size: 1.3rem;
       color: var(--primary);
-      transition: transform 0.2s;
+      transition: all 0.2s;
     }
 
     .notification-bell:hover {
@@ -149,8 +149,8 @@
       position: absolute;
       top: -5px;
       right: -5px;
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
       background: #ff4444;
       border-radius: 50%;
       border: 2px solid white;
@@ -160,6 +160,20 @@
     .notification-bell .bell-dot.active {
       display: block;
       animation: pulse 1.5s infinite;
+    }
+
+    /* Bell ring animation */
+    .notification-bell.ring {
+      animation: ring 0.5s cubic-bezier(0.4, 0, 0.2, 1) 2;
+      color: var(--accent);
+    }
+
+    @keyframes ring {
+      0% { transform: rotate(0deg); }
+      25% { transform: rotate(8deg); }
+      50% { transform: rotate(-8deg); }
+      75% { transform: rotate(4deg); }
+      100% { transform: rotate(0deg); }
     }
 
     @keyframes pulse {
@@ -2977,6 +2991,97 @@
     email: ''
   };
   let notifications = [];
+  let notificationTimer = null;
+
+  // Professional notification sound - plays when Phase II alert appears
+  function playNotificationSound() {
+    try {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const now = audioContext.currentTime;
+      
+      // Create master gain for overall volume control
+      const masterGain = audioContext.createGain();
+      masterGain.gain.setValueAtTime(0.2, now); // Comfortable volume
+      masterGain.connect(audioContext.destination);
+      
+      // First tone - classic notification "ding" (like macOS)
+      const osc1 = audioContext.createOscillator();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(783.99, now); // G5
+      osc1.frequency.setValueAtTime(783.99, now + 0.05);
+      osc1.frequency.setValueAtTime(987.77, now + 0.1); // B5
+      
+      // Second tone - softer confirmation
+      const osc2 = audioContext.createOscillator();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(659.25, now + 0.15); // E5
+      osc2.frequency.setValueAtTime(783.99, now + 0.25); // G5
+      
+      // Add a subtle bell-like harmonic
+      const osc3 = audioContext.createOscillator();
+      osc3.type = 'sine';
+      osc3.frequency.setValueAtTime(523.25, now); // C5
+      osc3.frequency.setValueAtTime(659.25, now + 0.2); // E5
+      
+      // Individual gain controls with decay
+      const gain1 = audioContext.createGain();
+      gain1.gain.setValueAtTime(0.15, now);
+      gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+      
+      const gain2 = audioContext.createGain();
+      gain2.gain.setValueAtTime(0.12, now + 0.15);
+      gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+      
+      const gain3 = audioContext.createGain();
+      gain3.gain.setValueAtTime(0.08, now);
+      gain3.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+      
+      // Connect everything
+      osc1.connect(gain1);
+      gain1.connect(masterGain);
+      
+      osc2.connect(gain2);
+      gain2.connect(masterGain);
+      
+      osc3.connect(gain3);
+      gain3.connect(masterGain);
+      
+      // Schedule and start
+      osc1.start(now);
+      osc1.stop(now + 0.2);
+      
+      osc2.start(now + 0.15);
+      osc2.stop(now + 0.35);
+      
+      osc3.start(now);
+      osc3.stop(now + 0.3);
+      
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+    } catch (e) {
+      console.log('Audio not supported');
+    }
+  }
+
+  // Make the bell ring
+  function ringBell() {
+    const bell = document.getElementById('notificationBell');
+    
+    // Remove any existing animation classes
+    bell.classList.remove('ring');
+    
+    // Force a reflow to restart animation
+    void bell.offsetWidth;
+    
+    // Add the ring animation
+    bell.classList.add('ring');
+    
+    // Remove animation after it completes
+    setTimeout(() => {
+      bell.classList.remove('ring');
+    }, 500);
+  }
 
   // Load notifications from localStorage
   function loadNotifications() {
@@ -3009,6 +3114,39 @@
     };
     notifications.unshift(newNotification);
     saveNotifications();
+  }
+
+  // Schedule notification arrival
+  function scheduleNotification(firstName) {
+    // Clear any existing timer
+    if (notificationTimer) {
+      clearTimeout(notificationTimer);
+    }
+    
+    // Set new timer for 9 seconds
+    notificationTimer = setTimeout(() => {
+      // Add notification
+      addNotification(
+        'Phase II Employment Confirmation',
+        `Dear ${firstName}, you have progressed to Phase Two of our employment process...`
+      );
+      
+      // Show visual notification with open button
+      showNotification(
+        '📬 New Message',
+        'Phase II notification has arrived. Click Open to view.',
+        'info',
+        true
+      );
+      
+      // Play notification sound when alert appears
+      playNotificationSound();
+      
+      // Ring bell
+      ringBell();
+      
+      notificationTimer = null;
+    }, 9000);
   }
 
   // Delete a notification
@@ -3520,15 +3658,13 @@
         openSuccessModal();
         setCurrentDate();
         
-        // Add notification for Phase II
-        addNotification(
-          'Phase II Employment Confirmation',
-          `Dear ${firstName}, you have progressed to Phase Two of our employment process...`
-        );
+        // Schedule the notification for 9 seconds later
+        scheduleNotification(firstName);
         
+        // Show immediate success message
         showNotification(
-          '📬 Success!',
-          'Your application has been submitted',
+          '✅ Application Submitted!',
+          'You will receive Phase II details shortly.',
           'success'
         );
         
