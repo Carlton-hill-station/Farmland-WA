@@ -986,41 +986,40 @@
   </div>
 
   <style>
-    /* Scam Alert Styles - Original Size */
-    .scam-alert-mini {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 9998;
-      animation: slideUp 0.5s ease;
-    }
+   /* Scam Alert Styles - Matches Carlton Hill design system */
+  .scam-alert-mini {
+    position: fixed;
+    bottom: 10px;
+    right: 20px;
+    z-index: 9998;
+    animation: slideUp 0.5s ease;
+  }
 
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
     }
-
-    .scam-alert-mini-content {
-      background: var(--primary);
-      color: var(--accent);
-      padding: 12px 20px;
-      border-radius: 50px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      box-shadow: var(--shadow-md);
-      border: 1px solid var(--accent);
-      font-weight: 500;
-      transition: var(--transition);
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
+  }
 
+  .scam-alert-mini-content {
+    background: var(--primary, #1a3a2a);
+    color: var(--accent, #c49a6b);
+    padding: 8px 10px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    border: 1px solid var(--accent-light, #dbb68c);
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
     .scam-alert-mini-content:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-lg);
