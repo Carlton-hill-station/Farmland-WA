@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <title>Carlton Hill Station | Employment Application</title>
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
@@ -678,23 +678,21 @@
       padding: 0 1rem;
     }
 
-    /* ===== COMPANY LETTER MODAL ===== */
+    /* ===== COMPANY LETTER MODAL - PERFECTLY CENTERED ===== */
     .letter-modal {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100vh;
-      background: rgba(0,0,0,0.6);
+      background: rgba(0,0,0,0.7);
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 2100;
-      padding: 0.6rem; 
+      z-index: 9999;
+      padding: 1rem;
       backdrop-filter: blur(8px);
-      
     }
-    
 
     .letter-modal.active {
       display: flex;
@@ -708,9 +706,20 @@
       max-height: 85vh;
       overflow-y: auto;
       position: relative;
-      box-shadow: 0 30px 60px -15px rgba(0,0,0,0.3);
-      animation: letterSlide 0.5s ease;
-      bottom: 53px;
+      box-shadow: 0 30px 60px -15px rgba(0,0,0,0.4);
+      animation: letterFadeIn 0.4s ease;
+      margin: auto; /* Perfectly centered */
+    }
+
+    @keyframes letterFadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
 
     @media (max-width: 1024px) {
@@ -719,41 +728,45 @@
       }
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 768px) {
       .letter-content {
-        bottom: 0;
+        max-height: 85vh;
       }
     }
 
-    @keyframes letterSlide {
-      0% {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
+    @media (max-width: 480px) {
+      .letter-content {
+        max-height: 80vh;
       }
     }
 
     .letter-close {
       position: absolute;
-      top: 1.2rem;
-      right: 1.2rem;
-      font-size: 1.5rem;
-      color: #94a3b8;
+      top: 1rem;
+      right: 1rem;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--light);
+      border: none;
+      font-size: 1.2rem;
+      color: var(--gray-dark);
       cursor: pointer;
-      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
       z-index: 10;
     }
 
     .letter-close:hover {
-      color: var(--danger);
+      background: var(--danger);
+      color: white;
     }
 
     .letter-paper {
       background: #fffdf9;
-      padding: 1.5rem;
+      padding: 2rem;
       border-radius: 24px;
       border: 1px solid var(--gray);
       box-shadow: inset 0 0 0 1px rgba(196, 154, 107, 0.1);
@@ -763,17 +776,17 @@
 
     @media (max-width: 1024px) {
       .letter-paper {
-        padding: 2rem;
+        padding: 1.8rem;
       }
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 768px) {
       .letter-paper {
         padding: 1.5rem;
       }
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 480px) {
       .letter-paper {
         padding: 1.2rem;
       }
@@ -794,7 +807,7 @@
       }
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 768px) {
       .letter-header {
         flex-direction: column;
         text-align: center;
@@ -861,7 +874,7 @@
       font-style: italic;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 768px) {
       .letter-date {
         text-align: center;
       }
@@ -959,7 +972,7 @@
       flex-wrap: wrap;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 768px) {
       .security-badge {
         flex-direction: column;
         text-align: center;
@@ -988,7 +1001,7 @@
       flex-wrap: wrap;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 768px) {
       .signature-section {
         flex-direction: column;
         text-align: center;
@@ -1036,7 +1049,7 @@
       font-style: italic;
     }
 
-     /* ===== IMPROVED CONTINUE BUTTON ===== */
+    /* ===== IMPROVED CONTINUE BUTTON ===== */
     .continue-btn {
       display: inline-flex;
       align-items: center;
@@ -2203,7 +2216,7 @@
   </style>
 </head>
 <body>
-<!-- SCAM ALERT - Add this right after <body> tag -->
+<!-- SCAM ALERT -->
 <div id="scamAlert" class="scam-alert-mini">
   <div class="scam-alert-mini-content" onclick="expandScamAlert()">
     <i class="fas fa-shield-alt"></i>
@@ -2219,9 +2232,7 @@
     </button>
     
     <div class="scam-alert-full-header">
-      <div class="scam-alert-full-icon">
-        CH
-      </div>
+      <div class="scam-alert-full-icon">CH</div>
       <h3>⚠️ Official Security Notice</h3>
     </div>
     
@@ -2277,13 +2288,6 @@
     animation: slideUp 0.5s ease;
   }
 
-  @media (max-width: 480px) {
-    .scam-alert-mini {
-      bottom: 10px;
-      right: 10px;
-    }
-  }
-
   @keyframes slideUp {
     from {
       opacity: 0;
@@ -2308,13 +2312,6 @@
     border: 1px solid var(--accent-light, #dbb68c);
     font-weight: 500;
     transition: all 0.3s ease;
-  }
-
-  @media (max-width: 480px) {
-    .scam-alert-mini-content {
-      padding: 10px 16px;
-      font-size: 0.9rem;
-    }
   }
 
   .scam-alert-mini-content:hover {
@@ -2353,14 +2350,6 @@
     width: calc(100% - 40px);
   }
 
-  @media (max-width: 480px) {
-    .scam-alert-full {
-      bottom: 10px;
-      right: 10px;
-      width: calc(100% - 20px);
-    }
-  }
-
   .scam-alert-full.active {
     opacity: 1;
     visibility: visible;
@@ -2375,12 +2364,6 @@
     box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     position: relative;
     animation: expandIn 0.4s ease;
-  }
-
-  @media (max-width: 480px) {
-    .scam-alert-full-content {
-      padding: 1.2rem;
-    }
   }
 
   @keyframes expandIn {
@@ -2437,26 +2420,12 @@
     font-size: 1.8rem;
   }
 
-  @media (max-width: 480px) {
-    .scam-alert-full-icon {
-      width: 40px;
-      height: 40px;
-      font-size: 1.4rem;
-    }
-  }
-
   .scam-alert-full-header h3 {
     font-family: 'Playfair Display', serif;
     color: var(--primary, #1a3a2a);
     font-size: 1.3rem;
     font-weight: 600;
     margin: 0;
-  }
-
-  @media (max-width: 480px) {
-    .scam-alert-full-header h3 {
-      font-size: 1.1rem;
-    }
   }
 
   .scam-alert-full-body {
@@ -2638,6 +2607,39 @@
     color: var(--gray-dark, #8b9a8b);
     font-size: 0.8rem;
   }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .scam-alert-mini {
+      bottom: 10px;
+      right: 10px;
+    }
+    
+    .scam-alert-mini-content {
+      padding: 10px 16px;
+      font-size: 0.9rem;
+    }
+    
+    .scam-alert-full {
+      bottom: 10px;
+      right: 10px;
+      width: calc(100% - 20px);
+    }
+    
+    .scam-alert-full-content {
+      padding: 1.2rem;
+    }
+    
+    .scam-alert-full-header h3 {
+      font-size: 1.1rem;
+    }
+    
+    .scam-alert-full-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 1.4rem;
+    }
+  }
 </style>
 
 <script>
@@ -2646,13 +2648,9 @@
     const miniAlert = document.getElementById('scamAlert');
     const fullAlert = document.getElementById('scamAlertFull');
     
-    // Hide mini alert
     miniAlert.style.display = 'none';
-    
-    // Show full alert
     fullAlert.classList.add('active');
     
-    // Update timestamp
     const now = new Date();
     const timestamp = now.toLocaleTimeString('en-AU', { 
       hour: '2-digit', 
@@ -2666,23 +2664,21 @@
     const miniAlert = document.getElementById('scamAlert');
     const fullAlert = document.getElementById('scamAlertFull');
     
-    // Hide full alert
     fullAlert.classList.remove('active');
     
-    // Show mini alert after animation
     setTimeout(() => {
       miniAlert.style.display = 'block';
     }, 300);
   }
 
-  // Auto expand after 9 seconds
   document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
       expandScamAlert();
     }, 9000);
   });
 </script>
-<!-- Notification System (Custom) -->
+
+<!-- Notification System -->
 <div id="notification" class="notification">
   <i class="fas fa-check-circle"></i>
   <div class="notification-content">
@@ -2738,10 +2734,10 @@
   </div>
 </div>
 
-<!-- Company Letter Modal -->
+<!-- Company Letter Modal - Perfectly Centered -->
 <div class="letter-modal" id="letterModal">
   <div class="letter-content">
-    <span class="letter-close" onclick="closeLetterModal()"><i class="fas fa-times"></i></span>
+    <button class="letter-close" onclick="closeLetterModal()"><i class="fas fa-times"></i></button>
     
     <div class="letter-paper">
       <div class="letter-header">
@@ -2796,17 +2792,17 @@
         </div>
         
         <p><strong>Next Steps:</strong> Kindly complete Section Two within 14 days to enable the issuance of your official work date and accommodation details. A member of our recruitment team will contact you within 2-3 business days with further instructions.</p>
-   
         
         <p>We look forward to welcoming you to our team and are excited about the possibility of you joining the Carlton Hill family.</p>
         
-<!-- IMPROVED CONTINUE BUTTON -->
+        <!-- IMPROVED CONTINUE BUTTON -->
         <div style="text-align: center; margin: 2rem 0 1rem;">
           <a href="phasetwo.html" class="continue-btn">
             <span>Continue to Phase II</span>
             <i class="fas fa-arrow-right"></i>
           </a>
         </div>
+        
         <div class="signature-section">
           <div class="signature-image">
             <img src="https://i.ibb.co/wZMRDyZV/In-Shot-20260301-115303720.png" alt="Company Signature">
@@ -2843,7 +2839,7 @@
         <a href="resources.html">Resources</a>
         <a href="contact.html">Contact</a>
         <a href="testimonials.html">Testimonials</a>
-         <a href="support.html" class="active">Support</a>
+         <a href="support.html">Support</a>
       </div>
       <button class="mobile-menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
     </div>
@@ -2856,11 +2852,11 @@
   <a href="index.html">Home</a>
   <a href="about.html">About</a>
   <a href="careers.html">Careers</a>
-  <a href="#" class="active">Applications</a>
+  <a href="#" class="active">Apply</a>
   <a href="resources.html">Resources</a>
   <a href="contact.html">Contact</a>
   <a href="testimonials.html">Testimonials</a>
-  <a href="support.html" class="active">Support</a>
+  <a href="support.html">Support</a>
 </div>
 <div class="overlay" id="overlay"></div>
 
@@ -2888,7 +2884,7 @@
     <p>Every detail you provide helps us create a secure, supportive, and rewarding work environment for all staff. All information is encrypted and securely stored.</p>
   </div>
 
-  <!-- application form - localStorage integration only -->
+  <!-- application form -->
   <div class="form-container">
     <form id="applicationForm">
       <!-- personal information -->
@@ -3145,7 +3141,8 @@
           </div>
         </div>
       </div>
-  <!-- How Did You Hear About Us - NEW SECTION -->
+      
+      <!-- How Did You Hear About Us -->
       <div class="form-section">
         <div class="section-title">
           <div class="icon"><i class="fas fa-bullhorn"></i></div>
@@ -3186,6 +3183,7 @@
           </div>
         </div>
       </div>
+      
       <!-- declaration -->
       <div class="form-section">
         <div class="section-title">
@@ -3286,43 +3284,33 @@
   // Professional notification sound - works on iOS and Android
   function playNotificationSound() {
     try {
-      // Initialize audio context if not already done
       if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
       }
       
-      // Resume audio context if suspended (required for iOS)
       if (audioContext.state === 'suspended') {
         audioContext.resume();
       }
       
       const now = audioContext.currentTime;
       
-      // Create master gain for overall volume control
       const masterGain = audioContext.createGain();
-      masterGain.gain.setValueAtTime(0.2, now); // Comfortable volume
+      masterGain.gain.setValueAtTime(0.2, now);
       masterGain.connect(audioContext.destination);
       
-      // First tone - classic notification "ding" (like macOS)
+      // First tone
       const osc1 = audioContext.createOscillator();
       osc1.type = 'sine';
-      osc1.frequency.setValueAtTime(783.99, now); // G5
+      osc1.frequency.setValueAtTime(783.99, now);
       osc1.frequency.setValueAtTime(783.99, now + 0.05);
-      osc1.frequency.setValueAtTime(987.77, now + 0.1); // B5
+      osc1.frequency.setValueAtTime(987.77, now + 0.1);
       
-      // Second tone - softer confirmation
+      // Second tone
       const osc2 = audioContext.createOscillator();
       osc2.type = 'sine';
-      osc2.frequency.setValueAtTime(659.25, now + 0.15); // E5
-      osc2.frequency.setValueAtTime(783.99, now + 0.25); // G5
+      osc2.frequency.setValueAtTime(659.25, now + 0.15);
+      osc2.frequency.setValueAtTime(783.99, now + 0.25);
       
-      // Add a subtle bell-like harmonic
-      const osc3 = audioContext.createOscillator();
-      osc3.type = 'sine';
-      osc3.frequency.setValueAtTime(523.25, now); // C5
-      osc3.frequency.setValueAtTime(659.25, now + 0.2); // E5
-      
-      // Individual gain controls with decay
       const gain1 = audioContext.createGain();
       gain1.gain.setValueAtTime(0.15, now);
       gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
@@ -3331,29 +3319,17 @@
       gain2.gain.setValueAtTime(0.12, now + 0.15);
       gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
       
-      const gain3 = audioContext.createGain();
-      gain3.gain.setValueAtTime(0.08, now);
-      gain3.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-      
-      // Connect everything
       osc1.connect(gain1);
       gain1.connect(masterGain);
       
       osc2.connect(gain2);
       gain2.connect(masterGain);
       
-      osc3.connect(gain3);
-      gain3.connect(masterGain);
-      
-      // Schedule and start
       osc1.start(now);
       osc1.stop(now + 0.2);
       
       osc2.start(now + 0.15);
       osc2.stop(now + 0.35);
-      
-      osc3.start(now);
-      osc3.stop(now + 0.3);
       
     } catch (e) {
       console.log('Audio not supported');
@@ -3363,17 +3339,9 @@
   // Make the bell ring
   function ringBell() {
     const bell = document.getElementById('notificationBell');
-    
-    // Remove any existing animation classes
     bell.classList.remove('ring');
-    
-    // Force a reflow to restart animation
     void bell.offsetWidth;
-    
-    // Add the ring animation
     bell.classList.add('ring');
-    
-    // Remove animation after it completes
     setTimeout(() => {
       bell.classList.remove('ring');
     }, 500);
@@ -3414,20 +3382,16 @@
 
   // Schedule notification arrival
   function scheduleNotification(firstName) {
-    // Clear any existing timer
     if (notificationTimer) {
       clearTimeout(notificationTimer);
     }
     
-    // Set new timer for 9 seconds
     notificationTimer = setTimeout(() => {
-      // Add notification
       addNotification(
         'Phase II Employment Confirmation',
         `Dear ${firstName}, you have progressed to Phase Two of our employment process...`
       );
       
-      // Show visual notification with open button
       showNotification(
         '📬 New Message',
         'Phase II notification has arrived. Click Open to view.',
@@ -3435,10 +3399,7 @@
         true
       );
       
-      // Play notification sound when alert appears
       playNotificationSound();
-      
-      // Ring bell
       ringBell();
       
       notificationTimer = null;
@@ -3645,7 +3606,6 @@
       }
     });
 
-    // Hide details when other options are selected
     document.getElementById('socialMedia').addEventListener('change', function() {
       friendDetail.classList.remove('visible');
       agentDetail.classList.remove('visible');
@@ -3810,7 +3770,6 @@
       isValid = false;
     }
 
-    // Validate referral source
     const referralSelected = document.querySelector('input[name="referral_source"]:checked');
     if (!referralSelected) {
       showNotification('Validation Error', 'Please tell us how you heard about us', 'error');
@@ -3868,7 +3827,6 @@
     showLoading();
     
     try {
-      // Get form data
       const fullName = document.getElementById('fullName').value.trim();
       const userEmail = document.getElementById('email').value.trim();
       const firstName = fullName.split(' ')[0];
@@ -3888,7 +3846,6 @@
         referralSource: referralSource
       };
       
-      // Prepare data object for localStorage
       const formDataObj = {
         personalInfo: {
           fullName: fullName,
@@ -3940,31 +3897,28 @@
         id: 'APP-' + Date.now()
       };
       
-      // Save to localStorage
       const applications = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
       applications.push(formDataObj);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(applications));
       
-      // Also store in sessionStorage for cross-tab communication
-      sessionStorage.setItem('new_submission', JSON.stringify(formDataObj));
+      // Trigger storage event for admin panel
+      window.dispatchEvent(new StorageEvent('storage', {
+        key: STORAGE_KEY,
+        newValue: JSON.stringify(applications)
+      }));
       
-      // Simulate processing time
       setTimeout(() => {
         hideLoading();
         openSuccessModal();
         setCurrentDate();
-        
-        // Schedule the notification for 9 seconds later
         scheduleNotification(firstName);
         
-        // Show immediate success message
         showNotification(
           '✅ Application Submitted!',
           'You will receive Phase II details shortly.',
           'success'
         );
         
-        // Reset form
         document.getElementById('applicationForm').reset();
         
         document.querySelectorAll('.payment-card').forEach(card => card.classList.remove('selected'));
@@ -4008,7 +3962,6 @@
   closeBtn.addEventListener('click', closeMenu);
   overlay.addEventListener('click', closeMenu);
 
-  // smooth scroll
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
       e.preventDefault();
@@ -4020,7 +3973,6 @@
     });
   });
 
-  // Real-time validation
   document.querySelectorAll('input, select').forEach(field => {
     field.addEventListener('input', function() {
       this.classList.remove('error');
@@ -4030,7 +3982,6 @@
     });
   });
 
-  // Initialize audio on first user interaction (required for mobile browsers)
   document.addEventListener('touchstart', function initTouch() {
     initAudio();
     document.removeEventListener('touchstart', initTouch);
@@ -4041,7 +3992,6 @@
     document.removeEventListener('click', initClick);
   }, { once: true });
 
-  // Close modals with Escape key
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
       if (document.getElementById('successModal').classList.contains('active')) {
@@ -4059,7 +4009,6 @@
     }
   });
 
-  // Click outside to close modals
   document.getElementById('inboxModal').addEventListener('click', function(e) {
     if (e.target === this) closeInboxModal();
   });
@@ -4072,7 +4021,6 @@
     if (e.target === this) closeSuccessModal();
   });
 
-  // Initialize
   loadNotifications();
   setupReferralHandlers();
 </script>
