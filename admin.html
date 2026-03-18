@@ -8,9 +8,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Parse SDK -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/parse/3.4.0/parse.min.js"></script>
+  <script>
+    // Initialize Parse with your Back4App credentials
+    Parse.initialize("Tu54uflotVKuoFPPn6XqE6GCSKpM6RmRNobtbL2n", "jWIucfqNhxtRx4nVuKITZmlpaaeE013zL8TeaAFI");
+    Parse.serverURL = 'https://parseapi.back4app.com/';
+  </script>
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
+    /* Your existing CSS remains exactly the same – no changes needed */
     * {
       margin: 0;
       padding: 0;
@@ -56,7 +64,6 @@
       overflow-x: hidden;
     }
 
-    /* Smooth Scrolling */
     html {
       scroll-behavior: smooth;
     }
@@ -1177,7 +1184,7 @@
       </div>
       
       <div class="input-field">
-        <input type="password" id="password" placeholder="Password" value="admin123">
+        <input type="password" id="password" placeholder="Password" value="warlord444">
       </div>
       
       <div class="login-error" id="loginError">Access denied</div>
@@ -1415,14 +1422,6 @@
   </div>
 
   <script>
-    // ==================== DATA STORAGE KEYS ====================
-    const STORAGE = {
-      PHASE1: 'jobApplications',
-      PHASE2: 'phase2_submissions',
-      CONTACT: 'contactMessages',
-      SUPPORT: 'workerSupportRequests'
-    };
-
     // ==================== STATE MANAGEMENT ====================
     let phase1 = [];
     let phase2 = [];
@@ -1444,23 +1443,43 @@
     // ==================== INITIALIZATION ====================
     document.addEventListener('DOMContentLoaded', () => {
       refreshTimer = setInterval(checkUpdates, 30000);
+      checkSession();
     });
 
-    // ==================== LOGIN ====================
-    document.getElementById('loginBtn').addEventListener('click', () => {
-      const user = document.getElementById('username').value;
-      const pass = document.getElementById('password').value;
-      
-      if (user === 'admin' && pass === 'admin123') {
+    async function checkSession() {
+      const currentUser = Parse.User.current();
+      if (currentUser) {
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('dashboard').classList.add('active');
-        loadData();
+        await loadData();
+      }
+    }
+
+    // ==================== LOGIN ====================
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      const btn = document.getElementById('loginBtn');
+      btn.classList.add('loading');
+      btn.disabled = true;
+
+      try {
+        await Parse.User.logIn(username, password);
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('dashboard').classList.add('active');
+        await loadData();
         showToast('Welcome', 'Access granted', 'success');
-      } else {
-        document.getElementById('loginError').classList.add('show');
+      } catch (error) {
+        const errorEl = document.getElementById('loginError');
+        errorEl.textContent = error.message;
+        errorEl.classList.add('show');
         setTimeout(() => {
-          document.getElementById('loginError').classList.remove('show');
+          errorEl.classList.remove('show');
         }, 3000);
+      } finally {
+        btn.classList.remove('loading');
+        btn.disabled = false;
       }
     });
 
@@ -1472,6 +1491,7 @@
 
     // ==================== LOGOUT ====================
     function logout() {
+      Parse.User.logOut();
       document.getElementById('dashboard').classList.remove('active');
       document.getElementById('loginScreen').classList.remove('hidden');
       if (refreshTimer) clearInterval(refreshTimer);
@@ -1528,71 +1548,100 @@
       document.getElementById('zoomLevel').textContent = `${zoom}%`;
     }
 
-    // ==================== DATA LOADING ====================
-    function loadData() {
+    // ==================== DATA LOADING (Parse) ====================
+    async function loadData() {
       showLoading();
       
-      setTimeout(() => {
-        try {
-          // Load from localStorage
-          phase1 = JSON.parse(localStorage.getItem(STORAGE.PHASE1) || '[]');
-          phase2 = JSON.parse(localStorage.getItem(STORAGE.PHASE2) || '[]');
-          messages = JSON.parse(localStorage.getItem(STORAGE.CONTACT) || '[]');
-          support = JSON.parse(localStorage.getItem(STORAGE.SUPPORT) || '[]');
-          
-          // Add IDs if missing
-          phase1 = phase1.map((item, idx) => ({ ...item, id: item.id || `APP${String(idx+1).padStart(3,'0')}` }));
-          messages = messages.map((item, idx) => ({ ...item, id: item.id || `MSG${String(idx+1).padStart(3,'0')}` }));
-          
-          // Add sample data if empty
-          if (phase1.length === 0) seedData();
-          
-          updateBadges();
-          updateStats();
-          updateQuick();
-          
-          if (currentTab === 'dashboard') {
-            renderDashboard();
-          } else {
-            filterData();
-          }
-          
-          hideLoading();
-        } catch (e) {
-          console.error('Load error:', e);
-          hideLoading();
-          showToast('Error', 'Failed to load data', 'error');
+      try {
+        // --- 1. Query Applications (Phase I) ---
+        const Application = Parse.Object.extend('Application');
+        const appQuery = new Parse.Query(Application);
+        appQuery.descending('timestamp'); // newest first
+        const appResults = await appQuery.find();
+        
+        phase1 = appResults.map(obj => ({
+          id: obj.id,
+          personalInfo: {
+            fullName: obj.get('fullName') || '',
+            email: obj.get('email') || '',
+            phone: obj.get('phone') || '',
+            nationality: obj.get('nationality') || ''
+          },
+          workPreference: {
+            position: obj.get('position') || '',
+            startDate: obj.get('startDate') || '',
+            needsAccommodation: obj.get('needsAccommodation') || 'no'
+          },
+          status: obj.get('status') || 'pending',
+          timestamp: obj.get('timestamp') || obj.createdAt.toISOString(),
+          // include other fields for details view
+          accountName: obj.get('accountName'),
+          bankName: obj.get('bankName'),
+          accountNumber: obj.get('accountNumber'),
+          bsb: obj.get('bsb'),
+          idFileURL: obj.get('idFileURL'),
+          idFileName: obj.get('idFileName'),
+          currentStreet: obj.get('currentStreet'),
+          currentSuburb: obj.get('currentSuburb'),
+          currentState: obj.get('currentState'),
+          currentPostcode: obj.get('currentPostcode'),
+          duration: obj.get('duration'),
+          // previous address fields
+          prevStreet: obj.get('prevStreet'),
+          prevSuburb: obj.get('prevSuburb'),
+          prevState: obj.get('prevState'),
+          prevPostcode: obj.get('prevPostcode'),
+          prevFrom: obj.get('prevFrom'),
+          prevTo: obj.get('prevTo'),
+          // referral
+          referralSource: obj.get('referralSource'),
+          friendName: obj.get('friendName'),
+          agentName: obj.get('agentName')
+        }));
+        
+        // --- 2. Query Contact Messages (if you have a Contact class) ---
+        const Contact = Parse.Object.extend('Contact');
+        const contactQuery = new Parse.Query(Contact);
+        contactQuery.descending('timestamp');
+        const contactResults = await contactQuery.find();
+        
+        messages = contactResults.map(obj => ({
+          id: obj.id,
+          name: obj.get('name') || '',
+          email: obj.get('email') || '',
+          subject: obj.get('subject') || '',
+          message: obj.get('message') || '',
+          status: obj.get('status') || 'unread',
+          timestamp: obj.get('timestamp') || obj.createdAt.toISOString()
+        }));
+        
+        // --- 3. Phase II and Support (placeholders) ---
+        phase2 = []; // implement if you have a Phase2 class
+        support = []; // implement if you have a Support class
+        
+        // --- 4. Update UI ---
+        updateBadges();
+        updateStats();
+        updateQuick();
+        
+        if (currentTab === 'dashboard') {
+          renderDashboard();
+        } else {
+          filterData();
         }
-      }, 600);
-    }
-
-    function checkUpdates() {
-      const newP1 = JSON.parse(localStorage.getItem(STORAGE.PHASE1) || '[]').length;
-      const newP2 = JSON.parse(localStorage.getItem(STORAGE.PHASE2) || '[]').length;
-      const newMsg = JSON.parse(localStorage.getItem(STORAGE.CONTACT) || '[]').length;
-      
-      if (newP1 > phase1.length || newP2 > phase2.length || newMsg > messages.length) {
-        loadData();
-        showToast('Updates', 'New data received', 'info');
+        
+        hideLoading();
+      } catch (error) {
+        console.error('Load error:', error);
+        hideLoading();
+        showToast('Error', 'Failed to load data', 'error');
       }
     }
 
-    function seedData() {
-      const now = new Date().toISOString();
-      
-      phase1 = [
-        { id: 'APP001', personalInfo: { fullName: 'John Smith', email: 'john.smith@email.com', phone: '+61 4XX XXX XXX', nationality: 'Australia' }, workPreference: { position: 'cattle', startDate: '2025-04-01', needsAccommodation: 'yes' }, status: 'pending', timestamp: now },
-        { id: 'APP002', personalInfo: { fullName: 'Sarah Johnson', email: 'sarah.j@email.com', phone: '+61 4XX XXX XXX', nationality: 'UK' }, workPreference: { position: 'fruit', startDate: '2025-05-15', needsAccommodation: 'yes' }, status: 'approved', timestamp: now },
-        { id: 'APP003', personalInfo: { fullName: 'Michael Chen', email: 'm.chen@email.com', phone: '+61 4XX XXX XXX', nationality: 'China' }, workPreference: { position: 'tractor', startDate: '2025-04-10', needsAccommodation: 'no' }, status: 'pending', timestamp: now }
-      ];
-      
-      messages = [
-        { id: 'MSG001', name: 'David Wilson', email: 'david.w@email.com', subject: 'Employment Inquiry', message: 'I would like to know more about the seasonal positions available.', status: 'unread', timestamp: now },
-        { id: 'MSG002', name: 'Emma Brown', email: 'emma.b@email.com', subject: 'Accommodation Question', message: 'Are the cabins shared or private?', status: 'read', timestamp: now }
-      ];
-      
-      localStorage.setItem(STORAGE.PHASE1, JSON.stringify(phase1));
-      localStorage.setItem(STORAGE.CONTACT, JSON.stringify(messages));
+    function checkUpdates() {
+      // Optional: implement periodic check by re-querying counts
+      // For simplicity, we just reload data every 30 seconds
+      loadData();
     }
 
     // ==================== UI UPDATES ====================
@@ -2023,7 +2072,77 @@
       renderTable();
     }
 
-    function bulkDelete() {
+    // ==================== CRUD OPERATIONS (Parse) ====================
+    async function deleteItem(type, idx, skipReload = false) {
+      if (!skipReload && !confirm('Delete this record?')) return;
+
+      const item = filtered[idx];
+      const objectId = item.data.id; // the Parse objectId
+
+      try {
+        let parseObject;
+        if (type === 'phase1') {
+          parseObject = new Parse.Object('Application');
+        } else if (type === 'message') {
+          parseObject = new Parse.Object('Contact');
+        } else {
+          return;
+        }
+        parseObject.id = objectId;
+        await parseObject.destroy();
+        
+        if (!skipReload) {
+          await loadData();
+          showToast('Success', 'Record deleted', 'success');
+        }
+      } catch (error) {
+        showToast('Error', error.message, 'error');
+      }
+    }
+
+    async function updateStatus(type, idx, newStatus) {
+      const item = filtered[idx];
+      const objectId = item.data.id;
+
+      try {
+        let parseObject;
+        if (type === 'phase1') {
+          parseObject = new Parse.Object('Application');
+        } else if (type === 'support') {
+          parseObject = new Parse.Object('Support');
+        } else {
+          return;
+        }
+        parseObject.id = objectId;
+        parseObject.set('status', newStatus);
+        await parseObject.save();
+        
+        await loadData();
+        showToast('Success', `Status updated to ${newStatus}`, 'success');
+      } catch (error) {
+        showToast('Error', error.message, 'error');
+      }
+    }
+
+    async function markRead(idx) {
+      const item = filtered[idx];
+      const objectId = item.data.id;
+
+      try {
+        const parseObject = new Parse.Object('Contact');
+        parseObject.id = objectId;
+        parseObject.set('status', 'read');
+        await parseObject.save();
+        
+        await loadData();
+        showToast('Success', 'Message marked as read', 'success');
+      } catch (error) {
+        showToast('Error', error.message, 'error');
+      }
+    }
+
+    // ==================== BULK DELETE ====================
+    async function bulkDelete() {
       if (selectedRows.size === 0) {
         showToast('No Selection', 'Select items to delete', 'warning');
         return;
@@ -2033,15 +2152,16 @@
       
       const indices = Array.from(selectedRows).sort((a,b) => b - a);
       
+      // Delete one by one (could be optimized with Parse.Object.destroyAll)
       for (let idx of indices) {
         if (idx < filtered.length) {
           const item = filtered[idx];
-          deleteItem(item.type, idx, true);
+          await deleteItem(item.type, idx, true);
         }
       }
       
       selectedRows.clear();
-      loadData();
+      await loadData();
       showToast('Success', `${indices.length} items deleted`, 'success');
     }
 
@@ -2081,6 +2201,10 @@
       if (type === 'phase1') {
         const p = d.personalInfo || {};
         const w = d.workPreference || {};
+        let idFileHtml = '';
+        if (d.idFileURL) {
+          idFileHtml = `<div class="detail-item"><span class="detail-label">ID Document:</span><span class="detail-value"><a href="${d.idFileURL}" target="_blank">${d.idFileName || 'Download'}</a></span></div>`;
+        }
         modal.innerHTML = `
           <div class="detail-section">
             <h4>Personal Information</h4>
@@ -2089,12 +2213,41 @@
             <div class="detail-item"><span class="detail-label">Email:</span><span class="detail-value">${p.email || 'N/A'}</span></div>
             <div class="detail-item"><span class="detail-label">Phone:</span><span class="detail-value">${p.phone || 'N/A'}</span></div>
             <div class="detail-item"><span class="detail-label">Nationality:</span><span class="detail-value">${p.nationality || 'N/A'}</span></div>
+            <div class="detail-item"><span class="detail-label">Address:</span><span class="detail-value">${d.address || 'N/A'}</span></div>
+            <div class="detail-item"><span class="detail-label">Emergency:</span><span class="detail-value">${d.emergency || 'N/A'}</span></div>
+          </div>
+          <div class="detail-section">
+            <h4>Identification</h4>
+            <div class="detail-item"><span class="detail-label">ID Type:</span><span class="detail-value">${d.idType || 'N/A'}</span></div>
+            <div class="detail-item"><span class="detail-label">ID Number:</span><span class="detail-value">${d.idNumber || 'N/A'}</span></div>
+            ${idFileHtml}
           </div>
           <div class="detail-section">
             <h4>Work Preference</h4>
             <div class="detail-item"><span class="detail-label">Position:</span><span class="detail-value">${w.position || 'N/A'}</span></div>
+            <div class="detail-item"><span class="detail-label">Work Type:</span><span class="detail-value">${d.workType || 'N/A'}</span></div>
             <div class="detail-item"><span class="detail-label">Start Date:</span><span class="detail-value">${w.startDate || 'N/A'}</span></div>
             <div class="detail-item"><span class="detail-label">Accommodation:</span><span class="detail-value">${w.needsAccommodation === 'yes' ? 'Yes' : 'No'}</span></div>
+          </div>
+          <div class="detail-section">
+            <h4>Payment</h4>
+            <div class="detail-item"><span class="detail-label">Option:</span><span class="detail-value">${d.paymentOption || 'N/A'}</span></div>
+            <div class="detail-item"><span class="detail-label">Account:</span><span class="detail-value">${d.accountName || 'N/A'}</span></div>
+            <div class="detail-item"><span class="detail-label">Bank:</span><span class="detail-value">${d.bankName || 'N/A'}</span></div>
+            <div class="detail-item"><span class="detail-label">BSB/Account:</span><span class="detail-value">${d.bsb || ''} ${d.accountNumber || ''}</span></div>
+          </div>
+          <div class="detail-section">
+            <h4>Address</h4>
+            <div class="detail-item"><span class="detail-label">Current:</span><span class="detail-value">${d.currentStreet || ''}, ${d.currentSuburb || ''}, ${d.currentState || ''} ${d.currentPostcode || ''}</span></div>
+            <div class="detail-item"><span class="detail-label">Duration:</span><span class="detail-value">${d.duration || ''}</span></div>
+            ${d.prevStreet ? `<div class="detail-item"><span class="detail-label">Previous:</span><span class="detail-value">${d.prevStreet || ''}, ${d.prevSuburb || ''}, ${d.prevState || ''} ${d.prevPostcode || ''}</span></div>` : ''}
+            ${d.prevFrom ? `<div class="detail-item"><span class="detail-label">From - To:</span><span class="detail-value">${d.prevFrom || ''} to ${d.prevTo || ''}</span></div>` : ''}
+          </div>
+          <div class="detail-section">
+            <h4>Referral</h4>
+            <div class="detail-item"><span class="detail-label">Source:</span><span class="detail-value">${d.referralSource || 'N/A'}</span></div>
+            ${d.friendName ? `<div class="detail-item"><span class="detail-label">Friend:</span><span class="detail-value">${d.friendName}</span></div>` : ''}
+            ${d.agentName ? `<div class="detail-item"><span class="detail-label">Agent:</span><span class="detail-value">${d.agentName}</span></div>` : ''}
           </div>
           <div class="detail-section">
             <h4>Status</h4>
@@ -2121,56 +2274,6 @@
       }
       
       document.getElementById('detailsModal').classList.add('active');
-    }
-
-    // ==================== CRUD OPERATIONS ====================
-    function deleteItem(type, idx, skipReload = false) {
-      if (!skipReload && !confirm('Delete this record?')) return;
-      
-      const item = filtered[idx];
-      let key = '', arr = [];
-      
-      if (type === 'phase1') { key = STORAGE.PHASE1; arr = phase1; }
-      else if (type === 'phase2') { key = STORAGE.PHASE2; arr = phase2; }
-      else if (type === 'message') { key = STORAGE.CONTACT; arr = messages; }
-      else if (type === 'support') { key = STORAGE.SUPPORT; arr = support; }
-      
-      const actual = arr.findIndex(x => x.id === item.data.id);
-      if (actual > -1) {
-        arr.splice(actual, 1);
-        localStorage.setItem(key, JSON.stringify(arr));
-        if (!skipReload) {
-          loadData();
-          showToast('Success', 'Record deleted', 'success');
-        }
-      }
-    }
-
-    function updateStatus(type, idx, newStatus) {
-      const item = filtered[idx];
-      let key = '', arr = [];
-      
-      if (type === 'phase1') { key = STORAGE.PHASE1; arr = phase1; }
-      else if (type === 'support') { key = STORAGE.SUPPORT; arr = support; }
-      
-      const actual = arr.findIndex(x => x.id === item.data.id);
-      if (actual > -1) {
-        arr[actual].status = newStatus;
-        localStorage.setItem(key, JSON.stringify(arr));
-        loadData();
-        showToast('Success', `Status updated to ${newStatus}`, 'success');
-      }
-    }
-
-    function markRead(idx) {
-      const item = filtered[idx];
-      const actual = messages.findIndex(m => m.id === item.data.id);
-      if (actual > -1) {
-        messages[actual].status = 'read';
-        localStorage.setItem(STORAGE.CONTACT, JSON.stringify(messages));
-        loadData();
-        showToast('Success', 'Message marked as read', 'success');
-      }
     }
 
     // ==================== EXPORT ====================
@@ -2281,6 +2384,31 @@
     document.getElementById('editModal').addEventListener('click', function(e) {
       if (e.target === this) closeEditModal();
     });
+
+    // Expose functions to global scope
+    window.switchTab = switchTab;
+    window.setFilter = setFilter;
+    window.quickJump = quickJump;
+    window.zoomIn = zoomIn;
+    window.zoomOut = zoomOut;
+    window.resetZoom = resetZoom;
+    window.prevPage = prevPage;
+    window.nextPage = nextPage;
+    window.viewDetails = viewDetails;
+    window.deleteItem = deleteItem;
+    window.updateStatus = updateStatus;
+    window.markRead = markRead;
+    window.bulkDelete = bulkDelete;
+    window.toggleRow = toggleRow;
+    window.toggleAll = toggleAll;
+    window.exportTable = exportTable;
+    window.exportCurrent = exportCurrent;
+    window.refreshData = refreshData;
+    window.showToast = showToast;
+    window.hideNotification = hideNotification;
+    window.closeModal = closeModal;
+    window.closeEditModal = closeEditModal;
+    window.logout = logout;
   </script>
 </body>
 </html>
